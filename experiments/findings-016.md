@@ -72,3 +72,6 @@ fixes before re-running P1–P4:
 `results/icrl_td/` per-cell jsonl (emergence_step, final_val_acc[/_ood],
 final_td_alignment, final_p4_tracking + per-eval trajectories). No figure pass —
 the result is a calibration-negative; a figure would imply a signal that is absent.
+
+## Traceability (added 2026-06-29)
+Paper E2's Result 2 also reports red-team robustness controls NOT in the base 45-run grid above — the exact Bellman oracle (strict acc 1.000), supervised-fit control, trainable-control cells, the wide-model rescue, and the de-noised sustained readout. These are backed by logged runs under `results/icrl_td/`, `results/icrl_td_ultragoal_calib/`, and `results/icrl_td_ultragoal_denoised/`. They validate the *evaluator* (so the failure is provably 'task not learned', a calibration failure rather than an adjudicable negative).
