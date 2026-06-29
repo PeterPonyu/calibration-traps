@@ -1,0 +1,203 @@
+{
+  "namespace": "experiments/results/ultragoal_20260620_deepcheck/e1_realtext_extension",
+  "n_cells": 4,
+  "records": [
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/e1_realtext_extension/large_b10M_s1.json",
+      "capacity": "large",
+      "seed": 1,
+      "budget": 10000000,
+      "fresh_val": 1.5352712869644165,
+      "best_n": 2,
+      "best_val_loss": 1.5306953489780426,
+      "R_free_native": 4,
+      "R_free_0p05": 4,
+      "R_free_0p1": 10,
+      "rows": [
+        {
+          "n": 1,
+          "U": 10000000,
+          "val_loss": 1.5352712869644165,
+          "tokens_seen": 9994240,
+          "excess": 0.0
+        },
+        {
+          "n": 2,
+          "U": 5000000,
+          "val_loss": 1.5306953489780426,
+          "tokens_seen": 9994240,
+          "excess": -0.004575937986373901
+        },
+        {
+          "n": 4,
+          "U": 2500000,
+          "val_loss": 1.5546323955059052,
+          "tokens_seen": 9994240,
+          "excess": 0.019361108541488647
+        },
+        {
+          "n": 10,
+          "U": 1000000,
+          "val_loss": 1.629808098077774,
+          "tokens_seen": 9994240,
+          "excess": 0.09453681111335754
+        },
+        {
+          "n": 20,
+          "U": 500000,
+          "val_loss": 2.2538111805915833,
+          "tokens_seen": 9994240,
+          "excess": 0.7185398936271667
+        }
+      ]
+    },
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/e1_realtext_extension/large_b10M_s2.json",
+      "capacity": "large",
+      "seed": 2,
+      "budget": 10000000,
+      "fresh_val": 1.5740297436714172,
+      "best_n": 1,
+      "best_val_loss": 1.5740297436714172,
+      "R_free_native": 4,
+      "R_free_0p05": 4,
+      "R_free_0p1": 10,
+      "rows": [
+        {
+          "n": 1,
+          "U": 10000000,
+          "val_loss": 1.5740297436714172,
+          "tokens_seen": 9994240,
+          "excess": 0.0
+        },
+        {
+          "n": 2,
+          "U": 5000000,
+          "val_loss": 1.584395319223404,
+          "tokens_seen": 9994240,
+          "excess": 0.010365575551986694
+        },
+        {
+          "n": 4,
+          "U": 2500000,
+          "val_loss": 1.6150913536548615,
+          "tokens_seen": 9994240,
+          "excess": 0.041061609983444214
+        },
+        {
+          "n": 10,
+          "U": 1000000,
+          "val_loss": 1.6600294411182404,
+          "tokens_seen": 9994240,
+          "excess": 0.08599969744682312
+        },
+        {
+          "n": 20,
+          "U": 500000,
+          "val_loss": 2.1394947171211243,
+          "tokens_seen": 9994240,
+          "excess": 0.565464973449707
+        }
+      ]
+    },
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/e1_realtext_extension/small_b10M_s1.json",
+      "capacity": "small",
+      "seed": 1,
+      "budget": 10000000,
+      "fresh_val": 1.7050822079181671,
+      "best_n": 1,
+      "best_val_loss": 1.7050822079181671,
+      "R_free_native": 4,
+      "R_free_0p05": 4,
+      "R_free_0p1": 10,
+      "rows": [
+        {
+          "n": 1,
+          "U": 10000000,
+          "val_loss": 1.7050822079181671,
+          "tokens_seen": 9994240,
+          "excess": 0.0
+        },
+        {
+          "n": 2,
+          "U": 5000000,
+          "val_loss": 1.728368192911148,
+          "tokens_seen": 9994240,
+          "excess": 0.023285984992980957
+        },
+        {
+          "n": 4,
+          "U": 2500000,
+          "val_loss": 1.7319339215755463,
+          "tokens_seen": 9994240,
+          "excess": 0.02685171365737915
+        },
+        {
+          "n": 10,
+          "U": 1000000,
+          "val_loss": 1.7636576890945435,
+          "tokens_seen": 9994240,
+          "excess": 0.05857548117637634
+        },
+        {
+          "n": 20,
+          "U": 500000,
+          "val_loss": 1.885145515203476,
+          "tokens_seen": 9994240,
+          "excess": 0.18006330728530884
+        }
+      ]
+    },
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/e1_realtext_extension/small_b10M_s2.json",
+      "capacity": "small",
+      "seed": 2,
+      "budget": 10000000,
+      "fresh_val": 1.7421859502792358,
+      "best_n": 1,
+      "best_val_loss": 1.7421859502792358,
+      "R_free_native": 10,
+      "R_free_0p05": 10,
+      "R_free_0p1": 10,
+      "rows": [
+        {
+          "n": 1,
+          "U": 10000000,
+          "val_loss": 1.7421859502792358,
+          "tokens_seen": 9994240,
+          "excess": 0.0
+        },
+        {
+          "n": 2,
+          "U": 5000000,
+          "val_loss": 1.7507808804512024,
+          "tokens_seen": 9994240,
+          "excess": 0.008594930171966553
+        },
+        {
+          "n": 4,
+          "U": 2500000,
+          "val_loss": 1.7613871395587921,
+          "tokens_seen": 9994240,
+          "excess": 0.019201189279556274
+        },
+        {
+          "n": 10,
+          "U": 1000000,
+          "val_loss": 1.786292165517807,
+          "tokens_seen": 9994240,
+          "excess": 0.04410621523857117
+        },
+        {
+          "n": 20,
+          "U": 500000,
+          "val_loss": 1.9389767050743103,
+          "tokens_seen": 9994240,
+          "excess": 0.19679075479507446
+        }
+      ]
+    }
+  ],
+  "headline": "E1 10M capacity bridge: R_free at 0.05 spans 4-10 for small and 4 for large in these seeds (large reaches 10 only at 0.1); n=20 is consistently worse, supporting capacity/threshold-sensitive 4-10 band rather than an exact constant."
+}

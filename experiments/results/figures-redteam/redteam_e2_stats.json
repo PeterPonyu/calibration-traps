@@ -1,0 +1,38 @@
+{
+  "fullattack": [
+    {
+      "file": "experiments/results/ultragoal_20260619_fullattack/e2_td_positive_control/remote_main/verdict_main.json",
+      "n_cells": 8,
+      "n_positive_cells": 0,
+      "n_near_positive_0p7": 0,
+      "best_max_val_acc": 0.62109375,
+      "status": "positive_control_not_yet_passed",
+      "kind": "main"
+    },
+    {
+      "file": "experiments/results/ultragoal_20260619_fullattack/e2_td_positive_control/verdict_ultra.json",
+      "n_cells": 6,
+      "n_positive_cells": 0,
+      "n_near_positive_0p7": 0,
+      "best_max_val_acc": 0.701171875,
+      "status": "positive_control_not_yet_passed",
+      "kind": "ultra"
+    }
+  ],
+  "redteam": [
+    {
+      "file": "experiments/results/ultragoal_20260619_redteam/e2_td_positive_rescue/verdict_wide.json",
+      "n_cells": 3,
+      "n_positive_cells": 0,
+      "n_near_positive_0p7": 3,
+      "best_max_val_acc": 0.75390625,
+      "status": "positive_control_not_yet_passed",
+      "kind": "wide"
+    }
+  ],
+  "zero_success_upper_95_if_no_success": {
+    "successes": 0,
+    "n": 17,
+    "upper95": 0.16156611126074016
+  }
+}

@@ -1,0 +1,380 @@
+{
+  "grayscale_contacts": [
+    ".omx/audits/redteam_gray/A_contact_gray.png",
+    ".omx/audits/redteam_gray/B_contact_gray.png",
+    ".omx/audits/redteam_gray/C_contact_gray.png",
+    ".omx/audits/redteam_gray/E1_contact_gray.png",
+    ".omx/audits/redteam_gray/E2_contact_gray.png"
+  ],
+  "log_warnings": {
+    "A": [
+      {
+        "line": 302,
+        "text": "Overfull \\hbox (2.43333pt too wide) has occurred while \\output is active"
+      },
+      {
+        "line": 353,
+        "text": "Underfull \\hbox (badness 2189) in paragraph at lines 314--314"
+      },
+      {
+        "line": 365,
+        "text": "Overfull \\hbox (0.38763pt too wide) in paragraph at lines 340--354"
+      },
+      {
+        "line": 384,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 437--437"
+      },
+      {
+        "line": 389,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 437--438"
+      },
+      {
+        "line": 394,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 437--438"
+      },
+      {
+        "line": 399,
+        "text": "Underfull \\hbox (badness 7238) in paragraph at lines 438--438"
+      },
+      {
+        "line": 404,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 438--438"
+      },
+      {
+        "line": 409,
+        "text": "Underfull \\hbox (badness 3029) in paragraph at lines 438--438"
+      },
+      {
+        "line": 414,
+        "text": "Underfull \\hbox (badness 1681) in paragraph at lines 439--439"
+      },
+      {
+        "line": 419,
+        "text": "Underfull \\hbox (badness 1270) in paragraph at lines 440--440"
+      },
+      {
+        "line": 424,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 440--440"
+      },
+      {
+        "line": 429,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 440--440"
+      },
+      {
+        "line": 434,
+        "text": "Underfull \\hbox (badness 7362) in paragraph at lines 440--440"
+      },
+      {
+        "line": 439,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 440--441"
+      },
+      {
+        "line": 444,
+        "text": "Underfull \\hbox (badness 3895) in paragraph at lines 441--441"
+      },
+      {
+        "line": 449,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 441--441"
+      },
+      {
+        "line": 454,
+        "text": "Underfull \\hbox (badness 2409) in paragraph at lines 442--442"
+      },
+      {
+        "line": 459,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 442--442"
+      },
+      {
+        "line": 464,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 442--442"
+      },
+      {
+        "line": 469,
+        "text": "Underfull \\hbox (badness 1584) in paragraph at lines 442--443"
+      },
+      {
+        "line": 474,
+        "text": "Underfull \\hbox (badness 8189) in paragraph at lines 442--443"
+      },
+      {
+        "line": 479,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 442--443"
+      }
+    ],
+    "B": [
+      {
+        "line": 311,
+        "text": "Overfull \\hbox (2.43333pt too wide) has occurred while \\output is active"
+      },
+      {
+        "line": 371,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 371--372"
+      },
+      {
+        "line": 376,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 372--372"
+      },
+      {
+        "line": 381,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 372--372"
+      },
+      {
+        "line": 386,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 374--374"
+      },
+      {
+        "line": 392,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 374--375"
+      },
+      {
+        "line": 397,
+        "text": "Underfull \\hbox (badness 5302) in paragraph at lines 390--390"
+      },
+      {
+        "line": 402,
+        "text": "Underfull \\hbox (badness 3965) in paragraph at lines 390--390"
+      },
+      {
+        "line": 407,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 390--391"
+      },
+      {
+        "line": 412,
+        "text": "Underfull \\hbox (badness 6559) in paragraph at lines 392--392"
+      },
+      {
+        "line": 417,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 394--394"
+      },
+      {
+        "line": 422,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 394--394"
+      },
+      {
+        "line": 427,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 394--394"
+      },
+      {
+        "line": 432,
+        "text": "Underfull \\hbox (badness 1297) in paragraph at lines 394--394"
+      },
+      {
+        "line": 437,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 394--395"
+      },
+      {
+        "line": 448,
+        "text": "Overfull \\vbox (90.0914pt too high) has occurred while \\output is active []"
+      }
+    ],
+    "C": [
+      {
+        "line": 302,
+        "text": "Overfull \\hbox (2.43333pt too wide) has occurred while \\output is active"
+      },
+      {
+        "line": 337,
+        "text": "Underfull \\hbox (badness 6675) in paragraph at lines 233--233"
+      },
+      {
+        "line": 343,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 233--233"
+      },
+      {
+        "line": 349,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 233--233"
+      },
+      {
+        "line": 377,
+        "text": "Underfull \\hbox (badness 1817) in paragraph at lines 335--335"
+      },
+      {
+        "line": 384,
+        "text": "Underfull \\hbox (badness 3815) in paragraph at lines 335--335"
+      },
+      {
+        "line": 390,
+        "text": "Underfull \\hbox (badness 5345) in paragraph at lines 372--373"
+      },
+      {
+        "line": 395,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 373--373"
+      },
+      {
+        "line": 400,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 373--373"
+      },
+      {
+        "line": 405,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 373--373"
+      },
+      {
+        "line": 410,
+        "text": "Underfull \\hbox (badness 3219) in paragraph at lines 373--374"
+      },
+      {
+        "line": 415,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 374--374"
+      },
+      {
+        "line": 420,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 374--374"
+      },
+      {
+        "line": 425,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 374--375"
+      },
+      {
+        "line": 430,
+        "text": "Underfull \\hbox (badness 1424) in paragraph at lines 375--376"
+      },
+      {
+        "line": 435,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 375--376"
+      },
+      {
+        "line": 440,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 376--376"
+      },
+      {
+        "line": 445,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 376--376"
+      },
+      {
+        "line": 450,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 376--376"
+      },
+      {
+        "line": 455,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 376--376"
+      },
+      {
+        "line": 460,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 376--376"
+      },
+      {
+        "line": 465,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 376--377"
+      }
+    ],
+    "E1": [
+      {
+        "line": 302,
+        "text": "Overfull \\hbox (2.43333pt too wide) has occurred while \\output is active"
+      },
+      {
+        "line": 333,
+        "text": "Underfull \\hbox (badness 1275) in paragraph at lines 230--230"
+      },
+      {
+        "line": 338,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 230--230"
+      },
+      {
+        "line": 343,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 231--231"
+      },
+      {
+        "line": 348,
+        "text": "Underfull \\hbox (badness 2486) in paragraph at lines 232--232"
+      },
+      {
+        "line": 353,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 232--232"
+      },
+      {
+        "line": 358,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 232--233"
+      },
+      {
+        "line": 363,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 232--233"
+      },
+      {
+        "line": 368,
+        "text": "Underfull \\hbox (badness 2653) in paragraph at lines 233--233"
+      },
+      {
+        "line": 373,
+        "text": "Underfull \\hbox (badness 1406) in paragraph at lines 234--234"
+      },
+      {
+        "line": 394,
+        "text": "Overfull \\hbox (0.28796pt too wide) in paragraph at lines 292--295"
+      }
+    ],
+    "E2": [
+      {
+        "line": 237,
+        "text": "Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)"
+      },
+      {
+        "line": 337,
+        "text": "(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty"
+      },
+      {
+        "line": 338,
+        "text": "Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)"
+      },
+      {
+        "line": 343,
+        "text": "Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2"
+      },
+      {
+        "line": 508,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 221--221"
+      },
+      {
+        "line": 513,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 222--222"
+      },
+      {
+        "line": 518,
+        "text": "Underfull \\hbox (badness 2529) in paragraph at lines 224--224"
+      },
+      {
+        "line": 523,
+        "text": "Underfull \\hbox (badness 10000) in paragraph at lines 224--224"
+      },
+      {
+        "line": 528,
+        "text": "Underfull \\hbox (badness 6173) in paragraph at lines 224--224"
+      },
+      {
+        "line": 544,
+        "text": "Package rerunfilecheck Info: File `main.out' has not changed."
+      },
+      {
+        "line": 545,
+        "text": "(rerunfilecheck)             Checksum: C24F8CFCFA83A7822025F597D0E8D772;2349."
+      }
+    ]
+  },
+  "native_tables": {
+    "A": {
+      "table": 2,
+      "tabular": 2,
+      "markdown_like_lines": 0
+    },
+    "B": {
+      "table": 2,
+      "tabular": 2,
+      "markdown_like_lines": 0
+    },
+    "C": {
+      "table": 3,
+      "tabular": 3,
+      "markdown_like_lines": 0
+    },
+    "E1": {
+      "table": 2,
+      "tabular": 2,
+      "markdown_like_lines": 0
+    },
+    "E2": {
+      "table": 2,
+      "tabular": 2,
+      "markdown_like_lines": 0
+    }
+  }
+}

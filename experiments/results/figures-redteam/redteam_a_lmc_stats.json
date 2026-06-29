@@ -1,0 +1,20 @@
+{
+  "fullattack": {
+    "n_completed": 1,
+    "k_star_present": 0,
+    "k_star_absent": 1,
+    "zero_kstar_upper95": 0.95
+  },
+  "redteam": {
+    "n_completed": 1,
+    "k_star_present": 0,
+    "k_star_absent": 1,
+    "zero_kstar_upper95": 0.95
+  },
+  "combined": {
+    "n_completed": 2,
+    "k_star_present": 0,
+    "k_star_absent": 2,
+    "zero_kstar_upper95": 0.7763932022500211
+  }
+}

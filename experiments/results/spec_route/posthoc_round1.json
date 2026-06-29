@@ -1,0 +1,387 @@
+{
+  "inventory": {
+    "grid_main": {
+      "loaded": 90,
+      "skipped": 0
+    },
+    "lr_control": {
+      "loaded": 36,
+      "skipped": 0
+    },
+    "lr_control_sc3": {
+      "loaded": 12,
+      "skipped": 0
+    },
+    "wd_sweep": {
+      "loaded": 48,
+      "skipped": 0
+    },
+    "tf_sweep": {
+      "loaded": 24,
+      "skipped": 0
+    },
+    "task_mul": {
+      "loaded": 20,
+      "skipped": 0
+    },
+    "task_s5": {
+      "loaded": 20,
+      "skipped": 0
+    },
+    "fine_eval": {
+      "loaded": 30,
+      "skipped": 0
+    },
+    "s5_rescue": {
+      "loaded": 24,
+      "skipped": 0
+    },
+    "mech": {
+      "loaded": 30,
+      "skipped": 0
+    },
+    "s5_mech": {
+      "loaded": 30,
+      "skipped": 0
+    }
+  },
+  "coverage": {
+    "grid_main": {
+      "runs": 90,
+      "grokked": 63,
+      "failed": 27,
+      "growth": 42,
+      "contraction": 21,
+      "no_memorize": 10
+    },
+    "lr_control": {
+      "runs": 36,
+      "grokked": 33,
+      "failed": 3,
+      "growth": 18,
+      "contraction": 15,
+      "no_memorize": 0
+    },
+    "lr_control_sc3": {
+      "runs": 12,
+      "grokked": 4,
+      "failed": 8,
+      "growth": 2,
+      "contraction": 2,
+      "no_memorize": 0
+    },
+    "wd_sweep": {
+      "runs": 48,
+      "grokked": 48,
+      "failed": 0,
+      "growth": 41,
+      "contraction": 7,
+      "no_memorize": 0
+    },
+    "tf_sweep": {
+      "runs": 24,
+      "grokked": 18,
+      "failed": 6,
+      "growth": 11,
+      "contraction": 7,
+      "no_memorize": 0
+    },
+    "task_mul": {
+      "runs": 20,
+      "grokked": 15,
+      "failed": 5,
+      "growth": 15,
+      "contraction": 0,
+      "no_memorize": 0
+    },
+    "task_s5": {
+      "runs": 20,
+      "grokked": 6,
+      "failed": 14,
+      "growth": 6,
+      "contraction": 0,
+      "no_memorize": 0
+    },
+    "fine_eval": {
+      "runs": 30,
+      "grokked": 29,
+      "failed": 1,
+      "growth": 29,
+      "contraction": 0,
+      "no_memorize": 0
+    },
+    "s5_rescue": {
+      "runs": 24,
+      "grokked": 3,
+      "failed": 21,
+      "growth": 1,
+      "contraction": 2,
+      "no_memorize": 8
+    },
+    "mech": {
+      "runs": 30,
+      "grokked": 27,
+      "failed": 3,
+      "growth": 17,
+      "contraction": 10,
+      "no_memorize": 0
+    },
+    "s5_mech": {
+      "runs": 30,
+      "grokked": 6,
+      "failed": 24,
+      "growth": 6,
+      "contraction": 0,
+      "no_memorize": 0
+    }
+  },
+  "W-mem/tierA": {
+    "grok/config": {
+      "signal": 0.8664197530864197,
+      "config_only": 0.8406172839506173,
+      "delta": 0.02580246913580242,
+      "perm_p": 0.004975124378109453
+    },
+    "grok/seed": {
+      "signal": 0.9398765432098766,
+      "config_only": 0.966604938271605,
+      "delta": -0.026728395061728416,
+      "perm_p": 0.004975124378109453
+    },
+    "grok/task": {
+      "signal": 0.45108695652173914,
+      "config_only": 0.8342391304347826,
+      "delta": -0.38315217391304346,
+      "perm_p": 0.6318407960199005
+    },
+    "route/config": {
+      "auroc": 0.6739130434782609,
+      "perm_p": 0.004975124378109453
+    },
+    "route/task": {
+      "auroc": 0.8333333333333334,
+      "perm_p": 0.10309278350515463
+    },
+    "route/config_adamw": {
+      "auroc": 0.46636363636363637,
+      "perm_p": 0.4427860696517413,
+      "n": 72
+    },
+    "p1_seed_increment": {
+      "n": 74,
+      "spearman": 0.07684561273602368,
+      "perm_p": 0.014925373134328358,
+      "mae_signal": 0.5248657860692967,
+      "mae_config": 0.4261930177186068
+    },
+    "p4_decomposition": {
+      "('adamw', 'add')": {
+        "n": 62,
+        "config_share": 0.7031624317151329,
+        "signal_share": 0.18215529639889239,
+        "residual_share": 0.11468227188597468,
+        "zero_variance": false
+      },
+      "('muon', 'add')": {
+        "n": 32,
+        "config_share": 0.9659243956280507,
+        "signal_share": 0.0002729817649383959,
+        "residual_share": 0.033802622607010946,
+        "zero_variance": false
+      },
+      "('sgdm', 'add')": {
+        "n": 26,
+        "config_share": 0.0,
+        "signal_share": 0.0,
+        "residual_share": 1.263031853231376,
+        "zero_variance": false
+      }
+    }
+  },
+  "W-mem/tierB": {
+    "grok/config": {
+      "signal": 0.8913043478260869,
+      "config_only": 0.8885869565217391,
+      "delta": 0.0027173913043477826,
+      "perm_p": 0.004975124378109453
+    },
+    "grok/seed": {
+      "signal": 0.9972826086956522,
+      "config_only": 1.0,
+      "delta": -0.0027173913043477826,
+      "perm_p": 0.004975124378109453
+    },
+    "grok/task": {
+      "signal": 0.3,
+      "config_only": 0.75,
+      "delta": -0.45,
+      "perm_p": 0.9651741293532339
+    },
+    "route/config": {
+      "auroc": 0.6363636363636364,
+      "perm_p": 0.14427860696517414
+    },
+    "route/task": {
+      "auroc": NaN,
+      "perm_p": NaN
+    },
+    "p1_seed_increment": {
+      "n": 5,
+      "spearman": NaN,
+      "perm_p": NaN,
+      "mae_signal": NaN,
+      "mae_config": NaN
+    },
+    "p4_decomposition": {
+      "('adamw', 'add')": {
+        "n": 9,
+        "config_share": 0.767407127650271,
+        "signal_share": 0.0,
+        "residual_share": 0.23259287234972903,
+        "zero_variance": false
+      },
+      "('muon', 'add')": {
+        "n": 12,
+        "config_share": 0.9758873790023088,
+        "signal_share": 0.0,
+        "residual_share": 0.02411262099769118,
+        "zero_variance": false
+      },
+      "('sgdm', 'add')": {
+        "n": 6,
+        "config_share": 0.1661721045307798,
+        "signal_share": 0.0,
+        "residual_share": 0.8338278954692202,
+        "zero_variance": false
+      }
+    }
+  },
+  "W-200/tierA": {
+    "grok/config": {
+      "signal": 0.9042170292774644,
+      "config_only": 0.8367177007789417,
+      "delta": 0.06749932849852269,
+      "perm_p": 0.004975124378109453
+    },
+    "grok/seed": {
+      "signal": 0.9568627450980393,
+      "config_only": 0.9393768466290626,
+      "delta": 0.017485898468976635,
+      "perm_p": 0.004975124378109453
+    },
+    "grok/task": {
+      "signal": 0.6730158730158731,
+      "config_only": 0.6396825396825396,
+      "delta": 0.03333333333333344,
+      "perm_p": 0.07960199004975124
+    },
+    "route/config": {
+      "auroc": 0.815263748597082,
+      "perm_p": 0.004975124378109453
+    },
+    "route/task": {
+      "auroc": 0.8571428571428571,
+      "perm_p": 0.13297872340425532
+    },
+    "route/config_adamw": {
+      "auroc": 0.57,
+      "perm_p": 0.11940298507462686,
+      "n": 72
+    },
+    "p1_seed_increment": {
+      "n": 109,
+      "spearman": 0.013826336762116581,
+      "perm_p": 0.004975124378109453,
+      "mae_signal": 0.5100840637417507,
+      "mae_config": 0.3301726995344693
+    },
+    "p4_decomposition": {
+      "('adamw', 'add')": {
+        "n": 62,
+        "config_share": 0.7031624317151329,
+        "signal_share": 0.030884875165124615,
+        "residual_share": 0.26595269311974246,
+        "zero_variance": false
+      },
+      "('muon', 'add')": {
+        "n": 105,
+        "config_share": 0.9579984870310613,
+        "signal_share": 0.00312968764352628,
+        "residual_share": 0.038871825325412446,
+        "zero_variance": false
+      },
+      "('muon', 'mul')": {
+        "n": 10,
+        "config_share": 0.9489540907744365,
+        "signal_share": 0.0,
+        "residual_share": 0.05104590922556351,
+        "zero_variance": false
+      },
+      "('sgdm', 'add')": {
+        "n": 26,
+        "config_share": 0.0,
+        "signal_share": 0.0,
+        "residual_share": 1.263031853231376,
+        "zero_variance": false
+      }
+    }
+  },
+  "W-200/tierB": {
+    "grok/config": {
+      "signal": 0.9259259259259259,
+      "config_only": 0.8765432098765432,
+      "delta": 0.04938271604938271,
+      "perm_p": 0.004975124378109453
+    },
+    "grok/seed": {
+      "signal": 0.978675645342312,
+      "config_only": 0.9910213243546577,
+      "delta": -0.012345679012345734,
+      "perm_p": 0.004975124378109453
+    },
+    "grok/task": {
+      "signal": 0.6111111111111112,
+      "config_only": 0.7430555555555556,
+      "delta": -0.13194444444444442,
+      "perm_p": 0.1691542288557214
+    },
+    "route/config": {
+      "auroc": 0.7043478260869566,
+      "perm_p": 0.04477611940298507
+    },
+    "route/task": {
+      "auroc": NaN,
+      "perm_p": NaN
+    },
+    "p1_seed_increment": {
+      "n": 5,
+      "spearman": NaN,
+      "perm_p": NaN,
+      "mae_signal": NaN,
+      "mae_config": NaN
+    },
+    "p4_decomposition": {
+      "('adamw', 'add')": {
+        "n": 9,
+        "config_share": 0.767407127650271,
+        "signal_share": 0.0,
+        "residual_share": 0.23259287234972903,
+        "zero_variance": false
+      },
+      "('muon', 'add')": {
+        "n": 12,
+        "config_share": 0.9758873790023088,
+        "signal_share": 0.0,
+        "residual_share": 0.02411262099769118,
+        "zero_variance": false
+      },
+      "('sgdm', 'add')": {
+        "n": 6,
+        "config_share": 0.1661721045307798,
+        "signal_share": 0.0,
+        "residual_share": 0.8338278954692202,
+        "zero_variance": false
+      }
+    }
+  }
+}

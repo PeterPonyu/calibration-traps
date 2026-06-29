@@ -1,0 +1,21 @@
+{
+  "title": "Testbed-calibration traps in small-scale emergence science: two pre-registered negatives",
+  "description": "Code and result logs for two pre-registered emergence negatives and the calibration diagnostics that prevent them. Code is MIT; result logs CC-BY-4.0. Figure/manuscript sources not included; large standard datasets not bundled.",
+  "upload_type": "dataset",
+  "access_right": "open",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Fu, Zeyu",
+      "orcid": "0009-0001-8329-0108",
+      "affiliation": "Army Medical University, Chongqing, China"
+    }
+  ],
+  "keywords": [
+    "emergence",
+    "calibration",
+    "negative results",
+    "in-context learning",
+    "reproducibility"
+  ]
+}

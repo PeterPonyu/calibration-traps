@@ -1,0 +1,237 @@
+{
+  "plan": {
+    "version": 1,
+    "createdAt": "2026-06-19T16:05:00.358Z",
+    "updatedAt": "2026-06-19T16:37:23.816Z",
+    "briefPath": ".omx/ultragoal/brief.md",
+    "goalsPath": ".omx/ultragoal/goals.json",
+    "ledgerPath": ".omx/ultragoal/ledger.jsonl",
+    "codexGoalMode": "aggregate",
+    "goals": [
+      {
+        "id": "G001-do-not-modify-local-experiments-grok",
+        "title": "Do not modify local experiments/grokking/.",
+        "objective": "Do not modify local experiments/grokking/.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:11:37.687Z",
+        "completedAt": "2026-06-19T16:11:37.687Z",
+        "evidence": "No writes under local experiments/grokking during redteam run; new wrappers live in .omx/ultragoal and outputs target experiments/results/ultragoal_20260619_redteam/."
+      },
+      {
+        "id": "G002-new-experiment-outputs-must-use-fres",
+        "title": "New experiment outputs must use fresh namespace experiments/results/u...",
+        "objective": "New experiment outputs must use fresh namespace experiments/results/ultragoal_20260619_redteam/.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:11:37.806Z",
+        "completedAt": "2026-06-19T16:11:37.806Z",
+        "evidence": "Created and used fresh namespace experiments/results/ultragoal_20260619_redteam/ for B/E1/E2/A redteam outputs."
+      },
+      {
+        "id": "G003-previous-outputs-under-experiments-r",
+        "title": "Previous outputs under experiments/results/ultragoal_20260619_fullatt...",
+        "objective": "Previous outputs under experiments/results/ultragoal_20260619_fullattack/ may be read but not treated as new outputs.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:11:37.923Z",
+        "completedAt": "2026-06-19T16:11:37.923Z",
+        "evidence": "Fullattack outputs read only for statistical/provenance audit; redteam scripts write only to ultragoal_20260619_redteam."
+      },
+      {
+        "id": "G004-all-papers-figs-png-must-remain-refe",
+        "title": "All papers/figs/*.png must remain referenced in LaTeX PDFs; no missin...",
+        "objective": "All papers/figs/*.png must remain referenced in LaTeX PDFs; no missing or unused figures.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:31:30.658Z",
+        "completedAt": "2026-06-19T16:31:30.658Z",
+        "evidence": "Final redteam paper_integrity_gate passes: all A/B/C/E1/E2 PDFs compile, figs_total=37, figs_used=37, unused=[], missing_total=0."
+      },
+      {
+        "id": "G005-tables-must-remain-native-latex-tabl",
+        "title": "Tables must remain native LaTeX table/tabular, not images or markdown.",
+        "objective": "Tables must remain native LaTeX table/tabular, not images or markdown.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:31:30.769Z",
+        "completedAt": "2026-06-19T16:31:30.769Z",
+        "evidence": "Visual hardening report confirms native tables: A 2/2, B 2/2, C 3/3, E1 2/2, E2 2/2 table/tabular counts and zero markdown-like table lines."
+      },
+      {
+        "id": "G006-figures-must-render-into-pdfs-with-m",
+        "title": "Figures must render into PDFs with matching page/figure sizes; no ove...",
+        "objective": "Figures must render into PDFs with matching page/figure sizes; no overlap; keep existing >=0.5 scale gate and add a >=0.6 warning/hardening report.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:31:30.887Z",
+        "completedAt": "2026-06-19T16:31:30.887Z",
+        "evidence": "Figure hardening complete: hard 0.5 scale gate risk_count=0; figure optimization reduced 0.6 warning count from 6 to 2; contacts/grayscale contacts regenerated; remaining 0.6 warnings documented for very wide multipanel figures."
+      },
+      {
+        "id": "G007-persist-visual-verdict-json-to-omx-s",
+        "title": "Persist visual verdict JSON to .omx/state/papers-visual/ralph-progres...",
+        "objective": "Persist visual verdict JSON to .omx/state/papers-visual/ralph-progress.json for this redteam iteration.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:31:31.002Z",
+        "completedAt": "2026-06-19T16:31:31.002Z",
+        "evidence": "Persisted redteam final visual verdict to .omx/state/papers-visual/ralph-progress.json with score 94 pass-with-warnings and hard 0.5 scale pass."
+      },
+      {
+        "id": "G008-use-local-rtx-5090-and-remote-dl4080",
+        "title": "Use local RTX 5090 and remote dl4080 RTX 4080 where safe; commands mu...",
+        "objective": "Use local RTX 5090 and remote dl4080 RTX 4080 where safe; commands must be resumable and evidence-backed.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:11:38.036Z",
+        "completedAt": "2026-06-19T16:11:38.036Z",
+        "evidence": "Local RTX 5090 used for B bridge and A LMC; remote dl4080 RTX 4080 used for E1 real-text seeds and E2 positive rescue via tmux; logs under logs/ug_red_*.log."
+      },
+      {
+        "id": "G009-avoid-inflated-claims-negative-parti",
+        "title": "Avoid inflated claims; negative/partial results must become boundarie...",
+        "objective": "Avoid inflated claims; negative/partial results must become boundaries or claim reductions.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:31:31.123Z",
+        "completedAt": "2026-06-19T16:31:31.123Z",
+        "evidence": "Papers updated to lower/clarify claims: E2 oracle not positive control and trained positive absent; B/E1 scale wording narrowed; A route descriptive not causal; C selected scale sensitivity preserved; negative/partial results kept as boundaries."
+      },
+      {
+        "id": "G010-final-story-must-run-targeted-verifi",
+        "title": "Final story must run targeted verification, ai-slop-cleaner, rerun ve...",
+        "objective": "Final story must run targeted verification, ai-slop-cleaner, rerun verification, independent code-reviewer APPROVE plus architect CLEAR, then update Codex goal complete and checkpoint with quality gate JSON.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:37:23.816Z",
+        "evidence": "Final redteam quality gate complete: targeted verification passed after ai-slop-cleaner; independent code-reviewer Recommendation APPROVE; independent architect Architectural Status CLEAR; Codex aggregate goal marked complete.",
+        "completedAt": "2026-06-19T16:37:23.816Z"
+      },
+      {
+        "id": "G011-create-no-gpu-statistical-provenance",
+        "title": "Create no-GPU statistical/provenance package over fullattack and redt...",
+        "objective": "Create no-GPU statistical/provenance package over fullattack and redteam outputs: manifest with hashes/commands/seeds/status; CI/effect sizes/failure/divergence rates; Clopper-Pearson upper bounds for 0-success E2; table-ready JSON/LaTeX snippets.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:28:49.780Z",
+        "completedAt": "2026-06-19T16:28:49.780Z",
+        "evidence": "Created statistical/provenance package: redteam_manifest.json, redteam_statistical_audit.md, B/A/C/E1/E2 stats JSON under .omx/ultragoal_redteam_20260619/evidence. Includes hashes, status, CI summaries, nonfinite/divergence counts, E1 threshold sensitivity, and E2 0/17 upper95=0.162."
+      },
+      {
+        "id": "G012-visual-latex-hardening-run-current-i",
+        "title": "Visual/LaTeX hardening: run current integrity and scale gates; add 0....",
+        "objective": "Visual/LaTeX hardening: run current integrity and scale gates; add 0.6 warning gate; grep current main logs for warnings; grayscale/contact/OCR-style or image-size readability report where possible; ensure tables native.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:31:31.241Z",
+        "completedAt": "2026-06-19T16:31:31.241Z",
+        "evidence": "Visual/LaTeX hardening artifacts created: verify-integrity-after-figopt, verify-scale-0p5-after-figopt, verify-scale-0p6-after-figopt, verify-contacts-after-figopt, visual-hardening-report-final.json, grayscale contacts."
+      },
+      {
+        "id": "G013-textual-category-fixes",
+        "title": "Textual category fixes:",
+        "objective": "Textual category fixes:\nE2: exact Bellman oracle must be called oracle/solved-reference control, not positive control; trained positive control remains absent unless new training succeeds.\nB: main EoS section must mention 36-cell neighbor audit; avoid universal law.\nE1/B scale wording should be selected bridge/audit where evidence is narrow.\nA route wording must remain descriptive signature, not causal mechanism.\nC should keep selected scale audit and optimizer/seed sensitivity.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:28:49.900Z",
+        "completedAt": "2026-06-19T16:28:49.900Z",
+        "evidence": "Applied textual category fixes in papers/A/B/E1/E2 and preserved C sensitivity wording: E2 oracle/solved-reference not positive control; B main EoS paragraph includes 36-cell plus redteam 24-cell audits; E1 real-text bridge wording lowered; A title/synthesis make route descriptive signature."
+      },
+      {
+        "id": "G014-b-low-cost-experiment-run-eos-lr-bri",
+        "title": "B low-cost experiment: run EoS LR bridge in fresh namespace for lr 0....",
+        "objective": "B low-cost experiment: run EoS LR bridge in fresh namespace for lr 0.025 and 0.05, CE/MSE/logit-MSE if script supports, seeds 0-5; summarize finite/divergence/test accuracy with CI. If logit-MSE unsupported, document and run supported losses only.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:28:50.020Z",
+        "completedAt": "2026-06-19T16:28:50.020Z",
+        "evidence": "B redteam EoS bridge completed 24 cells in experiments/results/ultragoal_20260619_redteam/b_eos_bridge: lr 0.025/0.05, CE/MSE, seeds 0-5; CE finite 12/12; MSE nonfinite 3/6 at 0.025 and 6/6 at 0.05; logit-MSE unsupported by eos_tiny train.py and documented by scope."
+      },
+      {
+        "id": "G015-a-lmc-at-minimum-finish-resume-one-a",
+        "title": "A LMC: at minimum finish/resume one additional Muon short-audit seed...",
+        "objective": "A LMC: at minimum finish/resume one additional Muon short-audit seed or run a bounded replacement under redteam namespace; if time allows expand Muon seeds to n>=3. Preserve incomplete evidence; do not modify experiments/grokking/.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:28:50.135Z",
+        "completedAt": "2026-06-19T16:28:50.135Z",
+        "evidence": "A redteam LMC short audit completed one additional Muon seed 11 in fresh namespace a_lmc_short; combined with fullattack seed10 gives two isolated short-audit seeds at spawn 0/50/100, both with k_star absent; no local experiments/grokking writes."
+      },
+      {
+        "id": "G016-e1-run-real-text-10m-seeds-2-3-if-da",
+        "title": "E1: run real-text 10M seeds 2-3 if data/scripts available; summarize...",
+        "objective": "E1: run real-text 10M seeds 2-3 if data/scripts available; summarize R_free stability and threshold sensitivity 0.02/0.05/0.1.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:28:50.248Z",
+        "completedAt": "2026-06-19T16:28:50.248Z",
+        "evidence": "E1 real-text 10M seeds 2-3 completed on remote 4080 and pulled locally; together with fullattack seed1, all three 10M seeds have R_free=4 at 0.05; threshold sensitivity recorded at 0.02/0.05/0.1 in redteam_e1_manifest.json."
+      },
+      {
+        "id": "G017-e2-run-trainable-positive-rescue-wid",
+        "title": "E2: run trainable positive rescue (wide/wide2 if supported, or a simp...",
+        "objective": "E2: run trainable positive rescue (wide/wide2 if supported, or a simple supervised Bellman-target sanity if discoverable) in fresh namespace; if still failed, explicitly strengthen non-adjudicable wording.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:28:50.366Z",
+        "completedAt": "2026-06-19T16:28:50.366Z",
+        "evidence": "E2 wide trainable-positive rescue completed 3 cells on remote 4080 in redteam namespace; all sustain 0.7 but none sustain 0.8, best max 0.754, status positive_control_not_yet_passed; paper narrowed to oracle solved-reference plus absent trained positive."
+      },
+      {
+        "id": "G018-c-no-mandatory-long-gpu-unless-resou",
+        "title": "C: no mandatory long GPU unless resources permit; at least generate s...",
+        "objective": "C: no mandatory long GPU unless resources permit; at least generate statistical framing for existing 8-cell scale audit and optionally queue two-layer continuations only if safe.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:28:50.473Z",
+        "completedAt": "2026-06-19T16:28:50.473Z",
+        "evidence": "C redteam work kept to statistical framing of existing 8-cell scale audit; redteam_c_scale_stats.json summarizes seed/optimizer-sensitive scale boundary; no long C GPU run launched because A/E1/E2/B were higher ROI."
+      },
+      {
+        "id": "G019-update-papers-a-b-c-e1-e2-with-bound",
+        "title": "Update papers A/B/C/E1/E2 with bounded statistics/manifest evidence a...",
+        "objective": "Update papers A/B/C/E1/E2 with bounded statistics/manifest evidence and textual category fixes; all tables native LaTeX.",
+        "status": "complete",
+        "attempt": 0,
+        "createdAt": "2026-06-19T16:05:00.358Z",
+        "updatedAt": "2026-06-19T16:31:31.350Z",
+        "completedAt": "2026-06-19T16:31:31.350Z",
+        "evidence": "Updated papers A/B/C/E1/E2 with bounded redteam evidence and textual category fixes; tables remained native LaTeX; final integrity and scale gates pass."
+      }
+    ],
+    "codexObjective": "Complete the durable ultragoal plan in .omx/ultragoal/goals.json, including later accepted/appended stories, under the original brief constraints; use .omx/ultragoal/ledger.jsonl as the audit trail."
+  },
+  "summary": {
+    "total": 19,
+    "pending": 0,
+    "inProgress": 0,
+    "complete": 19,
+    "failed": 0,
+    "reviewBlocked": 0,
+    "needsUserDecision": 0,
+    "superseded": 0,
+    "steeringBlocked": 0,
+    "aggregateComplete": false,
+    "artifactComplete": true
+  },
+  "reconciliation": null
+}

@@ -1,0 +1,83 @@
+{
+  "namespace_new": "experiments/results/ultragoal_20260620_deepcheck/a_lmc_short",
+  "new_records": [
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/a_lmc_short/muon_s12.jsonl",
+      "name": "muon_s12",
+      "seed": 12,
+      "optimizer": "muon",
+      "k_star": null,
+      "elapsed": null
+    },
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/a_lmc_short/muon_s13.jsonl",
+      "name": "muon_s13",
+      "seed": 13,
+      "optimizer": "muon",
+      "k_star": null,
+      "elapsed": null
+    },
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/a_lmc_short/muon_s14.jsonl",
+      "name": "muon_s14",
+      "seed": 14,
+      "optimizer": "muon",
+      "k_star": null,
+      "elapsed": null
+    },
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/a_lmc_short/summaries.json",
+      "name": null,
+      "seed": null,
+      "optimizer": null,
+      "k_star": null,
+      "elapsed": null
+    }
+  ],
+  "combined_muon_short_records": [
+    {
+      "file": "experiments/results/ultragoal_20260619_fullattack/a_lmc_extension/muon_s10.jsonl",
+      "name": "muon_s10",
+      "seed": 10,
+      "optimizer": "muon",
+      "k_star": null,
+      "elapsed": null
+    },
+    {
+      "file": "experiments/results/ultragoal_20260619_redteam/a_lmc_short/muon_s11.jsonl",
+      "name": "muon_s11",
+      "seed": 11,
+      "optimizer": "muon",
+      "k_star": null,
+      "elapsed": null
+    },
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/a_lmc_short/muon_s12.jsonl",
+      "name": "muon_s12",
+      "seed": 12,
+      "optimizer": "muon",
+      "k_star": null,
+      "elapsed": null
+    },
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/a_lmc_short/muon_s13.jsonl",
+      "name": "muon_s13",
+      "seed": 13,
+      "optimizer": "muon",
+      "k_star": null,
+      "elapsed": null
+    },
+    {
+      "file": "experiments/results/ultragoal_20260620_deepcheck/a_lmc_short/muon_s14.jsonl",
+      "name": "muon_s14",
+      "seed": 14,
+      "optimizer": "muon",
+      "k_star": null,
+      "elapsed": null
+    }
+  ],
+  "n_combined": 5,
+  "n_kstar_present": 0,
+  "zero_success_upper95": 0.4507197283469412,
+  "headline": "A LMC short audit now has 0/5 Muon k_star hits; no k_star observed in new seeds 12-14."
+}

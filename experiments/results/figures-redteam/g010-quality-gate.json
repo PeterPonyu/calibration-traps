@@ -1,0 +1,35 @@
+{
+  "aiSlopCleaner": {
+    "status": "passed",
+    "evidence": ".omx/ultragoal_redteam_20260619/evidence/ai-slop-cleaner-redteam-report.md"
+  },
+  "verification": {
+    "status": "passed",
+    "commands": [
+      "python -m py_compile .omx/ultragoal/run_20260619_redteam_*.py .omx/ultragoal_redteam_20260619/redteam_audit.py",
+      "ruff check --no-cache .omx/ultragoal/run_20260619_redteam_*.py .omx/ultragoal_redteam_20260619/redteam_audit.py",
+      "pyright .omx/ultragoal/run_20260619_redteam_*.py .omx/ultragoal_redteam_20260619/redteam_audit.py",
+      "python .omx/ultragoal_redteam_20260619/redteam_audit.py",
+      "python .omx/ultragoal/verify_paper_integrity.py",
+      "python .omx/ultragoal/verify_figure_scale.py --threshold 0.5",
+      "python .omx/ultragoal/verify_figure_scale.py --threshold 0.6",
+      "python .omx/ultragoal/make_pdf_contact_sheets.py"
+    ],
+    "evidence": ".omx/ultragoal_redteam_20260619/evidence/postclean-* and g010-verification-summary.txt"
+  },
+  "codeReview": {
+    "recommendation": "APPROVE",
+    "architectStatus": "CLEAR",
+    "evidence": ".omx/ultragoal_redteam_20260619/evidence/g010-code-reviewer-approve.md; .omx/ultragoal_redteam_20260619/evidence/g010-architect-clear.md",
+    "independentReview": {
+      "codeReviewer": {
+        "agentRole": "code-reviewer",
+        "evidence": ".omx/ultragoal_redteam_20260619/evidence/g010-code-reviewer-approve.md"
+      },
+      "architect": {
+        "agentRole": "architect",
+        "evidence": ".omx/ultragoal_redteam_20260619/evidence/g010-architect-clear.md"
+      }
+    }
+  }
+}

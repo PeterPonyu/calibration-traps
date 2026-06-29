@@ -1,0 +1,11 @@
+*.pt
+*.pth
+*.ckpt
+*.npy
+*.npz
+__pycache__/
+*.pyc
+.omc/
+.omx/
+.ruff_cache/
+.DS_Store

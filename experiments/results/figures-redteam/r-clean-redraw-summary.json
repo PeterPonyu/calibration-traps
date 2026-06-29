@@ -1,0 +1,28 @@
+{
+  "renderer": "R/ggplot2 + patchwork + ragg",
+  "script": ".omx/ultragoal/make_redteam_figures_r.R",
+  "figures": [
+    "A_redteam_lmc_extension.png",
+    "B_redteam_eos_bridge.png",
+    "E1_redteam_realtext_threshold.png",
+    "E2_redteam_positive_rescue.png"
+  ],
+  "integrity": {
+    "ok": true,
+    "figs_total": 41,
+    "figs_used": 41,
+    "unused": [],
+    "missing_total": 0,
+    "paper_compile": {
+      "A": true,
+      "B": true,
+      "C": true,
+      "E1": true,
+      "E2": true
+    }
+  },
+  "scale_0p5": "{\n  \"out\": \"/home/zeyufu/Desktop/dl-research/.omx/audits/figure_scale_gate.json\",\n  \"risk_count\": 0,\n  \"top_risks\": []\n}\n",
+  "scale_0p6_warning": "{\n  \"out\": \"/home/zeyufu/Desktop/dl-research/.omx/audits/figure_scale_gate.json\",\n  \"risk_count\": 2,\n  \"top_risks\": [\n    {\n      \"paper\": \"A\",\n      \"line\": 332,\n      \"path\": \"A_plasticity_p5_bridge.png\",\n      \"options\": \"width=1.08\\\\linewidth\",\n      \"resolved\": \"/home/zeyufu/Desktop/dl-research/papers/figs/A_plasticity_p5_bridge.png\",\n      \"page\": 10,\n      \"rendered_w_in\": 5.38,\n      \"rendered_h_in\": 2.3,\n      \"source_w_in\": 10.67,\n      \"scale\": 0.504,\n      \"px\": [\n        2347,\n        1005\n      ],\n      \"risk\": [\n        \"scale<0.6\"\n      ]\n    },\n    {\n      \"paper\": \"E2\",\n      \"line\": 180,\n      \"path\": \"E2_specroute.png\",\n      \"options\": \"width=1.06\\\\linewidth\",\n      \"resolved\": \"/home/zeyufu/Desktop/dl-research/papers/figs/E2_specroute.png\",\n      \"page\": 5,\n      \"rendered_w_in\": 6.89,\n      \"rendered_h_in\": 4.77,\n      \"source_w_in\": 13.0,\n      \"scale\": 0.53,\n      \"px\": [\n        1820,\n        1260\n      ],\n      \"risk\": [\n        \"scale<0.6\"\n      ]\n    }\n  ]\n}\n",
+  "visual_contact": ".omx/ultragoal_redteam_20260619/evidence/r-clean-newfig-contact.png",
+  "notes": "R statistical plotting redraw completed with clean renderer log; all 41 figures referenced and hard 0.5 scale gate remains clean."
+}

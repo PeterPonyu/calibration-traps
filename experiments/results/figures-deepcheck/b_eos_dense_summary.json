@@ -1,0 +1,135 @@
+{
+  "namespace": "experiments/results/ultragoal_20260620_deepcheck/b_eos_dense",
+  "n_cells": 84,
+  "rows": [
+    {
+      "lr": 0.015,
+      "loss": "ce",
+      "n": 6,
+      "finite": 6,
+      "nonfinite": 0,
+      "mean_ratio_finite": 1.0598733711242676,
+      "mean_test_acc": 0.483660156528155
+    },
+    {
+      "lr": 0.015,
+      "loss": "mse",
+      "n": 6,
+      "finite": 6,
+      "nonfinite": 0,
+      "mean_ratio_finite": 1.5896074295043945,
+      "mean_test_acc": 0.4869281103213628
+    },
+    {
+      "lr": 0.02,
+      "loss": "ce",
+      "n": 6,
+      "finite": 6,
+      "nonfinite": 0,
+      "mean_ratio_finite": 1.0137119007110595,
+      "mean_test_acc": 0.5555555721124014
+    },
+    {
+      "lr": 0.02,
+      "loss": "mse",
+      "n": 6,
+      "finite": 6,
+      "nonfinite": 0,
+      "mean_ratio_finite": 0.3093958568572998,
+      "mean_test_acc": 0.457516352335612
+    },
+    {
+      "lr": 0.025,
+      "loss": "ce",
+      "n": 6,
+      "finite": 6,
+      "nonfinite": 0,
+      "mean_ratio_finite": 0.6119718611240387,
+      "mean_test_acc": 0.4934640775124232
+    },
+    {
+      "lr": 0.025,
+      "loss": "mse",
+      "n": 6,
+      "finite": 3,
+      "nonfinite": 3,
+      "mean_ratio_finite": 0.4209083795547485,
+      "mean_test_acc": 0.5000000149011612
+    },
+    {
+      "lr": 0.03,
+      "loss": "ce",
+      "n": 6,
+      "finite": 6,
+      "nonfinite": 0,
+      "mean_ratio_finite": 0.5410498142242431,
+      "mean_test_acc": 0.5277778009573618
+    },
+    {
+      "lr": 0.03,
+      "loss": "mse",
+      "n": 6,
+      "finite": 0,
+      "nonfinite": 6,
+      "mean_ratio_finite": null,
+      "mean_test_acc": 0.5000000149011612
+    },
+    {
+      "lr": 0.04,
+      "loss": "ce",
+      "n": 6,
+      "finite": 6,
+      "nonfinite": 0,
+      "mean_ratio_finite": 0.23457545598347984,
+      "mean_test_acc": 0.51797387500604
+    },
+    {
+      "lr": 0.04,
+      "loss": "mse",
+      "n": 6,
+      "finite": 0,
+      "nonfinite": 6,
+      "mean_ratio_finite": null,
+      "mean_test_acc": 0.5000000149011612
+    },
+    {
+      "lr": 0.05,
+      "loss": "ce",
+      "n": 6,
+      "finite": 6,
+      "nonfinite": 0,
+      "mean_ratio_finite": 0.31396111647288005,
+      "mean_test_acc": 0.5310457746187845
+    },
+    {
+      "lr": 0.05,
+      "loss": "mse",
+      "n": 6,
+      "finite": 0,
+      "nonfinite": 6,
+      "mean_ratio_finite": null,
+      "mean_test_acc": 0.5000000149011612
+    },
+    {
+      "lr": 0.06,
+      "loss": "ce",
+      "n": 6,
+      "finite": 6,
+      "nonfinite": 0,
+      "mean_ratio_finite": 0.8079749941825867,
+      "mean_test_acc": 0.48366014162699383
+    },
+    {
+      "lr": 0.06,
+      "loss": "mse",
+      "n": 6,
+      "finite": 0,
+      "nonfinite": 6,
+      "mean_ratio_finite": null,
+      "mean_test_acc": 0.5000000149011612
+    }
+  ],
+  "headline": "Dense EoS bridge: CE remains finite for all 42 cells; MSE becomes nonfinite from lr=0.025 upward and 6/6 nonfinite for lr>=0.03.",
+  "ce_nonfinite_total": 0,
+  "mse_nonfinite_total": 27
+}
