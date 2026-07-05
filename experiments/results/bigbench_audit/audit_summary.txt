@@ -1,0 +1,90 @@
+==============================================================================
+BIG-BENCH EMERGENCE SCAN-STATISTIC AUDIT  (case study for paper E2)
+==============================================================================
+
+DATA: https://github.com/google/BIG-bench
+      bigbench/benchmark_tasks/<task>/results/scores_BIG-G_<scale>_T=0.json and .../task.json
+      BIG-G dense, T=0, 12 scales (2m..128b non-embedding params)
+      shots: aggregate score at max available number_of_shots per task
+
+SCOPE:
+  top-level BIG-G tasks              : 207
+  multiple-choice tasks audited (T)  : 89
+  generative str-match tasks (sep.)  : 25
+
+HEADLINE (detector = accuracy >= chance + 0.1 at some scale, near-chance (<= chance+0.05) early):
+  tasks flagged as apparent emergence      : 40
+  E[false emergents] predicted by chance   : 17.73
+  E[false] across detector grid (delta)    : {'delta_0.05': 44.971, 'delta_0.10': 17.727, 'delta_0.20': 1.499}
+  scan opportunities (tasks x 12 scales)   : 1068
+  adjudication verdicts (alpha=0.10)       : {'not_flagged': 49, 'scan_false_positive': 7, 'fragile': 9, 'survives': 24}
+
+------------------------------------------------------------------------------
+SURVIVORS (peak beats whole-benchmark chance envelope; genuine emergence):
+------------------------------------------------------------------------------
+  task                                           N chance    peak     jump   q_peak
+  simple_arithmetic_json_multiple_choice         8  0.250   1.000    0.750  1.5e-05
+  general_knowledge                             70  0.144   0.714    0.570  7.2e-27
+  human_organs_senses                           42  0.250   0.667    0.417  1.6e-08
+  simple_ethical_questions                     115  0.250   0.643    0.394  6.8e-19
+  date_understanding                           369  0.172   0.558    0.386  1.0e-63
+  hindu_knowledge                              175  0.249   0.606    0.356  4.8e-24  *cited
+  riddle_sense                                  49  0.200   0.551    0.351  6.1e-08
+  nonsense_words_grammar                        50  0.219   0.560    0.341  3.6e-08
+  ruin_names                                   448  0.250   0.574    0.324  8.2e-48
+  physics                                      229  0.251   0.541    0.291  1.7e-21
+  figure_of_speech_detection                    59  0.100   0.390    0.290  3.9e-09  *cited
+  identify_math_theorems                        54  0.249   0.528    0.279  5.6e-06
+  reasoning_about_colored_objects             2000  0.119   0.397    0.278 5.5e-219
+  implicit_relations                            85  0.040   0.318    0.278  2.0e-17
+  physical_intuition                            81  0.255   0.494    0.239  3.3e-06  *cited
+  emojis_emotion_prediction                    131  0.213   0.440    0.227  3.4e-09
+  implicatures                                 492  0.500   0.685    0.185  7.6e-17
+  discourse_marker_prediction                  857  0.100   0.259    0.159  1.0e-40
+  fantasy_reasoning                            201  0.500   0.657    0.157  5.2e-06  *cited
+  vitaminc_fact_verification                 54668  0.333   0.482    0.149  0.0e+00
+  ... 24 survivors total
+
+------------------------------------------------------------------------------
+SCAN FALSE POSITIVES (apparent jump NOT distinguishable from chance scan):
+------------------------------------------------------------------------------
+  task                                           N chance    peak     jump    E_task
+  suicide_risk                                  40  0.250   0.350    0.100     110.3
+  what_is_the_tao                               36  0.500   0.639    0.139      70.8
+  logical_sequence                              39  0.252   0.385    0.133      50.1
+  mathematical_induction                        70  0.500   0.609    0.109      38.6
+  empirical_judgments                           99  0.333   0.455    0.121       8.6
+  sentence_ambiguity                            60  0.500   0.667    0.167       7.2
+  common_morpheme                               50  0.250   0.420    0.170       6.7
+  ... 7 scan-false-positive candidates total
+
+------------------------------------------------------------------------------
+FRAGILE (own-task significant, not look-elsewhere robust):
+------------------------------------------------------------------------------
+  irony_identification                       N=99    chance=0.500 peak=0.646 E_task=2.48  *cited
+  novel_concepts                             N=32    chance=0.200 peak=0.438 E_task=2.09
+  swahili_english_proverbs                   N=153   chance=0.250 peak=0.359 E_task=1.81
+  cryobiology_spanish                        N=146   chance=0.500 peak=0.637 E_task=0.63
+  misconceptions                             N=219   chance=0.500 peak=0.616 E_task=0.37  *cited
+  emoji_movie                                N=100   chance=0.200 peak=0.350 E_task=0.36
+  phrase_relatedness                         N=100   chance=0.250 peak=0.420 E_task=0.16  *cited
+  logical_args                               N=32    chance=0.200 peak=0.500 E_task=0.15  *cited
+  entailed_polarity_hindi                    N=142   chance=0.500 peak=0.652 E_task=0.15
+  ... 9 fragile total
+
+------------------------------------------------------------------------------
+GENERATIVE HEADLINE TASKS (chance ~ 0; OUT OF binomial-null scope):
+------------------------------------------------------------------------------
+  word_unscrambling                              metric=exact_str_match        peak=0.130 final=0.130
+
+------------------------------------------------------------------------------
+CITED HEADLINE EMERGENT TASKS OUTSIDE THIS AUDIT'S SCOPE (with reason):
+------------------------------------------------------------------------------
+  international_phonetic_alphabet_transliterate  peak=n/a  [continuous metric (bleu); no discrete chance baseline]
+  modified_arithmetic                            peak=0.523  [generative exact-match, chance~0 (metric-discontinuity mechanism)]
+  word_unscrambling                              peak=0.132  [generative exact-match, chance~0 (metric-discontinuity mechanism)]
+
+Adjudication rule: flagged AND q(V_peak)*(T*12) < 0.10  -> survives;
+  flagged AND peak not significant on own 12-pt scan   -> scan_false_positive;
+  in between                                           -> fragile.
+==============================================================================
