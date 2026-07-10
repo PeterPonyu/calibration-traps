@@ -14,5 +14,14 @@ scratch (GPU recommended): `python experiments/<study>/run_*.py`. Runs are seede
 numpy. All inputs are synthetic and fully specified in the code, except large
 standard datasets (MNIST / WikiText) which are not bundled.
 
+## Budget-grid and rescue-inventory additions (v1.5, 2026-07)
+- `experiments/icrl_td/run_20260708_positive_regime.py` + `experiments/results/icrl_td_positive_regime/`
+  (60 runs): the gamma=0.5 budget grid (4x/8x canonical budget; 0/60 emergences).
+- Rescue-control raw data now archived: `experiments/results/e2_td_positive_control_20260618/`,
+  `e2_td_positive_control_20260619/`, `e2_td_positive_rescue_20260619/` (26 trained cells).
+- `experiments/icrl_td/build_redteam_e2_stats.py` rebuilds
+  `experiments/results/figures-redteam/redteam_e2_stats.json` (26-cell pool, upper95=0.109)
+  from those verdicts.
+
 ## License
 Code: MIT (`LICENSE`). Result logs: CC BY 4.0. See `CITATION.cff`.
