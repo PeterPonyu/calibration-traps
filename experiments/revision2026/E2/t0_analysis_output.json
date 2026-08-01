@@ -1,0 +1,235 @@
+{
+ "T0_1_tau_chain": {
+  "0.7": {
+   "pooled_qbar": 0.0985,
+   "ladder_observed_K1to5": {
+    "1": 42,
+    "2": 24,
+    "3": 14,
+    "4": 4,
+    "5": 1
+   },
+   "ladder_predicted_K1to5": {
+    "1": {
+     "mixture_approx": 40.6,
+     "mixture_exact_fmci": 40.61
+    },
+    "2": {
+     "mixture_approx": 24.51,
+     "mixture_exact_fmci": 24.18
+    },
+    "3": {
+     "mixture_approx": 13.55,
+     "mixture_exact_fmci": 12.62
+    },
+    "4": {
+     "mixture_approx": 5.48,
+     "mixture_exact_fmci": 4.55
+    },
+    "5": {
+     "mixture_approx": 1.53,
+     "mixture_exact_fmci": 1.2
+    }
+   },
+   "nomogram_pooled_K": 3.58,
+   "mixture_prescribed_K_alpha0.05": 5,
+   "severity": {
+    "observed_single_over_K5": 42.0,
+    "mixture_single_over_K5": 26.5
+   }
+  },
+  "0.8": {
+   "pooled_qbar": 0.0104,
+   "ladder_observed_K1to5": {
+    "1": 26,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+   },
+   "ladder_predicted_K1to5": {
+    "1": {
+     "mixture_approx": 22.86,
+     "mixture_exact_fmci": 22.88
+    },
+    "2": {
+     "mixture_approx": 2.15,
+     "mixture_exact_fmci": 2.1
+    },
+    "3": {
+     "mixture_approx": 0.07,
+     "mixture_exact_fmci": 0.07
+    },
+    "4": {
+     "mixture_approx": 0.0,
+     "mixture_exact_fmci": 0.0
+    },
+    "5": {
+     "mixture_approx": 0.0,
+     "mixture_exact_fmci": 0.0
+    }
+   },
+   "nomogram_pooled_K": 1.82,
+   "mixture_prescribed_K_alpha0.05": 2
+  },
+  "exact_binomial_q": {
+   "q(0.7)_N32_p0.562": 0.0517,
+   "q(0.8)_N32_p0.562": 0.002716
+  }
+ },
+ "T0_2c_autocorr_lags1to5": {
+  "centered": {
+   "1": {
+    "median": 0.036,
+    "n_inside_band": 41,
+    "n_total": 45,
+    "band": 0.138,
+    "max_abs": 0.159
+   },
+   "2": {
+    "median": 0.011,
+    "n_inside_band": 42,
+    "n_total": 45,
+    "band": 0.138,
+    "max_abs": 0.207
+   },
+   "3": {
+    "median": 0.014,
+    "n_inside_band": 43,
+    "n_total": 45,
+    "band": 0.138,
+    "max_abs": 0.171
+   },
+   "4": {
+    "median": -0.011,
+    "n_inside_band": 40,
+    "n_total": 45,
+    "band": 0.138,
+    "max_abs": 0.194
+   },
+   "5": {
+    "median": -0.006,
+    "n_inside_band": 43,
+    "n_total": 45,
+    "band": 0.138,
+    "max_abs": 0.166
+   }
+  },
+  "detrended": {
+   "1": {
+    "median": 0.029,
+    "n_inside_band": 41,
+    "n_total": 45,
+    "band": 0.138,
+    "max_abs": 0.153
+   },
+   "2": {
+    "median": 0.01,
+    "n_inside_band": 42,
+    "n_total": 45,
+    "band": 0.138,
+    "max_abs": 0.201
+   },
+   "3": {
+    "median": 0.009,
+    "n_inside_band": 44,
+    "n_total": 45,
+    "band": 0.138,
+    "max_abs": 0.145
+   },
+   "4": {
+    "median": -0.02,
+    "n_inside_band": 40,
+    "n_total": 45,
+    "band": 0.138,
+    "max_abs": 0.193
+   },
+   "5": {
+    "median": -0.016,
+    "n_inside_band": 42,
+    "n_total": 45,
+    "band": 0.138,
+    "max_abs": 0.171
+   }
+  }
+ },
+ "T0_2b_gamma09": {
+  "n_runs": 60,
+  "pooled_qbar": 0.0342,
+  "sustained2_observed": 15,
+  "sustained2_mixture_pred": 13.21,
+  "sustained2_mixture_pred_exact": 12.81,
+  "sustained3_observed": 1,
+  "sustained3_mixture_pred": 0.64,
+  "splithalf_repro": {
+   "pred_on_B_from_A": 6.4,
+   "obs_B": 8,
+   "pred_on_A_from_B": 6.8,
+   "obs_A": 7
+  },
+  "kfold5": {
+   "folds": [
+    {
+     "fold": 0,
+     "predicted": 2.5,
+     "observed": 4,
+     "within_2sd": true
+    },
+    {
+     "fold": 1,
+     "predicted": 2.67,
+     "observed": 1,
+     "within_2sd": true
+    },
+    {
+     "fold": 2,
+     "predicted": 2.67,
+     "observed": 4,
+     "within_2sd": true
+    },
+    {
+     "fold": 3,
+     "predicted": 2.75,
+     "observed": 3,
+     "within_2sd": true
+    },
+    {
+     "fold": 4,
+     "predicted": 2.62,
+     "observed": 3,
+     "within_2sd": true
+    }
+   ],
+   "total_predicted": 13.2,
+   "total_observed": 15,
+   "max_per_fold_abs_dev": 1.67
+  }
+ },
+ "T0_2a_cluster_bound": {
+  "n_total": 171,
+  "n_clusters": 9,
+  "cluster_sizes": {
+   "rescue_main": 14,
+   "rescue_ultra": 9,
+   "rescue_wide": 3,
+   "ladder_g0.3": 5,
+   "ladder_g0.5": 10,
+   "ladder_g0.7": 10,
+   "ladder_g0.9": 60,
+   "budget_4x": 30,
+   "budget_8x": 30
+  },
+  "ub95_independent": 0.0174,
+  "ub95_fully_clustered_(0_of_J)": 0.2831,
+  "betabinom_profile_ub95_by_phi": {
+   "0.01": 0.136,
+   "0.1": 0.111,
+   "1.0": 0.0466,
+   "10.0": 0.0158,
+   "100.0": 0.0091,
+   "10000.0": 0.0079,
+   "1000000.0": 0.0079
+  },
+  "note": "phi (within-cluster homogeneity) is unidentified from all-zero data; profile UB runs from the independent endpoint (phi->inf) to the cluster-level endpoint (phi->0)."
+ }
+}

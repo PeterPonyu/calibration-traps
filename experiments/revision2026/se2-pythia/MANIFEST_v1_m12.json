@@ -1,0 +1,100 @@
+{
+ "battery": "S-E2 Pythia checkpoint detector calibration (2026-07-17)",
+ "models": {
+  "pythia-70m": "12 revisions",
+  "pythia-160m": "12 revisions",
+  "pythia-410m": "8 revisions"
+ },
+ "revisions_note": "log-spaced Pythia public revisions step0..step143000; M=12 (410m: M=8) is far coarser than the paper's M=201 \u2014 the nomogram takes M as an input, see _meta in results",
+ "detector_convention": "tau = chance + 0.10 (paper's BIG-Bench audit DELTA_PRINCIPAL); sustained-K with K from the paper's nomogram K = ceil((ln M - ln alpha)/ln(1/qhat)), alpha=0.05",
+ "scoring_dtype": "float16, greedy/deterministic",
+ "generative_scope_note": "gen + lastword tasks have chance ~ 0 and are OUT of the binomial-null calibration (audit convention, Schaeffer-style metric discontinuity); they serve as genuine-emergence preservation probes. wiki_bpb is a continuous control.",
+ "seed": 20260717,
+ "tasks": [
+  {
+   "task": "arith_add2",
+   "type": "gen",
+   "N": 500,
+   "chance": 0.0,
+   "prompt_format": "2-shot QA prompt, greedy generation <=8 tokens, first integer before newline, exact match"
+  },
+  {
+   "task": "arith_add3",
+   "type": "gen",
+   "N": 500,
+   "chance": 0.0,
+   "prompt_format": "2-shot QA prompt, greedy generation <=8 tokens, first integer before newline, exact match"
+  },
+  {
+   "task": "arith_sub2",
+   "type": "gen",
+   "N": 500,
+   "chance": 0.0,
+   "prompt_format": "2-shot QA prompt, greedy generation <=8 tokens, first integer before newline, exact match"
+  },
+  {
+   "task": "bb_common_morpheme",
+   "type": "mc",
+   "N": 50,
+   "chance": 0.25,
+   "prompt_format": "task_prefix + input, continuation ' '+choice, zero-shot, argmax sum-logprob over choices"
+  },
+  {
+   "task": "bb_empirical_judgments",
+   "type": "mc",
+   "N": 99,
+   "chance": 0.3333,
+   "prompt_format": "task_prefix + input, continuation ' '+choice, zero-shot, argmax sum-logprob over choices"
+  },
+  {
+   "task": "bb_hindu_knowledge",
+   "type": "mc",
+   "N": 175,
+   "chance": 0.2481,
+   "prompt_format": "task_prefix + input, continuation ' '+choice, zero-shot, argmax sum-logprob over choices"
+  },
+  {
+   "task": "bb_logical_sequence",
+   "type": "mc",
+   "N": 39,
+   "chance": 0.2521,
+   "prompt_format": "task_prefix + input, continuation ' '+choice, zero-shot, argmax sum-logprob over choices"
+  },
+  {
+   "task": "bb_mathematical_induction",
+   "type": "mc",
+   "N": 70,
+   "chance": 0.5,
+   "prompt_format": "task_prefix + input, continuation ' '+choice, zero-shot, argmax sum-logprob over choices"
+  },
+  {
+   "task": "bb_misconceptions",
+   "type": "mc",
+   "N": 219,
+   "chance": 0.5,
+   "prompt_format": "task_prefix + input, continuation ' '+choice, zero-shot, argmax sum-logprob over choices"
+  },
+  {
+   "task": "bb_sentence_ambiguity",
+   "type": "mc",
+   "N": 60,
+   "chance": 0.5,
+   "prompt_format": "task_prefix + input, continuation ' '+choice, zero-shot, argmax sum-logprob over choices"
+  },
+  {
+   "task": "bb_what_is_the_tao",
+   "type": "mc",
+   "N": 36,
+   "chance": 0.5,
+   "prompt_format": "task_prefix + input, continuation ' '+choice, zero-shot, argmax sum-logprob over choices"
+  },
+  {
+   "task": "lambada_openai",
+   "type": "lastword",
+   "N": 2000,
+   "chance": 0.0,
+   "prompt_format": "context, greedy rank-1 prediction of every token of the final word (openai variant convention)"
+  }
+ ],
+ "continuous_control": "wiki_bpb on tasks/wiki_slice.txt (~500KB WikiText bytes)"
+}
