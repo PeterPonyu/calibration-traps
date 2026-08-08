@@ -12,7 +12,7 @@ from __future__ import annotations
 import json, subprocess, sys, time
 from pathlib import Path
 
-ROOT = Path('/home/zeyufu/Desktop/dl-research')
+ROOT = Path(__file__).resolve().parents[2]
 EXP = ROOT / 'experiments'
 PY = sys.executable
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 import json, os, sys, math
 from pathlib import Path
 import numpy as np
-ROOT=Path('/home/zeyufu/Desktop/dl-research')
+ROOT=Path(__file__).resolve().parents[2]
 ICRL=ROOT/'experiments'/'icrl_td'
 sys.path.insert(0,str(ICRL))
 import train_icrl as TI

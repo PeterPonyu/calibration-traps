@@ -9,3 +9,11 @@ __pycache__/
 .omx/
 .ruff_cache/
 .DS_Store
+
+# confidential / local artifacts
+*.tar.gz
+calibration-traps-v*.tar.gz
+.env
+.env.*
+credentials*
+*.pem
