@@ -12,7 +12,7 @@ import subprocess, sys, time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-EXP = Path('/home/zeyufu/Desktop/dl-research/experiments')
+EXP = Path(__file__).resolve().parents[2] / 'experiments'
 PY = sys.executable
 N_WORKERS = 6
 

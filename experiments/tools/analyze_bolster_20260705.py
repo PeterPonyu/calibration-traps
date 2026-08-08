@@ -14,7 +14,7 @@ from __future__ import annotations
 import glob, json, math, statistics as st
 from pathlib import Path
 
-RES = Path('/home/zeyufu/Desktop/dl-research/experiments/results')
+RES = Path(__file__).resolve().parents[2] / 'experiments' / 'results'
 GL = RES / 'icrl_td_gamma_ladder'
 
 
