@@ -8,7 +8,19 @@ __pycache__/
 .omc/
 .omx/
 .ruff_cache/
+.pytest_cache/
 .DS_Store
+
+# compiled figure tiers (pointer contract; never commit venue PDFs)
+papers/figs/tex/
+papers/figs/vec/
+papers/figs/**/*.png
+_site/
+portal/node_modules/
+portal/.next/
+portal/out/
+portal/public/data/
+
 
 # confidential / local artifacts
 *.tar.gz

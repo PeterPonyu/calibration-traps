@@ -1,0 +1,37 @@
+{
+  "artifact": "E2_induction",
+  "layout": "balanced-2x2",
+  "panel_count": 4,
+  "panels": [
+    {
+      "id": "a",
+      "question": "What trajectories form the positive control?",
+      "sources": [
+        "experiments/results/figures-deepcheck/detector_validation_induction.json"
+      ]
+    },
+    {
+      "id": "b",
+      "question": "How variable is onset across seeds?",
+      "sources": [
+        "experiments/results/figures-deepcheck/detector_validation_induction.json"
+      ]
+    },
+    {
+      "id": "c",
+      "question": "What latency does sustained K add?",
+      "sources": [
+        "experiments/results/figures-deepcheck/detector_validation_induction.json"
+      ]
+    },
+    {
+      "id": "d",
+      "question": "Does the detector retain all ninety transitions?",
+      "sources": [
+        "experiments/results/figures-deepcheck/detector_validation_induction.json"
+      ]
+    }
+  ],
+  "exception_reason": null,
+  "generated_from_manifest": "papers/figs/figure_manifest.yaml"
+}

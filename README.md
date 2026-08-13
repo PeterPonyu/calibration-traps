@@ -1,11 +1,20 @@
-# Testbed-calibration traps in small-scale emergence — code & data
+# Testbed-calibration traps in small-scale emergence — code, data, pointer tex
 
-Reproducibility archive: **experiment code and per-run result logs only**.
-Manuscript and write-up/derivation documents are intentionally **not** included.
+Public warehouse for **calibration-traps**: experiment code, per-run logs, pointer
+manuscript `papers/E2/main.tex`, figure generators, and a preflight console under
+`portal/`. Compiled journal PDFs are not hosted here.
+
+- GitHub: https://github.com/PeterPonyu/calibration-traps
+- Zenodo concept: https://doi.org/10.5281/zenodo.21020386
+- Figure contract: `papers/FIGURE-INDEX.json`
+- Rebuild figures: `papers/figs/PIPELINE.md`
 
 ## Contents
 - `experiments/<study>/` — runner / analysis code per sub-experiment.
 - `experiments/results/` — per-run logs (JSON/JSONL) behind every reported number.
+- `papers/E2/main.tex` — full canonical pointer manuscript (`\input{../figs/figpreamble.tex}`).
+- `papers/figs/` — generators + JSON summaries (compiled `tex/` and `vec/` are gitignored).
+- `portal/` — Next.js phosphor preflight console (`output: 'export'`, `basePath: /calibration-traps`). HOLD door only; findings stay in the warehouse.
 
 ## Reproducing
 The committed per-run logs are the recorded outputs. To re-run a study from
@@ -14,14 +23,17 @@ scratch (GPU recommended): `python experiments/<study>/run_*.py`. Runs are seede
 numpy. All inputs are synthetic and fully specified in the code, except large
 standard datasets (MNIST / WikiText) which are not bundled.
 
-## Budget-grid and rescue-inventory additions (v1.5, 2026-07)
-- `experiments/icrl_td/run_20260708_positive_regime.py` + `experiments/results/icrl_td_positive_regime/`
-  (60 runs): the gamma=0.5 budget grid (4x/8x canonical budget; 0/60 emergences).
-- Rescue-control raw data now archived: `experiments/results/e2_td_positive_control_20260618/`,
-  `e2_td_positive_control_20260619/`, `e2_td_positive_rescue_20260619/` (26 trained cells).
-- `experiments/icrl_td/build_redteam_e2_stats.py` rebuilds
-  `experiments/results/figures-redteam/redteam_e2_stats.json` (26-cell pool, upper95=0.109)
-  from those verdicts.
+Local portal preview (Next.js static export, no LaTeX):
+
+```
+python -m pip install -r requirements-ci.txt
+bash portal/build.sh
+mkdir -p /tmp/ct-pages/calibration-traps
+cp -a _site/. /tmp/ct-pages/calibration-traps/
+python -m http.server -d /tmp/ct-pages 8000
+# open http://127.0.0.1:8000/calibration-traps/
+```
 
 ## License
-Code: MIT (`LICENSE`). Result logs: CC BY 4.0. See `CITATION.cff`.
+Code: MIT (`LICENSE`). Result logs and figures: CC BY 4.0. See `CITATION.cff`.
+`portal/` and `_site/` are omitted from Zenodo `git archive` packs.

@@ -1,0 +1,37 @@
+{
+  "artifact": "E2_supervised_fit",
+  "layout": "balanced-2x2",
+  "panel_count": 4,
+  "panels": [
+    {
+      "id": "a",
+      "question": "Can the transformer fit support labels?",
+      "sources": [
+        "experiments/results/figures-deepcheck/e2_supervised_fit_summary.json"
+      ]
+    },
+    {
+      "id": "b",
+      "question": "How does fresh-MRP performance compare?",
+      "sources": [
+        "experiments/results/figures-deepcheck/e2_supervised_fit_summary.json"
+      ]
+    },
+    {
+      "id": "c",
+      "question": "Does the same-transformer control learn the supervised task?",
+      "sources": [
+        "experiments/results/figures-deepcheck/e2_supervised_fit_summary.json"
+      ]
+    },
+    {
+      "id": "d",
+      "question": "What separates classification fit from TD emergence?",
+      "sources": [
+        "experiments/results/figures-deepcheck/e2_supervised_fit_summary.json"
+      ]
+    }
+  ],
+  "exception_reason": null,
+  "generated_from_manifest": "papers/figs/figure_manifest.yaml"
+}

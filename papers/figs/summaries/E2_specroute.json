@@ -1,0 +1,37 @@
+{
+  "artifact": "E2_specroute",
+  "layout": "balanced-2x2",
+  "panel_count": 4,
+  "panels": [
+    {
+      "id": "a",
+      "question": "What early-window diagnostics predict the route?",
+      "sources": [
+        "experiments/results/spec_route/posthoc_round1.json"
+      ]
+    },
+    {
+      "id": "b",
+      "question": "What AUROC appears on tier A?",
+      "sources": [
+        "experiments/results/spec_route/posthoc_round1.json"
+      ]
+    },
+    {
+      "id": "c",
+      "question": "Does the conclusion survive a second early window?",
+      "sources": [
+        "experiments/results/spec_route/posthoc_round1.json"
+      ]
+    },
+    {
+      "id": "d",
+      "question": "What happens in the config-share-zero regime?",
+      "sources": [
+        "experiments/results/spec_route/posthoc_round1.json"
+      ]
+    }
+  ],
+  "exception_reason": null,
+  "generated_from_manifest": "papers/figs/figure_manifest.yaml"
+}

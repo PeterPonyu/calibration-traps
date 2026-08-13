@@ -1,0 +1,4 @@
+# Keep scientific git-archive deposits free of website / Actions trees.
+.github/ export-ignore
+portal/ export-ignore
+_site/ export-ignore

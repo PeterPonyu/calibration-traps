@@ -1,0 +1,2205 @@
+%% Compile: lualatex x2 (canonical engine since the 2026-06-28 R-TikZ figure
+%% migration). The PeerJ upload workspace uses pdflatex instead -- see
+%% papers/VERSIONS.md.
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+% defaultfeatures={Renderer=Node}: newtxtext forces Renderer=Basic under LuaTeX,
+% which drops the TeX ``/'' ligatures (quotes rendered as two single-quote glyphs);
+% the Node renderer restores them.
+\usepackage[defaultfeatures={Renderer=Node}]{newtxtext}
+\usepackage{newtxmath}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{float}
+\usepackage{microtype}
+\usepackage[round]{natbib}
+\usepackage{hyperref}
+\usepackage{threeparttable}
+\usepackage{orcidlink}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+% Muted dark link colors instead of boxed links (de-noises Table 1 Study cells)
+\definecolor{linkblue}{RGB}{13,51,115}
+\definecolor{citegreen}{RGB}{10,77,56}
+\definecolor{urlplum}{RGB}{77,26,90}
+\hypersetup{
+colorlinks=true, linkcolor=linkblue, citecolor=citegreen, urlcolor=urlplum,
+  pdftitle={Apparent emergence timing in small-scale grokking testbeds can be scan-statistic false positives: exact rates and a sustained-crossing correction},
+  pdfauthor={Zeyu Fu},
+  pdfsubject={Scan-statistic calibration of apparent emergence timing in small-scale grokking testbeds},
+  pdfkeywords={emergence, grokking, scan statistics, false-positive rate, sustained crossing, calibration}
+}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{remark}{Remark}
+
+\newenvironment{mathderivation}[1]{%
+  \begin{tcolorbox}[
+    colback=gray!6, colframe=gray!40, arc=2pt,
+    left=6pt, right=6pt, top=4pt, bottom=4pt,
+    title={\small\bfseries #1},
+    fonttitle=\small\bfseries,
+    breakable, enhanced
+  ]%
+}{%
+  \end{tcolorbox}%
+}
+\input{../figs/figpreamble.tex}
+
+% Tighter float placement to reduce whitespace
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+
+\begin{document}
+
+\title{Apparent emergence timing in small-scale grokking testbeds can be
+scan-statistic false positives: exact rates and a sustained-crossing correction}
+\author{Zeyu Fu\,\orcidlink{0009-0001-8329-0108}\\
+State Key Laboratory of Trauma and Chemical Poisoning, Institute of Combined Injury,\\
+Chongqing Engineering Research Center for Nanomedicine, College of Preventive Medicine,\\
+Army Medical University, Chongqing, China\\
+\href{mailto:fuzeyu09@gmail.com}{fuzeyu09@gmail.com}}
+\date{}
+
+\maketitle
+
+\begin{abstract}
+Threshold-crossing ``emergence detectors'' can manufacture apparent phase transitions out
+of evaluation noise. Re-analysing the public BIG-Bench data behind the original
+emergent-abilities claims, an exact scan-statistics computation shows that a
+chance$+0.10$ detector is expected to manufacture $17.7$ false ``emergent tasks'' out of
+$89$ scanned; a look-elsewhere correction leaves most observed detections standing while
+flagging several as unpowered. Crucially, the flagged firings are detector artifacts on
+the public score release, not claims made in the source paper, so the audit corroborates
+the published claims rather than debunking them. This failure mode reduces to classical
+run/scan statistics. Under a no-transition null with per-checkpoint exceedance
+probability $q$, the single-crossing false-positive rate $1-(1-q)^{M}$ rises with the
+number of checkpoints $M$, so refining the evaluation grid strictly worsens it.
+Requiring $K$ consecutive exceedances suppresses false positives; the exact Markov-chain
+suppression factor at the evaluated operating point ($q=0.00272$, $K=2$) is $286\times$.
+We give the exact finite-Markov-chain run-length probability, a
+power/false-negative/latency tradeoff, and a closed-form nomogram that picks $K$ from
+$M$, $q$, and a false-positive budget $\alpha$. On an in-context temporal-difference
+testbed with pre-registered threshold and criteria, the single-crossing detector fires
+in $42/45$ non-learning runs at $\tau=0.7$; a per-run mixture model reproduces the entire
+sustained-$K$ ladder to within $1.5$ runs, and its prescribed sustained-$5$ criterion
+reduces the count to $1/45$---an observed ${\sim}42\times$ reduction. The account extends
+to drifted baselines, threshold and evaluation-set-size ladders, public Pythia
+checkpoints, and three apparent effects. Apparent small-scale emergence timing therefore
+needs no new phenomenon: it can often be scan-statistic false positives,
+correctable by a stated calibration checklist.
+\end{abstract}
+
+\vspace{4pt}\noindent\textbf{Keywords:} emergence; grokking; false-positive rate; scan
+statistics; run statistics; sustained-crossing criterion; calibration; in-context learning;
+temporal-difference learning; small-scale testbeds
+
+% Highlights (Elsevier highlights go in a separate file at submission):
+% - At the pre-registered tau=0.7 bar, a single-crossing detector fires in 42/45 non-learning runs.
+% - The mixture-prescribed sustained-5 criterion reduces this to 1/45 (~42x observed reduction).
+% - "Emergence rate rises with horizon" is measured baseline drift, not learning.
+% - Exact run statistics yield a preflight nomogram for choosing K from (N, p, tau, M).
+% - A solved-task positive control is a necessary preflight for emergence claims.
+
+\section{Introduction}\label{sec:intro}
+
+Phase-transition-like learning---where a model's capability appears to jump
+discontinuously as training or scale proceeds---has attracted substantial empirical
+and theoretical attention since the characterisation of ``emergent abilities'' by
+\citet{wei2022emergent} and the grokking phenomenon by \citet{power2022grokking}.
+Tiny-transformer testbeds make such transitions reproducible
+at low cost, enabling systematic ablations over optimizers, data curriculum, and
+architectural choices that would be prohibitive at scale.
+Yet cheapness creates its own risk: the same experimenter who can run thousands of
+cells can just as easily over-read them.
+\citet{schaeffer2023mirage} demonstrated that apparent emergent abilities in large
+language models can be artefacts of metric choice rather than genuine phase transitions;
+related work on inverse scaling \citep{mckenzie2023inversescaling} has shown that
+apparently robust scaling trends can reverse or disappear under closer scrutiny.
+These findings motivate an analogous discipline for small-scale emergence work,
+where the confounds are different (noise detectors, unlearnable targets, nuisance axes)
+but the corrective logic is the same (Figure~\ref{fig:scheme}): verify that the measurement protocol can
+distinguish a real signal from a plausible null before interpreting the result.
+
+We make this discipline precise for the small-scale regime by reducing the
+emergence-timing readout itself to a classical statistical problem. A threshold-crossing
+``emergence detector'' that scans a scalar score across $M$ evaluation checkpoints and
+fires on the first crossing is a scan statistic; under a chance-accuracy null its
+false-positive behaviour is governed by run and scan statistics
+\citep{feller1968,glaz2001scan,fulou2003runs}. The detector is not a straw man: it is how
+emergence is operationalized across the literature---performance clearing an above-random
+bar at some scale point \citep{wei2022emergent}, the BIG-Bench ``breakthroughness''
+metric \citep{srivastava2022bigbench}, an ability manifesting once the pretraining loss
+crosses a threshold \citep{du2024loss}, the emergence point predicted from pre-emergence
+checkpoints \citep{snell2024predicting}, and, in the grokking and induction-head
+literatures, onset timing read as the first checkpoint at which a score clears a fixed
+threshold \citep{power2022grokking,olsson2022induction}. Section~\ref{sec:theorem} shows that the
+noise-only single-crossing rate is $1-(1-q)^{M}$ and rises toward one as the evaluation
+grid is refined, that a sustained-$K$ criterion suppresses it by $q^{-(K-1)}$, and that a
+simple nomogram (Section~\ref{sec:nomogram}) calibrates $K$ to a target false-positive
+budget. We then validate this account to within $2\%$ on a real in-context
+temporal-difference (TD) testbed (Section~\ref{sec:r2}) and show that three apparent
+effects---an ordering timing effect, an ``emergence rises with horizon'' scaling, and
+early-trajectory predictiveness---reduce to this false-positive mechanism or to a companion
+nuisance-axis confound (Sections~\ref{sec:r1},~\ref{sec:r3}). The framing is a
+reconciliation rather than a new phenomenon, in the genre of \citet{oneto2026}, who
+reconcile grokking with existing statistical learning theory without positing new
+mechanisms; here the known mechanism is scan-statistic false positives. The mathematics we
+use is classical; the contribution is the reduction and a calibrated instrument for
+small-scale emergence science.
+
+The in-context-emergence literature is almost entirely composed of positive claims
+(Figure~\ref{fig:landscape}, Table~\ref{tab:emergence-landscape}); what it lacks is a calibrated negative that distinguishes
+genuine emergence from a detector firing on noise---precisely what the reduction supplies.
+
+\begin{figure}[t]
+\centering
+\figtikz[\linewidth]{E2_scheme}
+\caption{Study design and headline finding, drawn at the pre-registered $\tau=0.7$ bar. On a stationary evaluation trace (an in-context TD testbed that does not acquire the task within the studied budget), a single-threshold-crossing emergence detector fires in $42/45$ runs, exactly as classical run statistics predict; requiring $K$ consecutive exceedances, with $K=5$ read from the per-run mixture of Section~\ref{sec:theorem}, reduces this to $1/45$ against $1.5$ predicted. At the illustrative $\tau=0.8$ bar used for the case-study figure the same chain runs $26/45\to0/45$ at $K=2$. The trace sketch is schematic: at $\tau=0.7$ a chance-level run crosses the bar repeatedly in isolation, and it is the absence of a long run, not the absence of crossings, that the criterion tests. The criterion is validated in three settings: a mildly drifted baseline ($0/45$ at $\tau=0.8$; the grid plateaus $0.17$ above its constant-predictor floor), a strongly drifted one ($0.35$ above floor, where the nomogram-corrected $K$ restores calibration), and genuine transitions ($90/90$ induction emergences detected at zero added latency).}
+\label{fig:scheme}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{Published in-context-emergence claims vs this work's calibrated outcomes---an
+expanded version of the landscape summarised in Figure~\ref{fig:landscape}.}
+\label{tab:emergence-landscape}
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.17\linewidth}>{\raggedright\arraybackslash}p{0.24\linewidth}>{\raggedright\arraybackslash}p{0.26\linewidth}@{}}
+\toprule
+Study & Phenomenon & Claim & Key figure \\
+\midrule
+\citet{olsson2022induction} & induction / copy & emerges (phase change) & $2.5$--$5{\times}10^{9}$ tokens \\
+\citet{lee2023icrl} & in-context reinforcement learning (RL) & emerges (pretraining) & near-optimal \\
+\citet{laskin2022ad} & in-context RL & emerges (distillation) & improves policy in-context \\
+\citet{zisman2024noise} & in-context RL & emerges (noise distill.) & Dark Room $6.36\!\to\!14.08$ \\
+\citet{wang2024tdtransformers} & in-context TD & emerges (forward pass) & value error $\downarrow$ with context \\
+\citet{schaeffer2023mirage} & (critique) & emergence may be a metric artifact & --- \\
+\citet{sabry2025induction} & (critique) & induction signature $\neq$ load-bearing & anti-induction ${\approx}0$ \\
+\textbf{This work} & in-context TD & calibration-negative & $42/45\!\to\!1/45$ ($\tau{=}0.7$, $K{=}5$); $26/45\!\to\!0/45$ ($\tau{=}0.8$, $K{=}2$); plateau $0.562$, floor $0.390$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Related work}\label{sec:related}
+\begin{figure}[t]
+\centering
+\figtikz[0.88\linewidth]{E2_landscape}
+\caption{Published in-context-emergence claims versus this
+work's calibrated outcomes. Induction/copy \citep{olsson2022induction}, in-context RL
+\citep{lee2023icrl}, and in-context TD (Wang 2024; \citealp{wang2024tdtransformers}) are each reported
+to emerge, while \citet{schaeffer2023mirage} caution that emergence can be a
+metric/measurement artifact. We confirm a clean positive for induction
+(${\approx}1850$ steps) but show the in-context-TD case is a calibration failure---the
+chain annotated inside the panel is $42/45\to1/45$ ($\tau=0.7$): a single-crossing
+detector manufactures emergence in $42/45$ runs that the mixture-prescribed sustained-$5$
+criterion reduces to $1/45$---supplying the calibrated negative the positive-claim
+literature lacked. The $\tau=0.8$ single-crossing chain $26/45\to0/45$ (where $K=2$
+already suffices) lives in Table~\ref{tab:tdgrid} and Figure~\ref{fig:td-grid}, not in
+this panel.}
+\label{fig:landscape}
+\end{figure}
+
+
+\paragraph{Emergence in large language models and whether it is a mirage.}
+\citet{wei2022emergent} introduced the term ``emergent abilities'' for capabilities
+that appear sharp and unpredicted by extrapolating smaller-model performance.
+\citet{schaeffer2023mirage} challenged this framing: by switching from discontinuous
+to continuous metrics, the apparent phase transitions smooth out, suggesting that
+emergence is partially an artefact of metric nonlinearity rather than a genuine
+discontinuity in the underlying computation.
+\citet{mckenzie2023inversescaling} showed that some capabilities actually
+decrease with scale, further complicating the picture of what ``emergence''
+means empirically.
+Our work brings the same measurement discipline to the small-scale
+regime: just as metric choice determines whether large-model abilities look emergent,
+detector choice determines whether small-model learning looks like a phase transition.
+\citet{oneto2026} is a recent instance of the reconciliation genre we adopt---explaining a
+grokking-type phenomenon through existing theory rather than a new mechanism.
+
+\paragraph{Grokking as a testbed for emergence.}
+\citet{power2022grokking} introduced the grokking phenomenon---delayed generalisation
+long after overfitting---on small algorithmic datasets, making it a natural controlled
+testbed for studying phase-transition-like learning.
+Subsequent work has characterised the geometry \citep{liu2023omnigrok}, lazy-to-rich
+transition \citep{kumar2024lazytorich}, norm
+dynamics \citep{prieto2025stablemax}, and hidden-progress structure
+\citep{nanda2023progress,barak2022hidden} of the grokking transition.
+Early-trajectory prediction of grokking outcomes has been attempted by
+\citet{notsawo2023predicting} and \citet{xu2026earlywarning}; our third case study
+(Section~\ref{sec:r3}) shows that such predictions must freeze the optimizer axis before
+the predictiveness can be attributed to run-level dynamics rather than configuration
+identity.
+
+\paragraph{In-context learning: circuits and emergence.}
+The mechanistic study of in-context learning has centred on induction heads
+\citep{olsson2022induction} as the circuit-level substrate for in-context
+generalisation, including their statistical form on Markov data
+\citep{edelman2024statinduction}.
+Our ordering case study (Section~\ref{sec:r1}) exploits the sharp emergence of the
+induction circuit as a measurable delay, testing whether data-presentation order can
+compress it.
+The broader in-context learning literature has examined how transformers implement
+algorithm-like computations in-context \citep{akyurek2024iclalgorithms,garg2022icl,vonoswald2023gd}, but whether emergence timing is modifiable by curriculum has had little
+direct experimental study at small scale.
+
+\paragraph{In-context reinforcement learning (RL).}
+\citet{lee2023icrl} showed that transformers pretrained with supervised imitation
+on diverse RL trajectories can perform near-optimal in-context reinforcement learning
+at test time, demonstrating that in-context RL emergence is achievable
+in principle.
+More directly, \citet{wang2024tdtransformers} report that transformers trained for
+policy-evaluation tasks can discover and implement temporal-difference learning in their
+forward pass, with value error decreasing as the in-context horizon grows; our TD case
+study (Section~\ref{sec:r2}) is a calibration boundary for online single-task
+in-context-TD---a harder regime than the pretrained multi-task setting of
+\citet{wang2024tdtransformers} and \citet{lee2023icrl}---establishing the solved-reference
+bar such a claim must clear before it is adjudicable on a single-task online testbed.
+In our setup the same transformer family cannot be straightforwardly
+trained to perform in-context temporal-difference learning above chance, and the naive
+threshold detector fires on noise rather than on genuine learning.
+This calibration failure is not a claim that in-context TD is impossible, but that
+its testbed must provide a solved-reference cell before the detector can distinguish
+emergence from noise.
+
+\paragraph{Curriculum learning and data ordering.}
+The idea that training on examples in order of increasing difficulty can improve
+sample efficiency dates at least to \citet{bengio2009curriculum}, and is surveyed by \citet{soviany2022curriculum}.
+Whether curriculum ordering helps with emergence specifically---compressing the
+delay of a phase transition rather than improving asymptotic performance---is less
+well studied.
+Our ordering case study (Section~\ref{sec:r1}) provides a direct negative: on the
+in-context induction task the ordering of training examples does not shorten the emergence
+delay, and easy$\to$hard ordering mildly lengthens it.
+
+\paragraph{Run and scan statistics.}
+The false-positive analysis of Section~\ref{sec:theorem} is an application of classical
+run and scan statistics. The distribution of success runs in Bernoulli sequences is
+treated in \citet{feller1968}; the finite-Markov-chain-imbedding technique for exact
+run-length distributions is developed by \citet{fulou2003runs}; and the scan-statistic
+viewpoint on threshold exceedances over an ordered index is surveyed by
+\mbox{\citet{glaz2001scan}}. Our use of these tools is standard; the novelty is their application
+to emergence-timing detectors and the resulting calibrated instrument.
+
+\paragraph{Early-training prediction and reproducibility.}
+Predicting final performance from early training trajectories has attracted attention
+as a cheap proxy for hyperparameter search \citep{notsawo2023predicting,xu2026earlywarning}.
+Reproducibility and rigorous null-hypothesis discipline in machine learning more broadly
+have been emphasised by \citet{pineau2021reproducibility}, who argue that negative
+results and pre-registration are essential to combating the publication bias toward
+positive findings---a discipline paralleled by the statistical-precipice critique of
+point-estimate reporting in deep RL \citep{agarwal2021precipice}; we treat pre-registration as a methods virtue below rather than as the
+identity of the paper.
+
+\section{The false-positive theorem}\label{sec:theorem}
+
+We formalise why a threshold-crossing detector manufactures apparent emergence, and why a
+sustained criterion suppresses it. The underlying mathematics is classical run/scan
+statistics \citep{feller1968,fulou2003runs,glaz2001scan}; what is new here is the reduction
+of small-scale emergence-timing readouts to this setting, the power/latency analysis of the
+sustained criterion (Lemma~\ref{lem:sustain}(c)), and the calibrated instrument of
+Section~\ref{sec:nomogram}.
+
+\paragraph{Setup.}
+A detector observes a scalar signal $\hat p_1,\dots,\hat p_M$ over $M$ evaluation
+checkpoints and declares ``emergence'' when the signal crosses a fixed threshold $\tau$.
+Under the null---no real transition, the model at a stationary baseline accuracy $p$ over
+$N$ evaluation
+samples---each checkpoint reports $\hat p_t = \tfrac1N\sum_{i=1}^N\mathrm{Bernoulli}(p)$,
+so $N\hat p_t\sim\mathrm{Binomial}(N,p)$ with marginal per-checkpoint exceedance
+probability
+\[
+  q(\tau) = P\!\bigl(\mathrm{Binom}(N,p) \geq \lceil \tau N\rceil\bigr).
+\]
+What the null asserts is stationarity, not chance. The parameter $p$ is the level the
+trace sits at while nothing is happening, which may be the task's chance level, a
+partially learned plateau, or a baseline that drifts as some easier component of the task
+is acquired. This distinction matters in practice, because every testbed analysed below
+plateaus above its own trivial floor, and it is the plateau rather than the floor that
+sets $q$.
+
+\begin{theorem}[Single-crossing false-positive rate and its $M$-monotonicity]\label{thm:single}
+Let the detector fire if $\hat p_t \geq \tau$ for at least one $t\in\{1,\dots,M\}$.
+\begin{enumerate}
+\item[\textnormal{(a)}] If the $\hat p_t$ are independent, the single-crossing
+  false-positive rate is exactly
+  \[
+    P_{\mathrm{single}}(M) = 1-(1-q)^{M},
+  \]
+  which is strictly increasing in $M$, satisfies $P_{\mathrm{single}}(M)\leq Mq$, and
+  tends to $1$ as $M\to\infty$.
+\item[\textnormal{(b)}] If the exceedance events $\{\hat p_t\geq\tau\}$ are positively
+  associated in the FKG/Harris sense, then $P_{\mathrm{single}}(M)\leq 1-(1-q)^{M}$; the
+  independence formula is an upper bound.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(a)~Under independence the non-exceedance events each have probability $1-q$, so
+$P(\text{no crossing})=(1-q)^{M}$ and $P_{\mathrm{single}}=1-(1-q)^{M}$. Strict
+monotonicity in $M$ follows from $0<q<1$; the union bound gives $P_{\mathrm{single}}\leq
+Mq$; and $(1-q)^{M}\to0$ gives the limit.
+(b)~Positive association (the FKG/Harris inequality) implies that the decreasing events
+$\{\hat p_t<\tau\}$ satisfy $P\!\bigl(\bigcap_{t}\{\hat p_t<\tau\}\bigr)\geq\prod_{t}
+P(\hat p_t<\tau)=(1-q)^{M}$, whence $P_{\mathrm{single}}=1-P(\text{no crossing})\leq
+1-(1-q)^{M}$.
+\end{proof}
+
+\begin{remark}[Association is a hypothesis, and it flips the bound direction]\label{rem:assoc}
+Part~(b) is stated under an explicit positive-association hypothesis, not proved from
+the model. Positive dependence reduces the number of effectively independent trials, so for
+the single-crossing detector it makes the i.i.d.\ formula an upper bound. The
+practical reading of part~(a) is that with $M=O(1/q)$ checkpoints the noise-only crossing
+probability is already of order one, so finer evaluation grids strictly worsen the
+false-positive rate. Empirically, the hypothesis is at most weakly active in our testbed:
+the lag-1 autocorrelation of the mean-centered (linearly detrended) validation signal has
+median $+0.04$ ($+0.03$) across the 45 in-context-TD logs, and $41/45$ detrended values lie
+inside the $\pm1.96/\sqrt{M}=\pm0.138$ white-noise band. Because the run-length formulas
+at $K\geq3$ are sensitive to dependence beyond one step, the audit extends to lags
+$2$--$5$: the detrended medians are $+0.01$, $+0.01$, $-0.02$, and $-0.02$, with
+$40$--$44$ of $45$ runs inside the same band at every lag. The marginal-variance match
+reported below is therefore accompanied by measured near-independence out to lag 5 rather
+than assumed independence.
+\end{remark}
+
+\begin{lemma}[Sustained-$K$ suppression and the power/latency tradeoff]\label{lem:sustain}
+Require the threshold to be held for $K$ consecutive checkpoints.
+\begin{enumerate}
+\item[\textnormal{(a)}] Under independence, the sustained-$K$ false-positive rate
+  $P_{\mathrm{sustain}\text{-}K}$ equals the probability of a success run of length $\geq K$
+  in $M$ Bernoulli$(q)$ trials, given exactly by the finite-Markov-chain-imbedding
+  recurrence on states $\{0,1,\dots,K\}$ (current consecutive-success run length, with $K$
+  absorbing), with small-$q$ asymptotic
+  \[
+    P_{\mathrm{sustain}\text{-}K} = (M-K+1)\,q^{K}\,(1+o(1)).
+  \]
+\item[\textnormal{(b)}] The suppression factor relative to single crossing is
+  $P_{\mathrm{single}}/P_{\mathrm{sustain}\text{-}K} = q^{-(K-1)}(1+o(1))$ as $q\to0$.
+\item[\textnormal{(c)}] Let a true transition occur at checkpoint $t^{\ast}$ with
+  post-transition per-checkpoint exceedance probability $q_1$ (operationally, the
+  probability under the alternative that the de-noised readout exceeds $\tau$ at a
+  post-transition checkpoint) over a window $W=M-t^{\ast}$. Then the sustained-$K$ miss
+  probability (the false-negative rate, FNR) obeys the disjoint-block bound
+  \[
+    \mathrm{FNR}\leq (1-q_1^{K})^{\lfloor W/K\rfloor},
+  \]
+  and the expected detection latency is
+  $\Delta\cdot(1-q_1^{K})/\bigl(q_1^{K}(1-q_1)\bigr)$ checkpoints, where $\Delta$ is the
+  evaluation interval. Raising $K$ buys $q^{-(K-1)}$ false-positive suppression at the cost
+  of latency growing like $q_1^{-K}$ and $\mathrm{FNR}$ rising when the true signal sits
+  near $\tau$ (i.e.\ $q_1$ bounded away from $1$).
+\end{enumerate}
+\end{lemma}
+
+Parts~(a) and~(b) are classical run statistics
+\citep{feller1968,fulou2003runs,glaz2001scan}; part~(c), which maps the sustained criterion
+onto a testbed's true-transition regime through the operationally defined $q_1$, is the new
+general content of this reduction.
+
+\begin{proof}[Proof of \textnormal{(c)}]
+Partition the post-transition window into $\lfloor W/K\rfloor$ disjoint blocks of $K$
+consecutive checkpoints. Under independence each block is entirely above $\tau$ with
+probability $q_1^{K}$; the detector misses only if every block fails, giving
+$\mathrm{FNR}\leq\prod(1-q_1^{K})=(1-q_1^{K})^{\lfloor W/K\rfloor}$ (an upper bound, since a
+qualifying run may also straddle a block boundary). Detection waits for the first block of
+$K$ consecutive exceedances; the number of Bernoulli$(q_1)$ trials to the first length-$K$
+run has mean $(1-q_1^{K})/\bigl(q_1^{K}(1-q_1)\bigr)$, and multiplying by the interval
+$\Delta$ gives the expected latency.
+\end{proof}
+
+\paragraph{The ``emergence rises with horizon'' pattern, demoted to a falsifiable prediction.}
+The next statement isolates the one leg of the account the paper does not rest on.
+
+\begin{corollary}[Nuisance-knob noise inflation]\label{cor:tdep}
+Suppose a nuisance knob (for instance the in-context horizon $T$) leaves the null accuracy
+$p$ unchanged but inflates the per-checkpoint noise scale $\sigma(T)$. Whenever $\tau>p$ and
+the noise law is symmetric and log-concave (the Gaussian case being immediate),
+$q(T)=\bar\Phi\bigl((\tau-p)/\sigma(T)\bigr)$ is increasing in $\sigma$, so
+$P_{\mathrm{single}}(T)$ increases in $T$ with no change in the underlying computation,
+while $P_{\mathrm{sustain}\text{-}K}$ (scaling as $q^{K}$) is far less sensitive.
+\end{corollary}
+
+The analytic core---$q$ increasing in $\sigma$ implies $P_{\mathrm{single}}$ increasing in
+$\sigma$---is elementary. But the antecedent ``$\sigma$ grows with $T$'' is not
+implied by the paper's own $T$-independent binomial noise $\sigma=\sqrt{p(1-p)/N}$; it
+requires an auxiliary mechanism, either a decreasing effective sample size
+$N_{\mathrm{eff}}(T)$ (longer sequences yielding fewer independent decision points or
+correlated per-sequence outcomes) or a baseline $p(T)$ drifting toward $\tau$. The $T$-grid
+logs adjudicate between the two. The noise-inflation route is inactive: the within-run
+standard deviation is flat in $T$ (medians $0.091/0.090/0.088$ for $T=10/20/40$; Spearman
+$r=-0.24$, $p=0.11$). The baseline-drift route is strongly active: the per-run mean accuracy
+rises toward the threshold (medians $0.505/0.576/0.634$; Spearman $r=+0.94$, $p<0.001$), and
+with it the single-crossing rate climbs from $1/15$ ($T{=}10$) through $10/15$ ($T{=}20$) to
+$15/15$ ($T{=}40$) at the illustrative $\tau=0.8$ bar while the sustained-$K$ rate stays at
+$0/45$. The ``emergence rises with
+horizon'' pattern is therefore real in this testbed but runs through $p(T)\to\tau$ rather
+than through the $\sigma(T)$ antecedent of Corollary~\ref{cor:tdep}, which remains an
+unexercised prediction here; the single-versus-sustained asymmetry it forecasts is exactly
+what the measured crossing rates show. The paper does not rest on this leg.
+
+\paragraph{The pre-registered $\tau=0.7$ bar leads the empirical chain.}
+The in-context-TD testbed of Section~\ref{sec:r2} operates two thresholds: its training
+logs' online detector was pre-registered at $\tau=0.7$, and the calibration audit
+additionally reports $\tau=0.8$, chosen so that a single case-study figure can show both
+criteria operating (Section~\ref{sec:r2}). To keep the two tracks unambiguous:
+$\tau=0.7$ is the pre-registered bar---fixed, together with the detection criteria, in
+the analysis plan before the calibration analysis was run; we use ``pre-registered''
+throughout in this analysis-plan sense, the plans being internal rather than lodged with
+a third-party registry---and it carries the paper's headline numbers, whereas $\tau=0.8$
+is an illustrative bar chosen for figure legibility, because the single-crossing and $K=2$
+criteria are both visible at that bar. At the pre-registered bar the mechanism is at
+its most severe, so we state that chain first, computed on the same 45 non-learning runs
+($M=201$ checkpoints each). The measured pooled per-checkpoint exceedance is
+$\bar q=0.099$---an order of magnitude above the $0.010$ measured at $\tau=0.8$---and the
+single-crossing detector is saturated: it fires in $42/45$ runs. Because the 45 runs are
+heterogeneous in baseline accuracy, the correct preflight tool this close to the noise
+band is the per-run mixture prediction $\sum_i\bigl[1-e^{-(M-K+1)\hat q_i^{K}}\bigr]$,
+with $\hat q_i$ the measured per-run exceedance rate. The mixture is estimated on the
+same $45$ runs it predicts---an in-sample consistency check rather than an out-of-sample
+forecast; its only out-of-sample support in this paper is the five-fold cross-validation
+on the sixty-seed $\gamma=0.9$ grid (Section~\ref{sec:ladder}). It reproduces the entire observed
+sustained-$K$ ladder to within $1.5$ of $45$ runs: observed (predicted) counts are $42$
+($40.6$) for single crossings, $24$ ($24.5$) at $K{=}2$, $14$ ($13.6$) at $K{=}3$, $4$
+($5.5$) at $K{=}4$, and $1$ ($1.5$) at $K{=}5$. The pooled-$\bar q$ nomogram reading of
+Section~\ref{sec:nomogram} ($K\geq3.6$, i.e.\ $K=4$) under-prescribes once this
+heterogeneity is priced in---the mixture still predicts $5.5/45\approx0.12$ false
+positives per run at $K{=}4$---so the mixture is the prescribing tool at such a bar, and
+it prescribes $K=5$, the smallest $K$ whose predicted per-run rate ($1.5/45\approx0.034$)
+meets the $\alpha=0.05$ budget. At $K=5$ exactly one of 45 runs survives, against $1.5$
+predicted: the pre-registered bar turns a $42/45$ false-positive saturation into a
+calibrated $1/45$, an observed ${\sim}42\times$ reduction (mixture-predicted
+${\sim}27\times$). Two lessons carry through the paper. First, noise suppression is
+threshold-dependent: the required run length grows from $K=2$ at $\tau=0.8$ to $K=5$ at
+$\tau=0.7$. Second, a practitioner applying Box~1 at a bar close to the noise band must
+use the per-run mixture rather than a pooled-$q$ reading. The single-binomial reading is
+worse still than the pooled one at this bar: it prescribes $K=3$, whose observed
+false-positive rate is $14/45$. That failure is worked through as a cautionary example
+after Box~1 (p.~\pageref{par:box1caution}), and it is why the checklist carries an
+explicit mixture step. The $\tau=0.8$ computation
+below is then the clean closed-form illustration of the same mechanism, at a bar where
+the exact binomial tail and the i.i.d.\ formulas can be followed digit by digit.
+
+\begin{corollary}[Recovering the in-context-TD numbers]\label{cor:numbers}
+For the in-context-TD testbed of Section~\ref{sec:r2} ($N=32$ held-out sequences, $M=201$
+checkpoints at steps $0,50,\dots,10{,}000$, chance baseline $p=0.562$, threshold
+$\tau=0.8$), the exceedance probability is
+$q(0.8)=P\!\bigl(\mathrm{Binom}(32,0.562)\geq 26\bigr)=0.00272$. Theorem~\ref{thm:single}
+then gives $P_{\mathrm{single}}=1-(1-0.00272)^{201}=0.421$ (expected $18.9/45$ runs), and
+Lemma~\ref{lem:sustain} gives $P_{\mathrm{sustain}\text{-}2}=200\cdot(0.00272)^{2}=0.00147$
+(expected $0.066\approx0.07/45$, matching the exact finite-Markov-chain value), a
+suppression factor of $0.421/0.00147\approx 286\times$.
+\end{corollary}
+
+\paragraph{Empirical validation of the noise model.}
+With $p=0.562$ and $N=32$ the predicted per-checkpoint standard error is
+$\sigma=\sqrt{0.562\times0.438/32}=0.0877$; the measured within-run standard deviation of
+validation accuracy is $0.089$ (median over the 45 per-run logs), matching to within $2\%$.
+This validates the marginal Bernoulli/Gaussian readout empirically---a necessary, not
+sufficient, condition (it does not validate independence). At the pre-registered threshold
+$\tau=0.7$, $\lceil0.7\times32\rceil=23$ and $q(0.7)=0.0517$ (exact binomial at the median
+baseline), giving $P_{\mathrm{single}}(0.7)\approx1.000$ (expected $45/45$)---consistent
+with the observed $42/45$ saturation reported above. (The measured pooled
+$\bar q=0.099$ exceeds this median-baseline value because $q$ is convex in the baseline
+accuracy; that heterogeneity is exactly what the per-run mixture prices.)
+
+\paragraph{Honesty caveats on the illustrative-bar suppression factor and the $26/45$.}
+The suppression factor of Corollary~\ref{cor:numbers} and the $0.07/45$ sustained prediction hold under the
+positive-association hypothesis of Theorem~\ref{thm:single}(b) with negligible
+autocorrelation. The autocorrelation is now measured (Remark~\ref{rem:assoc}): the median
+detrended lag-1 value is $+0.03$, with $41/45$ runs inside the white-noise band. Even
+pricing that residual dependence conservatively---replacing one factor of $q$ in
+$(M-1)q^{2}$ by the linearly inflated conditional $q+\rho_{1}(1-q)$ at the median
+$\rho_{1}$---the suppression factor remains ${\approx}24\times$, and the observed sustained-2
+count is $0/45$, consistent with the i.i.d.\ prediction of $0.066/45$. The factor is
+thus the i.i.d.\ value with measured-small dependence, bounded below by ${\sim}24\times$
+under a deliberately pessimistic dependence model.
+That floor is pessimistic in a way the data can quantify. The quantity the run-length
+formulas actually depend on is the autocorrelation of the exceedance indicator
+$\mathbf{1}\{a_{m}\geq\tau\}$, not of the accuracy trace, and it is smaller: measured at
+lags $1$ through $5$ across the 45 runs, the mean indicator autocorrelation is $+0.0002$
+with every lag satisfying $|\rho_{\ell}|<0.03$. The i.i.d.\ assumption behind
+Theorem~\ref{thm:single} is therefore better supported than the ${\approx}24\times$ floor
+implies; we report the floor as a conservative bound rather than a best estimate.
+The observed single crossings are $26/45$, above the $18.9/45$ predicted at the median $p$:
+the 45 cells are heterogeneous in baseline accuracy (finals reach $0.875$) and $q$ is convex
+in $p$. The direct mixture computation over the empirical per-run baselines,
+$\mathbb{E}_{\hat p}\bigl[P_{\mathrm{single}}(\hat p)\bigr]$ with $\hat p$ the per-run mean
+accuracy, gives $0.541$ (expected $24.3/45$), and the observed $26/45$ lies well within one
+binomial standard deviation ($\pm3.3$) of that prediction---so the excess over $18.9/45$ is
+quantitatively accounted for by baseline heterogeneity, not by a mechanism outside the noise
+model. All $q$ values in this section are exact binomial tail probabilities
+($q(0.8)=0.002716$, $q(0.7)=0.0517$); the normal-$z$ figures quoted for intuition agree to
+the printed digits.
+
+
+\section{Calibration nomogram for sustained-crossing criteria}\label{sec:nomogram}
+
+The sustained-$K$ criterion becomes a reusable instrument once $K$ is chosen to meet a
+target false-positive budget. From the small-$q$ form of Lemma~\ref{lem:sustain}(a), a
+target noise-only budget $\alpha$ requires $(M-K+1)q^{K}\leq\alpha$, i.e.
+\begin{equation}\label{eq:nomogram}
+  K \;\geq\; \frac{\ln M - \ln\alpha}{\ln(1/q)}.
+\end{equation}
+For the paper's parameters ($\alpha=0.05$, $M=201$, $q=0.00272$),
+\[
+  K \geq \frac{\ln 201 - \ln 0.05}{\ln(1/0.00272)}
+      = \frac{5.30 + 3.00}{5.91}
+      = 1.40,
+\]
+so $K=2$ suffices ($P_{\mathrm{sustain}\text{-}2}=0.00147\ll0.05$). The $K=2$ criterion used
+throughout Section~\ref{sec:r2} is thus derived from Eq.~\eqref{eq:nomogram} rather
+than assumed. Figure~\ref{fig:nomogram} renders the full instrument: contours of the
+required $K$ over the $(q,\alpha,M)$ ranges a practitioner encounters, with this paper's
+operating point marked.
+
+\begin{figure}[htbp]
+\centering
+\figtikz[\linewidth]{E2_nomogram}
+\caption{$K$-selection nomogram. Required sustained-run length $K$ from
+Eq.~\eqref{eq:nomogram} as a function of the per-checkpoint exceedance probability $q$
+(both axes logarithmic), with contours for target noise-only false-positive budgets
+$\alpha\in\{0.05,0.01,0.001\}$ (colour) at $M\in\{50,200,1000\}$ checkpoints (line type).
+A practitioner computes $q$ from $(N,p,\tau)$ and reads off the minimum $K$ meeting the
+budget $\alpha$ over $M$ checkpoints. The star marks the in-context-TD operating point
+($q=0.00272$, $M=201$), which reads $K\geq2$ at $\alpha=0.05$; the dotted horizontal line
+marks $K=2$.
+(b)~Observed versus null-predicted single-crossing fires on three corpora: the
+instrument predicts the false-positive count before any correction is applied
+(in-context TD $42$ observed; Pythia $4$ observed against $5.7$ binomial-null
+predicted; BIG-Bench $40$ observed against $17.7$ expected).
+(c)~The pooled-$q$ cautionary example: the naive single-pooled route prescribes
+$K=3$ and observes $14/45$ false positives ($6.2\times$ over the $0.05$
+budget), while the per-run-mixture route prescribes $K=5$ and restores
+calibration at $1/45$.
+(d)~Suppression-versus-latency tradeoff: the exact $286\times$ suppression at
+the operating point ($q=0.00272$, $K=2$) costs one checkpoint of confirmation
+latency; on the genuine-emergence controls sustained-$K$ removes every false
+fire while keeping $8/9$ genuine detections at zero added latency.
+Panel summaries: (a)~K nomogram. (b)~calibration check. (c)~pooled-q caution. (d)~power-latency tradeoff.}
+\label{fig:nomogram}
+\end{figure}
+
+Box~1 condenses the correction into an operational calibration checklist.
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\bfseries Box 1. Calibration checklist: before declaring emergence from a threshold crossing},
+  fonttitle=\small\bfseries, breakable, enhanced]
+\begin{enumerate}
+\item \textbf{Compute $q$} $=P(\mathrm{Binom}(N,p)\geq\lceil\tau N\rceil)$ from your actual
+  $N$, the baseline $p$ your trace plateaus at, and threshold $\tau$. Use the plateau, not
+  the task's chance level: if the model learns an easier component of the task, the two
+  differ and only the plateau predicts crossings. If $qM\gtrsim0.1$, single crossings are
+  noise.
+\item \textbf{Validate the noise model:} does the empirical within-run $\sigma$ match
+  $\sqrt{p(1-p)/N}$? (Necessary, not sufficient.)
+\item \textbf{Check autocorrelation $\rho_\ell$ out to $\ell=K$.} If $\rho_\ell>0$, your
+  sustained-$K$ false-positive rate is worse than the i.i.d.\ formula.
+\item \textbf{If per-run baseline levels vary, price the heterogeneity.} The trigger:
+  replace the single binomial $q$ of step~1 with the per-run mixture
+  $\sum_i\bigl[1-\exp(-(M-K+1)\hat q_i^{\,K})\bigr]$ over the measured per-run exceedance
+  rates $\hat q_i$ whenever $\bar qM \gtrsim 1$ or the per-run rates span more than
+  about a factor of two of their mean. This mixture is the quantity the nomogram
+  actually prices; routing through the single binomial $q$ when $\bar qM$ is not
+  small under-prescribes $K$, because $q$ is convex in the baseline accuracy and the
+  runs above the pooled mean dominate the false-positive count. (The factor-of-two
+  span and the $\bar qM \lesssim 1$ sufficiency zone are empirical, observed in the
+  testbeds of Section~3; a rigorous bound is open.)
+\item \textbf{Pick $K$} from Eq.~\eqref{eq:nomogram} for your target $\alpha$, evaluated on
+  whichever of step~1 or step~4 applies.
+\item \textbf{Freeze nuisance knobs} (horizon $T$, optimizer): if a ``trend'' tracks a knob
+  that inflates $\sigma$, it may be a noise artifact---verify that the sustained rate is
+  flat while the single rate rises.
+\item \textbf{Include a solved-reference cell} so that a real transition would actually
+  cross.
+\end{enumerate}
+\end{tcolorbox}
+
+\paragraph{A worked cautionary example: the checklist applied naively to this paper's own
+testbed.}\label{par:box1caution}
+Step~4 is not a refinement, and the cost of skipping it is measurable on the testbed of
+Section~\ref{sec:r2}. At the pre-registered $\tau=0.7$ bar, step~1 evaluated at the median
+baseline gives $q=0.0517$, and Eq.~\eqref{eq:nomogram} with $M=201$ and $\alpha=0.05$ then
+reads $K\geq2.80$, i.e.\ $K=3$. The observed false-positive rate of that prescription is
+$14/45=0.311$, which is $6.2$ times the nominal budget. The per-run mixture of step~4,
+computed on the same runs, prescribes $K=5$ instead and restores calibration: $1/45$
+observed against $1.5$ predicted, inside $\alpha$. The pooled-$\bar q$ reading
+($\bar q=0.099$) lands in between at $K=4$, still over budget at $4/45=0.089$. Two
+properties of this bar drive the gap. The baseline heterogeneity across the 45 runs is
+large (per-run $\hat q_i$ span $0.004$ to $0.133$), and $\bar qM\approx20$ is far from the
+small-$\bar qM$ regime in which a single $q$ summarises the ensemble. The naive reading is
+the failure mode this checklist exists to catch, and reporting it here fixes the operating
+range over which a single binomial $q$ can be trusted: $\bar qM\lesssim1$, with per-run
+rates within a factor of about two of their mean.
+
+\section{Methods}\label{sec:methods}
+
+The three case studies come from a shared suite of tiny-transformer emergence experiments,
+all with analysis plans (detector thresholds, criteria, and outcome branches) fixed before
+analysis; for the re-analysis corpus of Section~\ref{sec:r3} the runs pre-existed and only
+the analysis plan was fixed in advance. We summarise the common design here; the
+testbed-specific sweeps (ordering policies, horizons, context lengths, seed counts) are
+stated in each case study below.
+
+\paragraph{Testbeds.} (1)~An in-context copy/induction family---the one task in the suite
+that is learnable, non-Fourier, and shows a measurable emergence delay---used to test whether
+data-presentation order compresses the emergence delay (Section~\ref{sec:r1}). (2)~An
+in-context temporal-difference (TD) value-learning testbed, used here as the primary
+validation of Section~\ref{sec:theorem} rather than a solved trainable-control result
+(Section~\ref{sec:r2}). (3)~A post-hoc re-analysis of 364 existing runs across 11 closed
+experiment namespaces, used to test early-trajectory outcome prediction
+(Section~\ref{sec:r3}).
+
+\paragraph{Emergence readout.} Emergence is read by a threshold-crossing detector (first
+crossing of a fixed score threshold) on a fixed-step evaluation grid, matching the
+operationalizations cited in Section~\ref{sec:intro}. Because a single-crossing
+rule can fire on transient noise, we contrast it throughout against a sustained-emergence
+criterion and a solved-reference (oracle) cell.
+
+\paragraph{Optimizers and seeds.} Experiments sweep the \{AdamW, SGD with momentum (SGDM),
+Muon (an orthogonalized-momentum optimizer)\} optimizers with multiple seeds per cell; the
+exact grid for each testbed is given in the corresponding case study.
+
+\section{Validation case studies}\label{sec:results}
+
+The reduction of Section~\ref{sec:theorem} makes three checkable predictions on a shared
+tiny-transformer programme. The primary validation is the in-context-TD grid
+(Section~\ref{sec:r2}), which instantiates Corollary~\ref{cor:numbers} to within $2\%$; two
+further case studies (Sections~\ref{sec:r1} and~\ref{sec:r3}) exercise the
+floor-censoring/learnable-target and nuisance-axis disciplines the reduction implies. In
+each case the null is the theorem's empirical anchor rather than the contribution, which is
+why its individual weakness (a borderline $p$, a non-learning grid, a power-bounded
+comparison) is acceptable. Two external-data case studies then apply the same instrument
+beyond the programme: the public BIG-Bench release (Section~\ref{sec:bigbench}) and real
+Pythia pretraining checkpoints (Section~\ref{sec:pythia}).
+
+\subsection{Primary validation: in-context TD does not learn, and single crossings fire on noise}\label{sec:r2}
+
+This grid is the primary validation of Section~\ref{sec:theorem}: it instantiates
+Corollary~\ref{cor:numbers} to within $2\%$ and exhibits the single-versus-sustained gap the
+reduction predicts.
+On an in-context temporal-difference value-learning testbed that remains a calibration vignette rather than a solved trainable-control result (3 optimizers $\times$ horizon
+$T \in \{10, 20, 40\}$ $\times$ 5 seeds), the model does not learn the task: final
+validation accuracy plateaus far below competence almost everywhere (median $0.562$, min $0.406$, max
+$0.875$; only 1/45 cells exceed $0.8$), and per-evaluation trajectories oscillate
+within a typical band ($0.5 \leftrightarrow 0.72$) rather than showing a sustained jump
+(worst-case single-cell excursions reach wider, e.g.\ $0.344$--$0.844$ in the case study below).
+At the pre-registered online bar $\tau=0.7$ the single-crossing detector fires in $42/45$
+of these non-learning runs, and the mixture-prescribed sustained-$5$ criterion reduces
+this to $1/45$ (Section~\ref{sec:theorem}); the audit below is reported at $\tau=0.8$,
+where the prescribed correction is $K=2$, so that a single figure can show both criteria
+operating. At that bar, a threshold-crossing
+emergence detector (first crossing of $\tau=0.8$) likewise fires on transient noise crossings:
+cells flagged ``emerged'' settle back to $\approx 0.56$. The apparent pattern---
+``emergence rate rises with horizon (T10: 0--1/5 $\to$ T40: 5/5) and emergence step drops
+with horizon''---is an artifact of the noise detector (larger $T$ makes the eval estimate
+noisier and the spurious $0.8$-crossing earlier), the falsifiable prediction of
+Corollary~\ref{cor:tdep}, not evidence of faster TD computation.
+None of the headline questions (sharp emergence, precursor diagnostics,
+optimizer-moves-the-transition) is adjudicable until the testbed is recalibrated. The
+recipe: add a solved-reference cell (here, an exact Bellman-oracle reference under the
+same generator, which reaches strict accuracy $1.000$), use a de-noised readout
+(smoothed / held-out accuracy), and require a sustained-emergence criterion (accuracy held
+above threshold for a window), not a single crossing. As a calibration boundary, the same
+transformer can fit finite Bellman-labelled support sets above $0.8$ in 5/6 cells while
+fresh Markov reward process (MRP) generalisation accuracy remains far below the
+positive-control bar (maximum $0.605$ vs the $0.8$ bar), establishing
+that fitting labelled support is not TD emergence (Fig.~\ref{fig:supervised-fit}).
+
+\begin{figure}[htbp]
+\centering
+\figtikz[\linewidth]{E2_supervised_fit}
+\caption{Supervised Bellman-label fit sanity check. Finite-support Bellman labels often
+exceed 0.8 while fresh-MRP accuracy stays low, so fitting labelled support is not TD emergence.
+The same transformer and evaluator can fit finite Bellman-labelled support sets above 0.8
+in 5/6 cells (maximum 0.898), but fresh-MRP (generalisation) accuracy remains far below
+the sustained positive-control bar (maximum 0.605), establishing a calibration boundary
+between memorisation of labelled support and genuine in-context TD emergence.
+Panel summaries: (a)~finite-support fit at support $128$. (b)~finite-support fit at support $512$. (c)~support-fit margin over fresh MRP. (d)~support-fit threshold tally.}
+\label{fig:supervised-fit}
+\end{figure}
+
+The non-signal is itself
+informative: Figure~\ref{fig:td-grid} shows the full grid of per-evaluation accuracy
+trajectories, which oscillate around the plateau with transient spikes that fall back, alongside
+the precursor metric (the Bellman residual) that never descends toward zero---visual
+confirmation that the threshold detector is firing on noise rather than on a forming value
+function.
+Table~\ref{tab:tdcalib} reports the
+calibration audit and Table~\ref{tab:tdgrid} gives the per-cell quantitative breakdown:
+transient $0.8$ crossings occur in 26/45 original runs, but none survive
+a 2-evaluation or 5-evaluation sustained criterion. A second de-noised T40 rerun with
+larger held-out evaluation batches also produces no $0.8$ crossing at all, strengthening the
+negative calibration reading.
+
+\paragraph{The grid's trivial floor, and where its null parameter comes from.}
+Calling this grid chance-level, as an earlier reading of it did, overstates the negative.
+The task's trivial floor is the accuracy of a constant predictor that always emits the
+modal value bucket, and that floor can be computed exactly by simulating the generator.
+For the grid's configuration (ten states, $\gamma=0.9$, nine value buckets over
+$[-10,10]$; $4\times10^{5}$ sampled Markov reward processes) the target-bucket marginal is
+$0.000/0.003/0.056/0.247/0.390/0.246/0.056/0.003/0.000$, so the constant predictor scores
+$0.390$. The grid's median final accuracy of $0.562$ sits $0.17$ above that floor. The
+model therefore does extract real structure---the same context-mean regression that the
+$\gamma=0.9$ ladder rung of Section~\ref{sec:ladder} exhibits more strongly---and then
+plateaus, without approaching either the task ceiling or the detection bar. The grid is a
+partially learned, drifted baseline rather than a pure-noise trace, and we label it that
+way throughout. The substantive reading is unchanged: the model never acquires
+temporal-difference computation, so the crossings remain false positives for emergence,
+and the Bellman-residual precursor of Fig.~\ref{fig:td-grid} never descends.
+
+The null parameter $p=0.562$ of Corollary~\ref{cor:numbers} is accordingly not the task's
+chance level but an empirical per-checkpoint exceedance estimate taken from the runs being
+tested. That is the quantity the scan calculation needs. Theorem~\ref{thm:single} is a
+statement about how often a stationary trace crosses a bar, so its parameter must be the
+level the trace actually sits at; substituting the trivial floor $0.390$ would give
+$q(0.8)=1.3\times10^{-6}$ and $0.014$ expected single crossings in $45$ runs against the
+$26$ observed, a prediction calibrated against a model that is not the one being run.
+Estimating $p$ from the runs makes the false-positive computation self-consistent, at the
+cost of making it descriptive rather than a priori. A practitioner applying Box~1 before
+training has no such estimate and must instead bound $p$ by the highest plateau the model
+could plausibly reach, which is one of the things the solved-reference cell of step~7 is
+for.
+
+\paragraph{Case study: a single false-positive emergence.}
+
+Figure~\ref{fig:case} shows the validation-accuracy trajectory of one representative cell
+(AdamW, $T=40$, seed~3).
+At step~150 the accuracy spikes to $0.844$, crossing a single-crossing detector threshold;
+the detector therefore flags this cell as ``emerged.'' (The calibration audit reported throughout
+this case study fires at $\tau=0.8$; the original in-context-TD training logs additionally record an
+online emergence field at the pre-registered $\tau=0.7$. At that lower bar the exceedance
+rate is tenfold higher and $K=2$ no longer suffices---the full $\tau=0.7$ sustained-$K$
+ladder, with the mixture-prescribed $K=5$, leads the empirical chain of
+Section~\ref{sec:theorem}. The case study uses $\tau=0.8$, where $K=2$ is the prescribed
+correction, so that a single figure can show both criteria operating.)
+Over the remaining $9{,}850$ steps the
+accuracy oscillates between $0.344$ and $0.844$ without ever stabilising above threshold,
+and the run ends at $0.5625$---within rounding of the grid's plateau level of $0.562$
+(the median across all 45 cells). This is a textbook false positive: a single noisy
+upward fluctuation triggers the detector, while the model never acquires the task. The
+recalibration recipe above (a solved-reference cell, a de-noised readout, and a
+sustained-emergence criterion) would prevent all three failure modes simultaneously: a
+solved-reference cell establishes that a sustained crossing is achievable; de-noising
+damps the spike that causes the first crossing; and requiring the threshold to be held for
+a window rules out the isolated crossing at step~150.
+
+\begin{figure}[htbp]
+\centering
+\figtikz[0.97\linewidth]{E2_td_grid}
+\caption{The in-context-TD calibration grid shows no emergence to detect.
+(a)~Per-evaluation validation-accuracy trajectories for all nine optimizer $\times$ horizon
+cells (five seeds each, 45 runs); curves oscillate around the grid's plateau level (dotted) with
+transient excursions that fall back rather than a sustained jump. The dashed line marks the
+$0.8$ detector threshold and the lower dotted-green line the $0.7$ threshold; transient
+single crossings become more frequent at larger horizon $T$ because the per-evaluation
+estimate is noisier, not because computation is faster.
+(b)~Single-crossing fire rate at $\tau=0.7$ per cell ($42/45$ runs): the
+false-positive count the run statistics predict; bar centres sit close enough that
+per-bar labels sit inside the bars rather than above them.
+(c)~The precursor metric (median Bellman residual over training, per optimizer) never
+descends toward zero, confirming that no value function is being learned for a detector to
+fire on.
+(d)~The sustained-$K$ ladder: observed false-positive counts collapse with $K$
+($42/24/14/1$ at $\tau=0.7$; $26/0/0/0$ at $\tau=0.8$), with the per-run
+mixture predicting $1.5$ at $K=5$ against the observed $1$.
+Panel summaries: (a)~validation grid. (b)~single crossings. (c)~precursor null. (d)~mixture calibration.}
+\label{fig:td-grid}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\figtikz[\linewidth]{E2_case}
+\caption{A single false-positive emergence makes the false-positive account of
+Section~\ref{sec:theorem} (Corollary~\ref{cor:numbers})
+visible on one trajectory (AdamW, $T=40$, seed~3). The validation accuracy spikes to a
+peak of $0.844$ at step~150 (orange diamond), crossing the $\tau=0.8$ detector threshold
+(dashed red); over the full run it crosses the threshold at six isolated points (open red
+circles), so the single-crossing detector fires. None of these crossings is followed
+by a second consecutive evaluation above threshold, so the sustained-$K{=}2$
+detector records zero qualifying pairs and rejects the cell. The run oscillates within the
+plateau band ($0.5625 \pm 1$ binomial SE, grey) and settles by step~10\,000 to $0.5625$,
+the grid's plateau level and $0.17$ above the task's constant-predictor floor of $0.390$. This is the per-run picture behind the population suppression factor of
+${\approx}286\times$ (under the association hypothesis of Theorem~\ref{thm:single}): a
+single noisy upward fluctuation triggers the single-crossing
+detector, whereas requiring the threshold to be held for one further evaluation removes the
+false positive.
+(b)~Zoom on the crossing cluster: the firing is a transient spike, not a
+regime change.
+(c)~Longest run at the bar versus the geometric null at the measured
+per-checkpoint exceedance rate: the observed run length is unremarkable under
+the memoryless null.
+(d)~Sustained-$K$ rejection: the same trajectory fires the single-crossing
+detector and is silent at $K\geq2$.
+Panel summaries: (a)~false-positive trajectory. (b)~exceedance clustering. (c)~geometric null. (d)~sustained-K rejection.}
+\label{fig:case}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{Calibration audit for the in-context-TD grid, at both operating thresholds:
+the pre-registered online bar $\tau=0.7$ (mixture-prescribed $K=5$) and the illustrative
+audit bar $\tau=0.8$ ($K=2$). The exact Bellman oracle is a
+solved-reference readout for the same data generator/evaluation target; the original trained
+grid is the 45-run optimizer $\times$ horizon sweep, and the de-noised rerun is a bounded T40
+check with larger held-out evaluation batches.}
+\label{tab:tdcalib}
+\begin{threeparttable}
+\begin{tabular}{llcl}
+\toprule
+Readout & Criterion & Count/value & Interpretation \\
+\midrule
+Exact Bellman oracle\tnote{a} & strict acc. & 1.000 & solved reference \\
+Trained grid & median final acc. & 0.562 & 45 runs \\
+Single crossing & $\geq0.7$ once & 42/45 & pre-registered bar; saturated \\
+Sustained crossing & $\geq0.7$ for 5 evals & 1/45 & mixture-prescribed $K{=}5$ \\
+Single crossing & $\geq0.8$ once & 26/45 & spike-prone \\
+Sustained crossing & $\geq0.8$ for 2 evals & 0/45 & de-noised \\
+Sustained crossing & $\geq0.8$ for 5 evals & 0/45 & primary guard \\
+De-noised T40 rerun\tnote{b} & $\geq0.8$ once / smooth5 & 0/9 / 0/9 & no rescue \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\footnotesize
+\item[a] Analytic exact solution: the evaluator queries the true Bellman value $V^\pi$ for each MRP directly via dynamic programming; this is not a trained run.
+\item[b] 9 held-out runs (3 optimizers $\times$ 3 seeds); re-run with larger held-out evaluation batches (128 sequences); no $\geq0.8$ crossing under the de-noised readout.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{In-context TD calibration grid: median final validation accuracy and threshold-crossing counts
+per optimizer $\times$ horizon ($n=5$ seeds each; 45 runs total).
+Single crossing: at least one evaluation point $\geq0.8$.
+Sustained-2: $\geq0.8$ held for $\geq2$ consecutive evaluations.
+No cell achieves a sustained crossing; the single-crossing pattern grows with $T$ (detector artifact, not faster computation).}
+\label{tab:tdgrid}
+\small
+\begin{tabular}{llccc}
+\toprule
+Optimizer & Horizon $T$ & Median final acc. & Single cross.\ $\geq0.8$ & Sustained-2 $\geq0.8$ \\
+\midrule
+AdamW & 10 & 0.594 & 0/5 & 0/5 \\
+AdamW & 20 & 0.531 & 2/5 & 0/5 \\
+AdamW & 40 & 0.594 & 5/5 & 0/5 \\
+\addlinespace
+Muon  & 10 & 0.500 & 1/5 & 0/5 \\
+Muon  & 20 & 0.594 & 3/5 & 0/5 \\
+Muon  & 40 & 0.563 & 5/5 & 0/5 \\
+\addlinespace
+SGDM  & 10 & 0.594 & 0/5 & 0/5 \\
+SGDM  & 20 & 0.563 & 5/5 & 0/5 \\
+SGDM  & 40 & 0.594 & 5/5 & 0/5 \\
+\midrule
+\multicolumn{2}{l}{Aggregate (45 runs)} & 0.562 & 26/45 & 0/45 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Discount ladder: no learnable rung, with validation under baseline
+drift}\label{sec:ladder}
+
+A natural objection to the grid above is selection: perhaps the testbed was simply an
+unlearnable cell, and a slightly easier variant would have emerged. We therefore built a
+difficulty ladder inside the same pipeline---identical model, tokenization, evaluator,
+and detector; six states, horizon $T=40$; only the discount changes,
+$\gamma\in\{0,0.3,0.5,0.7,0.9\}$ (five seeds at $\gamma\in\{0,0.3\}$, ten at
+$\gamma\in\{0.5,0.7\}$, sixty at $\gamma=0.9$). At $\gamma=0$ the value function collapses
+to the immediate discretized reward, $V(s)=r(s)$, so the task degenerates to an
+in-context lookup of the queried state's reward token---the same competence class as the
+induction positive control above. The information-theoretic ceiling is $0.95$--$0.96$ at
+every rung (an oracle restricted to in-context evidence), and the guess-the-modal-bucket
+baselines are $0.149/0.159/0.305$ for $\gamma=0/0.3/0.9$.
+
+Two results. First, no rung is learnable within the $10^4$-step budget: from $\gamma=0$
+through $\gamma=0.7$ the best checkpoint accuracy rises only gently with $\gamma$ (medians
+$0.500$, $0.531$, $0.562$, $0.656$ across the four rungs)---above the modal baselines, so
+some signal is extracted, but far below both the ceiling and the detection bar; neither
+detector ever fires ($0/30$ runs across the four rungs). Even the lookup rung does not
+train at this budget, which localizes the family's bottleneck to state-resolved
+in-context retrieval rather than to value bootstrapping, and rules out the
+easier-variant objection at the studied scale: there is no solvable rung between the
+canonical task and its induction-grade reduction that the grid's budget could have
+reached. (Quadrupling the budget shows the lookup rung is learnable but very late; we
+return to this in Section~\ref{sec:mnaxes}, where the late transition serves as an
+in-family solved reference.)
+
+Second, the $\gamma=0.9$ rung turns baseline drift from a theoretical mechanism into a
+live measurement---and, at sixty seeds, into a rate-level calibration test. There the
+achievable component is context-mean regression (values concentrate, hence the $0.305$
+modal baseline), and the model genuinely learns it, lifting the running accuracy
+baseline to $\bar p = 0.642$ without ever reaching sustained competence (best checkpoint
+$0.813$--$0.938$, bar $0.8$, ceiling $0.96$). The detectors respond exactly as
+Section~\ref{sec:theorem} predicts. Single-crossing fires in $60/60$ seeds. The per-run
+mixture prediction (measured per-run exceedances $\hat q_i$, pooled $\bar q=0.034$)
+gives $13.2$ expected sustained-2 firings in 60 runs; $15$ are observed (rate $0.250$,
+$95\%$ CI $[0.147,0.379]$). The estimate is not circular: in a five-fold cross-validation
+(per-run $\hat q$ estimated on four fifths of the seeds, the held-out fifth predicted),
+the held-out counts run from $1$ to $5$ sustained-2 firings per fold against per-fold
+predictions of $2.5$--$2.8$, depending on how the sixty seeds are partitioned
+($3,2,3,3,4$ under a strided assignment on seed order; $3,1,5,3,3$ under a contiguous
+one). Every fold lies within two standard deviations of its prediction under either
+partition, and the fold totals agree with the pooled figures in all cases ($15$ observed
+vs $13.2$ predicted). The nomogram of Section~\ref{sec:nomogram} prescribes
+the repair before looking at the data: at $q=0.034$ it reads $K\geq2.45$, i.e.\
+$K=3$---and sustained-3 fires once in $60$ seeds against a predicted count of $0.64$
+(rate CI $[0.0004,0.089]$), within its $\alpha=0.05$ per-run budget. The criterion is not a universal constant but an instrument: when
+partial learning (or any nuisance) drifts the baseline toward the bar, $K$ must be
+re-read from the nomogram, and the re-read value restores calibration.
+
+Third, the horizon effect of Section~\ref{sec:theorem} replicates on eighty runs that
+share nothing with the main grid except the detector. The $\gamma=0.9$ rung was also run
+at two shorter horizons, ten seeds each at $T=10$ and $T=20$, alongside the sixty-seed
+$T=40$ arm; all use six states and AdamW, where the main grid used ten states and three
+optimizers. The two grids agree closely on the quantity the account turns on. Median
+per-run accuracy rises $0.509\to0.582\to0.642$ with $T$ here against
+$0.505\to0.576\to0.634$ there, and the single-crossing count rises
+$1/10\to9/10\to60/60$ against $1/15\to10/15\to15/15$ (Table~\ref{tab:horizonrep}). Since
+the replication changes the state count, the optimizer set and the seeds, the horizon
+effect is a property of how the baseline depends on $T$ rather than of one grid's
+configuration.
+
+The two grids differ in one cell, and the difference is the predicted one. At $T=40$ and
+$\tau=0.8$ the replication records $15/60$ sustained-2 firings where the main grid records
+$0/15$. The replication's baseline sits slightly higher ($\bar q=0.034$ against $0.025$),
+which raises the i.i.d.\ expectation from $1.9$ per $15$ runs to $13.2$ per $60$; the
+replication lands on its expectation while the main grid falls below it, the direction
+Theorem~\ref{thm:single}(b) permits under positive association. Sustained-3 fires $0/10$,
+$0/10$ and $1/60$ across the three arms. At the pre-registered $\tau=0.7$ bar the same
+ordering appears earlier and more sharply, with single crossings at
+$9/10\to10/10\to60/60$ and sustained-2 at $1/10\to7/10\to60/60$: once the baseline has
+drifted this far, a sustained criterion carried over unchanged from a shorter horizon
+saturates too, which is the case for re-reading $K$ from the nomogram at each operating
+point rather than fixing it once.
+
+\begin{table}[htbp]
+\centering
+\caption{Independent replication of the horizon effect on the $\gamma=0.9$ ladder rung
+(six states, AdamW, $N=32$, $M=201$), to be compared with the main grid's
+$1/15\to10/15\to15/15$ single-crossing ladder at $\tau=0.8$ (ten states, three
+optimizers). Accuracy is the median across runs of each run's mean over all $201$
+checkpoints. Detector counts are given at both operating bars.}
+\label{tab:horizonrep}
+\small
+\begin{tabular}{lccccccc}
+\toprule
+& & & \multicolumn{2}{c}{$\tau=0.8$ (illustrative)} & \multicolumn{2}{c}{$\tau=0.7$ (pre-registered)} \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Horizon $T$ & Runs & Mean acc. & Single & Sustained-2 & Single & Sustained-2 \\
+\midrule
+10 & 10 & 0.509 & 1/10  & 0/10  & 9/10  & 1/10 \\
+20 & 10 & 0.582 & 9/10  & 0/10  & 10/10 & 7/10 \\
+40 & 60 & 0.642 & 60/60 & 15/60 & 60/60 & 60/60 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Together with the induction-side validation above, the sustained criterion is now checked
+in three settings, which span two drift levels rather than three separate regimes: a
+mildly drifted baseline (the 45-run grid, $0.17$ above its constant-predictor floor,
+$0/45$ at the illustrative $\tau=0.8$ bar), a strongly drifted one (this rung, $0.35$
+above its floor, where a stale $K$ fails at the predicted rate and the
+nomogram-corrected $K$ holds), and genuine transitions ($90/90$ detected at zero
+latency). No arm of the TD family sits at its trivial floor. What makes the
+non-transition arms noise-like for the detector is that their traces are stationary, not
+that they are at chance, which is the sense in which Theorem~\ref{thm:single} applies to
+them.
+
+\subsection{Stress tests along the checkpoint and eval-size axes}\label{sec:mnaxes}
+
+The false-positive formula has two free axes besides the threshold: the number of
+checkpoints $M$ and the evaluation-set size $N$ (which sets $q$ through the binomial
+tail). We measured both in the drifted regime ($\gamma=0.9$), where the predictions are
+non-trivial.
+
+Along the $N$ axis (five seeds each at $N=16$ and $64$, sixty at the default $N=32$;
+$M=201$), the measured exceedance tracks the binomial-tail computation of Box~1 step~1
+within a factor of two despite the drifting baseline: observed $\bar q = 0.133$, $0.034$,
+$0.004$ against predicted $0.119$, $0.030$, $0.002$ at $N=16$, $32$, $64$ ($\bar p
+\approx 0.64$). The detector consequences span the full range of failure and repair. At
+$N=16$, single-crossing and sustained-2 fire in $5/5$ seeds and even sustained-3 fires
+in $2/5$---which the nomogram itself predicts, since at $q=0.133$ it reads $K\geq4.1$:
+a $K$ calibrated for $N=32$ is stale at $N=16$. At $N=64$, single-crossing itself drops
+to $3/5$ and sustained-2 is silent. Evaluation-set size, not any training-side knob, is
+the dominant false-positive lever in this regime, and the preflight computation
+anticipates its effect quantitatively.
+
+Along the $M$ axis the same rung was run at two longer budgets under the identical
+configuration, ten seeds each: $M=401$ (doubled training) and $M=801$ (quadrupled). We
+report both, since the axis is only informative if its endpoints are shown. Single-crossing
+is saturated throughout, $60/60$ at $M=201$ and $10/10$ at both longer budgets, as it must
+be once $Mq\gg1$. The sustained-2 counts are $15/60$, $2/10$ and $5/10$, against i.i.d.\
+envelopes of $13.2$, $3.7$ and $6.6$ runs computed from each arm's own measured exceedance
+($\bar q=0.034$, $0.034$, $0.038$); every arm lies at or below its envelope, the direction
+Theorem~\ref{thm:single}(b) permits under positive association. Sustained-3 gives $1/60$,
+$0/10$ and $1/10$ against $0.6$, $0.2$ and $0.5$ expected. The false-positive rate
+therefore rises with $M$ at fixed $\tau$ and fixed configuration---the sustained-2 rate
+roughly doubles from $0.25$ to $0.50$ as the grid is refined fourfold---which is
+Theorem~\ref{thm:single}(a)'s $M$-monotonicity measured directly rather than assumed. None
+of this is learning: at $M=801$ the drifted rung's accuracy is as flat as at $M=201$ (mean
+over the first fifth of checkpoints $0.638$, over the last fifth $0.657$; no run holds the
+bar for more than three consecutive checkpoints, and final accuracies stay between $0.594$
+and $0.781$). Quadrupling the budget buys this rung no competence, only more opportunities
+to cross. The lower rungs serve
+as negative controls along the same axis: across the non-learning runs
+($\gamma\in\{0,0.3\}$ at $M=201$; $\gamma=0$ at $M=401$ and $801$), exactly one---a
+$\gamma=0$ non-learner at the densest grid, $M=801$---produces any false crossings:
+four isolated single-checkpoint crossings ($0.81$--$0.88$), each rejected by the
+sustained criterion; no non-learning run ever sustains. The learning runs at $M=801$
+are the exception that validates
+the instrument rather than breaking it: at four times the grid's budget, $4$ of $20$
+$\gamma=0$ seeds genuinely solve the lookup rung in late, abrupt transitions (onsets at
+steps ${\sim}32{,}000$--$38{,}400$, all in the final fifth of training; post-onset
+accuracy holds above the bar on the smoothed readout, with raw checkpoint dips to
+$0.66$--$0.81$), and the sustained criterion detects all four---two at zero added
+latency, two attributing $7$--$8$ checkpoints later than the first single crossing
+because an isolated spike precedes the ramp, the slow-ramp failure mode priced by the
+confirmation-delay accounting of Section~\ref{sec:r1}. The late-emergence rate
+of $0.20$ ($95\%$ CI $[0.06,0.44]$) provides the solved-reference cells that Box~1
+step~7 demands, inside the TD family itself, and it sharpens the ladder's negative
+result: the grid's calibration-negative reflects under-training at the studied budget,
+not unlearnability.
+
+The budget lever, however, does not generalize to a second, harder configuration. We ran a
+$\gamma=0.5$ sixty-run budget grid:
+$\text{steps}\in\{40{,}000,\,80{,}000\}\times T\in\{10,20,40\}\times\{$AdamW,
+Muon$\}\times$ five seeds, read out with the de-noised $N=128$ evaluator so that
+any emergence meets the same evidentiary bar as the rescue attempts above. The two
+step budgets are four and eight times the canonical $10^{4}$ steps, counted in
+optimizer steps; the checkpoint count stays at $M=201$ (evaluating every
+$200$/$400$ steps), unlike the $M=801$ arm above, which scaled both axes
+together. Nothing emerges: $0/60$ runs (Fig.~\ref{fig:budgetgrid}). No run reaches even the $0.7$ trainer threshold
+at a single checkpoint (best transient accuracy $0.469$ across all $60\times201$
+checkpoint evaluations; final accuracies $0.22$--$0.37$), so the single-crossing and
+sustained criteria are silent alike.
+
+This arm is not a clean one-factor contrast against the lookup rung, and we do not read it
+as one. It differs from that rung on four axes at once: the discount ($\gamma=0.5$ against
+$\gamma=0.9$), the state count ($10$ against $6$), the horizon ($T\in\{10,20,40\}$ against
+$T=40$ alone), and the readout ($N=128$ evaluation sequences against $32$). Read together
+with the lookup rung's $4/20$ late emergences at four times the budget, the comparison
+therefore establishes a difference across a jointly varying configuration, not a
+difficulty-by-budget interaction attributable to $\gamma$. What the arm does carry, and
+what it is included for, is robustness of the negative itself: the best transient accuracy
+anywhere in the grid is $0.469$ across all $60\times201$ checkpoint evaluations, against a
+task ceiling near $0.95$, so nothing was learned in this configuration regardless of which
+axis is responsible. The under-training reading of the calibration-negative is confirmed at
+the lookup rung and is untested elsewhere; in this configuration the required budget, if
+finite, exceeds $8\times$, and the budget lever is exhausted at this scale. A state-matched
+de-confound that would isolate the discount---six states, the matched $N=32$ readout,
+$T=40$, at both elevated budgets---is specified but has not been run, and we flag the
+attribution as open rather than resolved.
+
+\begin{figure}[htbp]
+\centering
+\figtikz[\linewidth]{E2_budget_grid}
+\caption{The $\gamma=0.5$ sixty-run budget grid: per-run maximum validation
+accuracy over all ${\sim}201$ checkpoints (points) and per-cell median final
+accuracy (bars), by horizon $T$ and optimizer, at four and eight times the
+canonical budget. No run reaches even the $0.7$ trainer threshold at a single
+checkpoint (best transient $0.469$), so every detector variant is silent:
+$0/60$ emergences.
+(b)~Marginal maximum accuracy by horizon (all 60 runs): no horizon rescues
+the task.
+(c)~Crossing rate (max accuracy ${\geq}0.7$) by discount factor on the
+$\gamma$ ladder: apparent emergence is a no-discount/drift phenomenon; the
+$\gamma=0.5$ arm is clean at both budgets.
+(d)~Best-of-grid per budget: the budget lever is exhausted ($0/60$ reach the
+bar at $4\times$ or $8\times$).
+Panel summaries: (a)~budget grid. (b)~horizon marginal. (c)~gamma ladder. (d)~budget exhaustion.}
+\label{fig:budgetgrid}
+\end{figure}
+
+\subsection{Case study: auditing published emergence curves}\label{sec:bigbench}
+
+The preflight computation of Box~1 applies beyond small testbeds, so we re-analysed the
+public BIG-Bench score release \citep{srivastava2022bigbench}, the per-task data
+underlying the emergence claims of \citet{wei2022emergent}. For the 89 multiple-choice
+tasks with a defined chance baseline, evaluated on the dense BIG-G series across twelve
+scales, we computed the binomial probability that a chance-level model would clear an
+above-chance detector at any scale, and the expected number of such false ``emergent
+tasks'' across the whole scan. A detector at chance${}+0.10$ flags 40 of the 89 tasks as
+apparently emergent, yet under the all-chance null the same detector is expected to fire
+on $17.7$ tasks by sampling noise alone---and the flagged count is set almost entirely
+by detector leniency ($45.0$ expected false flags at chance${}+0.05$, $1.5$ at
+chance${}+0.20$). A look-elsewhere correction over all $89\times12$ task-by-scale
+evaluations then adjudicates the individual claims: 24 of the 40 survive
+overwhelmingly---large-$N$, large-jump tasks such as \texttt{hindu\_knowledge} ($N{=}175$,
+peak $0.61$ from a $0.25$ baseline, per-point exceedance $q\approx10^{-24}$) and
+\texttt{date\_understanding} ($N{=}369$, $q\approx10^{-63}$)---while 9 are fragile and 7,
+all small-$N$ or small-jump (e.g.\ \texttt{suicide\_risk}, $N{=}40$, jump $0.10$,
+$q\approx0.10$), are unconfirmed under the scan correction: at these item counts their
+jumps are indistinguishable from what a chance-level scan would produce, so they are
+unpowered rather than demonstrated false. Per-task item counts and chance baselines for
+the flagged claims are tabulated in Appendix~\ref{app:bigbench}.
+
+The audit also has an error rate in the other direction, and reporting it is part of
+calibrating the instrument. Eighteen of the 89 multiple-choice tasks are cited as emergent
+by \citet{wei2022emergent}. The chance${}+0.10$ detector flags 40 tasks but only nine of
+those eighteen, a false-negative rate of $9/18$ on precisely the claims the audit is meant
+to adjudicate. Eight of the nine misses never reach chance${}+0.10$ at any scale, with peak
+jumps from $0.006$ to $0.092$; the ninth, \texttt{persian\_idioms}, clears the jump at
+$+0.265$ but already sits $0.205$ above chance at the smallest scale and so fails the
+near-chance-early leg. Moving the bar does not repair this: at chance${}+0.05$ the detector
+flags 60 tasks and still misses seven of the eighteen, and at chance${}+0.20$ it flags 18
+and misses fourteen. The leniency that produces 40 flags and $17.7$ expected false ones is
+thus not the same knob as the sensitivity that would recover the cited claims, and none of
+the three grid settings makes the flagged set the cited set. The verdict cross-tabulation
+points the same way: none of the seven unconfirmed tasks is cited, five of the 24 survivors
+are, and four of the nine fragile ones are. An operational threshold-crossing rule and the
+published claims are largely disjoint populations, which is a reason to report both error
+directions of any such audit rather than only the false positives it was built to find.
+Two scope notes.
+First, the published axis is model scale (twelve points), not training checkpoints, so
+the operative multiplicity is the number of tasks scanned rather than a checkpoint grid;
+the correction is the same. Second, the most-cited generative emergent tasks
+(e.g.\ \texttt{modified\_arithmetic}) have chance ${\approx}0$ under exact string match
+and fall outside this binomial null entirely: they belong to the metric-discontinuity
+mechanism of \citet{schaeffer2023mirage}, which is complementary to---not competing
+with---the scan-statistic mechanism analysed here. The audit therefore corroborates
+rather than debunks: it separates the emergence claims that survive a calibrated
+detector from those that a preflight computation would have flagged as unpowered. The
+audit script and full per-task table are included in the archived repository.
+
+\subsection{Case study: real training trajectories (Pythia)}\label{sec:pythia}
+
+The validations so far share one experimental pipeline, so a residual objection is that
+the calibration account could be programme-local. As an external test, we ran the
+detector and its correction, unchanged, on real pretraining trajectories: the public
+checkpoint suites of Pythia-70M, 160M, and 410M \citep{biderman2023pythia}, scored at
+twelve log-spaced public revisions (eight for 410M) spanning step $0$ to $143{,}000$, on
+a twelve-task battery per model. Eight BIG-Bench multiple-choice tasks are reused from
+the audit of Section~\ref{sec:bigbench}---six of its seven small-$N$
+flagged-as-unpowered tasks plus two larger-$N$ tasks (\texttt{hindu\_knowledge},
+$N{=}175$; \texttt{misconceptions}, $N{=}219$)---and three arithmetic prompt tasks and
+LAMBADA \citep{paperno2016lambada} serve as chance-${\approx}0$ genuine-emergence probes
+outside the binomial null, with a WikiText bits-per-byte control confirming smooth
+training progress. The detector settings are the audit's ($\tau=\text{chance}+0.10$,
+$\alpha=0.05$), with the per-curve $K$ read from Eq.~\eqref{eq:nomogram} at the measured
+pre-emergence exceedance rate $\hat q$, estimated on the maximal checkpoint prefix that
+ends immediately before the first sustained above-threshold block; if no such block
+appears, the full curve is used, as in the drift correction of
+Section~\ref{sec:ladder}.
+
+Of the $36$ accuracy-versus-checkpoint curves, nine emerge by the end of training (last
+two checkpoints above the bar) and $27$ stay at chance level (Table~\ref{tab:pythia}).
+On the chance-level curves the single-crossing detector fires four times, against $5.7$
+expected from the exact binomial-null computation of Box~1 step~1 over the $18$
+multiple-choice chance-level curves---agreement within about one standard deviation
+($1.7$); the nine arithmetic chance-level curves never leave the floor. All four fires
+occur on small-$N$ tasks (\texttt{what\_is\_the\_tao}, $N{=}36$;
+\texttt{common\_morpheme}, $N{=}50$, at two model sizes; \texttt{empirical\_judgments},
+$N{=}99$), with measured $\hat q$ of $0.08$--$0.33$: the evaluation-size lever of
+Section~\ref{sec:mnaxes} operating on public data, at exceedance rates above any
+testbed cell ($\bar q=0.004$--$0.133$ across the $N$ ladder there). The
+nomogram-prescribed sustained-$K$ ($K=3$--$5$ on these curves) removes all four false
+fires ($0/27$; the per-curve mixture predicts $0.08$), while preserving eight of the
+nine genuine emergences at zero added latency beyond the $K{-}1$ confirmation
+window---including LAMBADA at all three model sizes, where a clean pre-emergence
+segment ($\hat q=0$) prescribes $K{=}1$ and the correction costs nothing. The ninth is
+the priced power cost of Lemma~\ref{lem:sustain}(c), not a silent failure:
+\texttt{what\_is\_the\_tao} at 160M ($N{=}36$) has so noisy a pre-emergence segment
+($\hat q=0.44$) that the nomogram prescribes $K{=}7$ with only three checkpoints
+remaining, so its detection is censored at the end of the trace.
+
+\begin{table}[htbp]
+\centering
+\caption{Pythia public-checkpoint battery: per-model detector outcomes at
+$\tau=\text{chance}+0.10$ with nomogram-prescribed per-curve $K$. Parenthesised
+predictions are exact binomial-null expectations over the multiple-choice chance-level
+curves (the arithmetic chance-level curves have measured $\hat q=0$ and cannot fire);
+the 160M censored emergence is the $K{=}7$ case discussed in the text.}
+\label{tab:pythia}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Model & Curves & Chance-level & Single fires (pred.) & Sustained-$K$ fires & Emergences caught \\
+\midrule
+Pythia-70M & 12 & 10 & 3 (2.7) & 0 & 2/2 \\
+Pythia-160M & 12 & 9 & 1 (1.9) & 0 & 2/3 (1 censored) \\
+Pythia-410M & 12 & 8 & 0 (1.1) & 0 & 4/4 \\
+Total & 36 & 27 & 4 (5.7) & 0 & 8/9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three caveats scope the replication. First, twelve checkpoints are far coarser than the
+testbed's $M=201$; by Theorem~\ref{thm:single} the single-crossing false-fire
+probability $1-(1-q)^{M}$ falls as the grid coarsens, so the public grid is the
+lenient direction on the checkpoint axis, and this battery exercises the small-$N$
+lever rather than the dense-grid lever. Second, this is one model family at three
+sizes, and at $N=36$--$50$ the emerged-versus-chance split is itself weakly powered;
+the unambiguous genuine emergences are LAMBADA's ($N{=}2000$).
+
+Third, and most consequentially for how the null is read, the emerged-versus-chance
+labels are instrument-derived: a curve counts as emerged when its last two checkpoints sit
+above the bar, which is a member of the same threshold-crossing family whose calibration is
+under test. The battery therefore validates the sustained-$K$ correction against a
+partition that the uncorrected criterion supplied, and the two are not logically
+independent. Two tasks make the exposure concrete by receiving different labels at
+different model sizes: \texttt{what\_is\_the\_tao} is scored a false fire at 70M but a
+genuine emergence at 160M and 410M, and \texttt{common\_morpheme} is a false fire at 70M
+and 160M but genuine at 410M. Reclassifying the three low-size cases as genuine would move
+the headline comparison from four observed fires against $5.7$ predicted to one observed,
+while simultaneously removing the three highest-$\hat q$ curves from the eighteen-curve
+chance-level pool and so lowering the prediction as well. We do not recompute the null on
+a relabelled pool, because any defensible relabelling needs an emergence criterion
+independent of the detector, which the public checkpoint grid does not supply; the point of
+reporting the size-inconsistent cases is that the $4$-versus-$5.7$ agreement is contingent
+on a detector-derived split rather than on ground truth. Within that scope, both
+halves of the account---the predicted single-crossing false-fire rate and a
+sustained-$K$ correction that suppresses noise fires while sparing genuine
+transitions---operate as predicted on pretraining checkpoints produced entirely
+outside this programme's pipeline.
+
+\subsection{Case study: data-presentation order does not compress the emergence delay}\label{sec:r1}
+
+As a case study for the floor-censoring and learnable-target disciplines
+(Section~\ref{sec:disciplines}), we ask whether data-presentation order can compress a
+genuine emergence delay.
+On the in-context copy/induction family---the one task in our suite that is learnable,
+non-Fourier, and shows a measurable emergence delay---we sweep four ordering policies
+(i.i.d., easy$\to$hard, hard-first, structured) $\times$ $\{$AdamW, SGD with momentum
+(SGDM)$\}$ $\times$ 5 seeds.
+The induction circuit emerges at 1750--1950 steps regardless of ordering; the i.i.d.\
+(no-curriculum) baseline is the fastest (mean 1780) and the easy$\to$hard
+curriculum is mildly but significantly slower (mean 1900; pooled Welch
+$t = -2.83$, $p = 0.011$, $n = 10$; the AdamW-only contrast is borderline at $t = -2.23$,
+$p = 0.058$, $n = 5$). These ordering-policy contrasts are exploratory descriptive checks,
+reported unadjusted rather than as a separate corrected confirmatory family. The honest
+statement for this copy/induction family is therefore ``no
+ordering helps and easy$\to$hard mildly hurts,'' not a flat zero-effect null: the
+emergence delay is set by the task, and ordering does not substitute for target structure
+(Fig.~\ref{fig:curriculum}; Table~\ref{tab:curriculum}). (The Walsh and modular-addition families did not yield an
+adjudicable readout---a testbed boundary we document rather than over-read; the Walsh
+target is unlearnable in this pipeline (Fig.~\ref{fig:walsh-control}), which is itself one
+of the calibration lessons.)
+
+The induction circuit itself is a clean positive emergence---a useful contrast to the
+in-context TD non-emergence in Section~\ref{sec:r2}: across context lengths the circuit appears within
+a few hundred steps and every cell reaches a high in-context-learning score
+(Fig.~\ref{fig:induction-emergence}; these context-length steps use a different readout and
+task setup from the ${\approx}1850$-step ordering measurement above and are not directly
+comparable), so the delay we measure is a property of a circuit
+that genuinely forms, not of a detector firing on noise. The positive-control grid here
+adds a third optimizer, Muon, to the
+$\{$AdamW, SGDM$\}$ pair used in the ordering sweep above, giving the
+$\{$AdamW, SGDM, Muon$\}$ set referenced in the figures and tables.
+
+\paragraph{The sustained criterion validated on real transitions.} The noise suppression
+of Section~\ref{sec:r2} would be worthless if sustaining also suppressed or delayed
+genuine emergence. It does not. Applying both detectors at the same $\tau=0.8$ bar to all
+90 induction runs (3 optimizers $\times$ 3 context lengths $\times$ 10 seeds; evaluation
+every 100 steps), every run truly emerges (final repeat-token accuracy $\geq0.9$) and both
+detectors fire in $90/90$ runs. Critically, sustaining is free on this side: the
+sustained-2 detection step equals the single-crossing step in $90/90$ runs---zero
+latency at the evaluation cadence---because a genuine transition is sticky (once the
+signal crosses the bar it stays above it), whereas a noise crossing is isolated by
+construction. Even sustained-3 has median zero latency; eleven of the $90$ runs pay a
+nonzero attribution cost of three to five evaluation intervals, two of them the
+maximum five. Requiring $K=2$ consecutive exceedances therefore buys the noise-side
+false-positive suppression quantified in Corollary~\ref{cor:numbers} at zero measured
+detection cost on a genuinely emerging family.
+
+Two clarifications keep this claim honest. First, ``zero latency'' is an
+onset-attribution statement: the sustained detector reports the first checkpoint of the
+qualifying run, and by construction it cannot confirm an emergence until $K-1$
+further checkpoints have been observed, so the confirmation delay is always
+$(K{-}1)\times$ the evaluation cadence. Second, the transitions above are sharp, which
+is the criterion's most favorable case, so we engineered toward the unfavorable one:
+rerunning the copy/induction family at $3.3\times$ and $6.7\times$ reduced learning
+rates with a $4\times$ finer evaluation cadence (25 steps). All ten seeds still emerge,
+${\sim}3.7\times$ later than at the default rate (onsets 6525--6850), and the
+transitions remain overwhelmingly sharp: accuracy climbs from $0.3$ to above $0.8$
+within one to three 25-step checkpoints in nine of ten runs, while the tenth produces
+the sought gradual ramp---eleven checkpoints (${\sim}275$ steps). In all ten runs,
+including on that ramp, single-crossing, sustained-2, and sustained-3 attribute the
+identical onset, because the ramps are monotone once under way---no pre-ramp noise
+spike preceded any of them. Across the $104$ genuine transitions observed in this
+paper's testbeds ($90$ induction, $10$ reduced-lr copy, $4$ late TD emergences),
+sustaining adds attribution latency in exactly two---the two late TD emergences whose
+ramps are preceded by an early isolated spike ($7$--$8$ checkpoints each;
+Section~\ref{sec:mnaxes})---and is latency-free in the other $102$; the failure mode
+(an early isolated spike on a slow ramp) is thus observed, rare, and exactly what
+the confirmation-delay accounting above prices.
+
+\begin{figure}[t]
+\centering
+\figtikz[\linewidth]{E2_curriculum}
+\caption{Emergence step by data-ordering policy (copy/induction family; mean $\pm$ s.d.\
+over 5 seeds per optimizer). (a)~Across the four ordering policies the circuit emerges at
+1750--1950 steps; the i.i.d.\ baseline is the fastest (mean 1780 steps) and easy$\to$hard
+is the slowest (mean 1900).
+(b)~Per-seed emergence steps by ordering: the null is seed-consistent.
+(c)~Delta versus each optimizer's own iid baseline: no ordering compresses
+the delay.
+(d)~Family robustness on copy versus mod-add (120-run grid): the
+no-compression verdict holds on both families; Walsh is not in this panel.
+Panel summaries: (a)~emergence step by ordering and optimizer. (b)~per-seed emergence steps. (c)~delta vs iid baseline. (d)~copy vs mod-add robustness.}
+\label{fig:curriculum}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\figtikz[\linewidth]{E2_induction}
+\caption{The induction-circuit emergence is a clean positive control (contrast the
+non-emergence of Section~\ref{sec:r2}). (a)~Median emergence step (interquartile range over 10 seeds) versus context
+length for three optimizers; the circuit forms within a few hundred steps in every cell, with
+plain-momentum SGD the slowest. The emergence step is read on a 100-step evaluation grid, so
+the fastest cells are grid-limited at the floor and the AdamW/Muon difference is not resolved
+here. These context-length emergence steps (a few hundred) use a different readout and task
+setup from the ${\approx}1850$-step copy/induction emergence of Section~\ref{sec:r1}
+(Fig.~\ref{fig:curriculum}, threshold $0.5$); the two are not directly comparable.
+(b)~Final in-context-learning score per optimizer (each point a seed): all cells sit
+well above the $0.5$ reference, confirming the circuit genuinely forms rather than being a
+detector artifact.
+(c)~Sustained-$K$ latency audit: the sustained-$K{=}2$ crossing adds at most
+one checkpoint over the single crossing per run (median zero), so the
+correction costs no latency on genuine emergences.
+(d)~Per-seed onset steps by context length: the raw distributions behind the
+median ordering.
+Panel summaries: (a)~emergence step vs context length. (b)~final ICL score by optimizer. (c)~sustained-$K$ latency. (d)~per-seed onset steps.}
+\label{fig:induction-emergence}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{Emergence step per ordering policy and optimizer (copy/induction family, $n=5$ seeds each).
+Median emergence step at threshold $0.5$; cell means span 1780--1900 and cell medians 1750--1950 across orderings.
+Pooled Welch $t$-test (i.i.d.\ vs.\ easy$\to$hard, $n=10$ each): $t=-2.83$, $p=0.011$.}
+\label{tab:curriculum}
+\small
+\begin{tabular}{llcc}
+\toprule
+Ordering & Optimizer & Median step & Mean step \\
+\midrule
+i.i.d.\       & AdamW & 1750 & 1780 \\
+i.i.d.\       & SGDM  & 1850 & 1830 \\
+easy$\to$hard & AdamW & 1950 & 1900 \\
+easy$\to$hard & SGDM  & 1850 & 1880 \\
+hard-first    & AdamW & 1850 & 1840 \\
+hard-first    & SGDM  & 1850 & 1850 \\
+structured    & AdamW & 1850 & 1830 \\
+structured    & SGDM  & 1850 & 1850 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Case study: early trajectories are a configuration fingerprint, not a run predictor}\label{sec:r3}
+
+As a case study for the nuisance-axis-freezing discipline, we ask whether early-trajectory
+predictiveness survives once the optimizer axis is frozen.
+Re-analysing 364 existing runs across 11 closed experiment namespaces (252 grok events each
+labelled with a route---a discrete outcome-class assigned to the run and used here as the
+prediction target; zero new training), we test three early-prediction laws (a seed-level
+delay-signal increment, a route-prediction area under the ROC curve (AUROC), and a config-baseline error
+comparison)---whose analysis plan (the three laws plus baselines) was pre-registered before
+the data were inspected, although the runs themselves are pre-existing rather than collected
+prospectively---on this first-window trajectory against a configuration-identity baseline,
+with group-aware cross-validation and label-permutation nulls. All three land on their pre-registered
+clean-negative branches: the seed-level signal increment for delay is statistically
+detectable but practically nil (Spearman $\rho \approx 0.077 / 0.014$) and the signal
+model's error is worse than a predict-the-config baseline. The quantified warning
+for the timing-prediction literature: the pooled route AUROC of $0.815$ collapses toward
+chance ($0.47$--$0.57$, not distinguishable from chance at this sample size)
+within AdamW---optimizer identity masquerades as trajectory
+predictiveness unless the optimizer axis is frozen. Reported predictability that pools
+across optimizers can be configuration recognition, not run prediction.
+The full window~$\times$~tier breakdown is in Fig.~\ref{fig:route-matrix}, and the
+collapsed summary is in Fig.~\ref{fig:specroute}. This recasts early-prediction claims
+\citep{notsawo2023predicting, xu2026earlywarning} as requiring a frozen nuisance axis
+before the predictiveness can be attributed to the run.
+
+\begin{figure}[htbp]
+\centering
+\figtikz[0.7\linewidth]{E2_routemat}
+\caption{Tier-B route-prediction AUROC at both early windows, pooled across optimizers
+(bars); the dotted line marks chance. Tier~B has no estimable within-AdamW cell
+(insufficient within-optimizer label balance), as noted in the panel.
+(b)~Tier-A reference: the pooled-versus-within-AdamW collapse (pooled $0.815$/$0.67$
+dropping to $0.57$/$0.47$ within a single optimizer, across the 200-step and mem-onset
+windows; the four bars of the main-text spec-route figure, restated).
+(c)~The optimizer-identity component per window (pooled minus within-AdamW,
+tier A).
+(d)~Variance decomposition at the mem-onset window: config share dominates in
+every optimizer---the early window is a configuration fingerprint, not a run
+fingerprint.
+Panel summaries: (a)~tier-B AUROC. (b)~within-AdamW collapse. (c)~optimizer component. (d)~variance decomposition.}
+\label{fig:route-matrix}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\centering
+\figtikz[\linewidth]{E2_specroute}
+\caption{Four diagnostics for the early-prediction collapse, panels (a)--(d).
+(a)~Signal increment is not stable: the change in grok-prediction AUROC from adding the
+trajectory signal on top of the config-only baseline, for the config, seed, and task
+predictors (the mem-onset window W-mem and the 200-step window W-200). Increments are at most $+0.07$ and the task
+predictor moves $-0.38$, so the signal adds no reliable predictiveness over config.
+(b)~Pooled route AUROC is optimizer identity: pooled route-prediction AUROC is high
+($0.815$ at the 200-step window, $0.674$ at mem-onset) but collapses to chance within
+AdamW ($0.57$/$0.47$, below the $0.5$ dotted line), exposing that pooled predictiveness
+is configuration recognition, not run-level forecasting.
+(c)~Config baseline wins: leave-one-out mean absolute error (MAE) of log-delay residual for the signal model
+versus the predict-the-config baseline; the signal model's error ($0.51$/$0.52$) exceeds
+the config baseline ($0.33$/$0.43$) at both windows.
+(d)~Config dominates optimizer structure: out-of-fold variance-share decomposition of
+log-delay per optimizer (config, signal, residual). AdamW and Muon are config-dominated;
+SGDM carries no recoverable structure (see below).
+In the variance-share decomposition, shares are clamped at zero and need not
+sum to one: for SGDM both the config and signal out-of-fold $R^2$ are negative
+(predictors are worse than the group mean), so config and signal collapse to zero and the
+residual share exceeds one ($1.26$), indicating that no fitted component explains its
+delay variance.
+Panel summaries: (a)~$\Delta$ AUROC. (b)~pooled vs within-AdamW AUROC. (c)~LOO MAE. (d)~variance share.}
+\label{fig:specroute}
+\end{figure}
+
+\section{Reconciliation and scope}\label{sec:discussion}
+
+\paragraph{The shared root: measurement before interpretation.}
+All three case studies trace to the same preventable failure mode: interpreting a measurement
+output before verifying that the measurement protocol can distinguish a real signal from
+its null.
+A single-crossing detector applied to a stationary accuracy series
+will reliably fire (Section~\ref{sec:theorem}); an unlearnable target will reliably fail any ordering
+intervention; a predictor trained without freezing the optimizer axis will reliably
+absorb the optimizer label.
+These are not unusual mistakes---they are precisely the traps that arise when
+experiments are cheap enough to run at scale but too fast to pre-calibrate carefully.
+
+\paragraph{Relation to the large-model emergence debate.}
+Our findings mirror, at small scale, the concern raised by \citet{schaeffer2023mirage}
+for large models: apparent phase transitions can be artefacts of the measurement
+protocol rather than genuine discontinuities in the underlying computation.
+The mechanism differs---metric nonlinearity for large models, noisy single-crossing
+detectors and unlearnable targets for small models---but the corrective logic is the same.
+The single-crossing detector is the small-scale counterpart of a discontinuous metric: it
+maps a noisy accuracy series onto a binary ``emerged / not'' label by asking whether the
+series ever crosses a threshold.
+Applied to our in-context TD grid (45 runs, median final accuracy $0.562$, against a
+constant-predictor floor of $0.390$ and a detection bar of $0.8$)
+at the illustrative $\tau=0.8$ bar, it manufactures apparent emergence in 26/45 runs, whereas the sustained-2 criterion---the
+counterpart of a continuous or de-noised readout---removes every apparent emergence (0/45
+survive).
+Theorem~\ref{thm:single} and Lemma~\ref{lem:sustain} give the closed-form, parameter-free account: with $N=32$ evaluation
+sequences, $M=201$ evaluation points, and stationary baseline $p=0.562$, a single crossing
+fires with probability $0.421$ per run without any transition while a sustained-2 crossing fires with
+probability $0.00147$---a suppression of more than two orders of magnitude (under the
+stated association hypothesis). At the pre-registered $\tau=0.7$ bar the corresponding chain is
+$42/45\to1/45$ under the mixture-prescribed $K=5$ (Section~\ref{sec:theorem}).
+The instrument (detector choice) manufactures the phenomenon (emergence rate), in direct
+analogy to \citeauthor{schaeffer2023mirage}'s finding that the metric manufactures the
+phenomenon in large-model scaling. This is a reconciliation rather than a new phenomenon: in
+the genre of \citet{oneto2026}, the apparent effect is accounted for by a known
+mechanism---here, scan-statistic false positives.
+
+\citet{lee2023icrl} provide the positive existence proof that in-context RL can
+emerge: their supervised-pretraining recipe on diverse RL trajectories yields near-optimal
+in-context RL agents at test time.
+Our TD testbed does not refute this; it is a calibration failure on a harder, single-task
+online regime.
+The honest framing is: \citeauthor{lee2023icrl} establish that in-context TD emergence is
+achievable in principle, which is precisely why our recalibration recipe (solved-reference
+cell, de-noised readout, sustained criterion) matters: it sets the minimum calibration bar
+an online single-task testbed must clear before emergence can be claimed, and without such a
+gate there is no way to tell a broken testbed from a genuine negative.
+
+\paragraph{Curriculum learning and emergence timing.}
+The curriculum learning literature \citep{bengio2009curriculum, soviany2022curriculum, wu2021curricula}
+generally shows benefits for asymptotic performance or sample efficiency, not for
+shifting the onset of phase-transition-like learning.
+Our ordering case study (Section~\ref{sec:r1}) is consistent with this: if the emergence delay is set by the task
+structure (the induction circuit must be assembled regardless of input order), then
+presenting examples in a ``better'' order cannot materially accelerate that assembly.
+Easy$\to$hard ordering mildly lengthens the delay, plausibly because the early
+easy-example phase trains representations that must be partially unlearned when harder
+examples arrive.
+Curricula can help or hurt depending on
+whether the hard-example representations subsume the easy-example ones.
+
+\paragraph{Pre-registration as a methods virtue.}
+Following the methodological prescription of \citet{pineau2021reproducibility},
+all three case studies had their analysis plans---thresholds, comparison arms, and
+outcome branches---fixed before analysis (for the re-analysis of
+Section~\ref{sec:r3}, before the pre-existing runs were inspected).
+Pre-registration is especially useful for calibration work because the
+``interesting'' finding---a null that rules out a hypothesis---requires the same
+evidential discipline as a positive finding: without it, a researcher who runs four ordering
+policies and finds a borderline-significant slowdown could plausibly report that as a
+positive curriculum effect. We treat it as one methodological safeguard among several, not
+as the identity of the paper.
+
+\paragraph{Scope and forward directions.}
+The validation here is specific to a single programme of tiny-transformer experiments; the
+theorem is general but the empirical anchoring is local.
+The calibration disciplines below (Section~\ref{sec:disciplines}) follow from the reduction
+as transferable recommendations, not as universal theorems.
+Extending the in-context TD testbed to a regime where emergence is achievable would
+convert the current calibration vignette into an adjudicable science question; the
+budget and discount levers are now answered in the negative at this scale
+(Section~\ref{sec:mnaxes}), leaving pretraining diversity---for instance, via the
+approach of \citet{lee2023icrl}---as the untested lever.
+Similarly, the early-prediction collapse (Section~\ref{sec:r3}) motivates a cleaner experimental
+design: fix the optimizer and vary only seed and data, then ask whether within-seed
+early trajectories predict final performance.
+The sustained-crossing criterion of Section~\ref{sec:theorem} is immediately applicable to
+any binary-accuracy emergence study as a drop-in replacement for single-crossing
+detectors, with an observed ${\sim}42\times$ reduction in false positives at the
+pre-registered bar of the testbed studied here.
+
+\subsection{The calibration disciplines}\label{sec:disciplines}
+
+The three case studies share a small set of preventable failure modes, which the reduction
+of Section~\ref{sec:theorem} implies as calibration disciplines for small-scale emergence
+studies:
+
+\begin{enumerate}
+\item \textbf{Sustained vs single-crossing criteria.} A single threshold crossing is
+  noise; require the signal to persist for $K$ consecutive evaluations. Theorem~\ref{thm:single}
+  and Lemma~\ref{lem:sustain} quantify the $q^{-(K-1)}$ suppression, and
+  Eq.~\eqref{eq:nomogram} sets $K$ for a target budget (Section~\ref{sec:r2}, and cf.\
+  mode-connectivity and norm-clock studies).
+\item \textbf{Floor-censoring control.} Coarse evaluation grids censor fast transitions at
+  a floor; a fine-evaluation arm is needed before reading ``instant'' or ``zero-variance''
+  (Section~\ref{sec:r1}, mod-add arm; cf.\ Edge-of-Stability \citep{cohen2021eos} and induction-emergence studies).
+\item \textbf{Learnable-vs-unlearnable target check.} An intervention that fails on an
+  unlearnable target (e.g.\ the Walsh pure-degree target) is uninformative; verify the
+  target is learnable in the pipeline first (Section~\ref{sec:r1}).
+\item \textbf{Freeze nuisance axes before claiming predictiveness.} Predictiveness pooled
+  over a nuisance axis (here the optimizer) can be recognition of that axis; freeze it
+  (Section~\ref{sec:r3}).
+\item \textbf{A recurring negative anchor.} Plain-momentum SGD repeatedly serves as a clean
+  negative anchor (it fails to train several of these tasks), useful for calibrating ``did
+  anything happen at all.''
+\end{enumerate}
+Table~\ref{tab:evidence-ledger} summarises each case study with its diagnostic, evidence scope, and what further work would be needed before a stronger claim.
+
+\begin{table}[htbp]
+\centering
+\caption{Validation summary across the case studies. The final column
+marks what would be needed before making a stronger positive/negative claim.}
+\label{tab:evidence-ledger}
+\scriptsize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.23\linewidth}>{\raggedright\arraybackslash}p{0.24\linewidth}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.25\linewidth}@{}}
+\toprule
+Claim & Diagnostic & Evidence & Boundary \\
+\midrule
+Order does not compress delay & Fixed-target order arms and solved-reference check & Copy/induction ordering grid & Copy/induction family only \\
+In-context TD remains a calibration failure in the trained grid & Sustained threshold plus de-noised detector & TD audit and false-positive case study & Calibration negative; not a theorem that TD cannot emerge \\
+Early trajectories confound optimizer identity & Pooled vs within-optimizer AUROC & Trajectory re-analysis & Warning is local to this corpus/optimizer mix \\
+Detector must reject noise & Single-crossing vs sustained emergence & False-positive trajectory audit plus 171 failed trainable-control cells (rescue, ladder, $\gamma=0.5$ budget grid) & Oracle validates labels; trained positive remains absent at up to $8\times$ budget \\
+Calibration transfers off-programme & Audit-convention detector plus nomogram-prescribed sustained-$K$ on public checkpoints & Pythia $70$M--$410$M, $36$ real pretraining curves ($4\to0$ false fires, $8/9$ emergences kept) & Coarse grid ($M{=}12$/$8$), one model family; small-$N$ tasks drive the fires and the one censored detection \\
+Negative anchor is useful & SGDM failure across related testbeds & Cross-paper optimizer floor evidence & Anchor diagnoses training failure, not mechanism by itself \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Limitations}\label{sec:limitations}
+
+These are toy-scale results on one programme's testbeds; the negatives follow analysis
+plans fixed in advance and are clean but individually modest. The Pythia battery
+(Section~\ref{sec:pythia}) shows the detector account itself transfers off-programme,
+but that replication is scoped in its own right: twelve (eight for 410M) log-spaced
+public checkpoints per curve rather than $201$---by Theorem~\ref{thm:single} the
+direction that reduces single-crossing false fires, so it tests the small-$N$ lever
+rather than the dense-grid lever---one model family at three sizes, and
+multiple-choice item counts small enough ($N{=}36$--$50$ on several tasks) that the
+emerged-versus-chance split is itself weakly powered. The ordering adjudication is on the copy/induction family
+only (other families were testbed-bounded). The in-context TD grid is a calibration-failure vignette---it does
+not establish that in-context TD cannot emerge, only that the trained grid cannot
+adjudicate it despite a solved-reference oracle validating the evaluator; indeed, at
+four times the budget the lookup rung does produce genuine late emergences ($4/20$
+seeds; Section~\ref{sec:mnaxes}). The same lever fails in a second, harder configuration:
+the $\gamma=0.5$ sixty-run budget grid stays negative at eight times the budget ($0/60$;
+Section~\ref{sec:mnaxes}). That arm varies the state count, horizon set, and readout size
+alongside the discount, so it bounds the negative rather than isolating which axis
+resists the budget; the two results are not in contradiction.
+Additional isolated trainable-control attempts made the TD task easier
+($n_{\mathrm{states}}\in\{2,4\}$, $T\in\{4,6\}$; 26 trained cells, across two attack rounds, spanning AdamW/Muon,
+ultra-easy AdamW, and a wider 897k-parameter AdamW rescue). None obtained a sustained
+$0.8$ run under the detector (Fig.~\ref{fig:positive-rescue}). The wider rescue was informative but still not a positive
+control: all three cells sustained $0.7$ yet peaked only at $0.754$ and ended near
+
+
+\begin{figure}[htbp]
+\centering
+\figtikz[\linewidth]{E2_positive_rescue}
+\caption{Trainable-positive rescue: near-positive but not a positive control.
+(a)~Best max validation accuracy per rescue family, pooling both attack rounds
+(main: $n=14$ cells; ultra-easy: $n=9$; wide 897k-parameter AdamW: $n=3$); the wide
+rescue improves toward $0.754$ but does not
+cross the $0.8$ positive-control threshold.
+(b)~95\% one-sided upper bound on the success probability given $0/26$ successes
+($\hat{p}_{\mathrm{upper}}=0.109$): this is an upper bound under this sampled rescue set,
+not an impossibility proof. It also assumes independent cells; the 26 cells share one
+pipeline across three arms, so the cluster-aware reading is weaker
+(Section~\ref{sec:limitations}).
+This is why Section~\ref{sec:r2} is framed as a non-adjudicable TD testbed rather than evidence that
+TD emergence cannot occur.
+(c)~Near-positive ($0.7$) counts per family: the wide family comes closest,
+but near-positive is not a positive control.
+(d)~Pool provenance: the 26 rescue cells pooled across both attack rounds
+with zero successes (95\% upper bound $0.109$ on the per-cell rate).
+Panel summaries: (a)~best rescue accuracy. (b)~zero-success bound. (c)~near-positive cells. (d)~pool provenance.}
+\label{fig:positive-rescue}
+\end{figure}
+$0.69$--$0.71$ (Fig.~\ref{fig:positive-rescue}). The discount ladder of
+Section~\ref{sec:ladder} extends this search to the family's easiest rung ($V(s)=r(s)$,
+an in-context lookup) and still finds no trained positive at the standard budget, and
+the $\gamma=0.5$ sixty-run budget grid (Section~\ref{sec:mnaxes}) extends it along the
+budget axis. Across all 171 trainable-control cells---the 26 rescue cells, the 85
+standard-budget ladder runs at $\gamma>0$, and the 60 budget-grid runs---zero genuine
+sustained emergences were observed. These cells are not independent draws: all 171 share
+one pipeline, architecture, and tokenizer, and they group into nine experimental arms
+(three rescue families, four ladder rungs, two budget tiers). Under the optimistic
+independence assumption the $0/171$ count gives a 95\% upper bound of about $0.02$ on the
+per-cell success probability of this family of rescues; under the pessimistic extreme in
+which each arm contributes one effective trial, the $0/9$ count gives about $0.28$. A
+hierarchical (Beta-Binomial) treatment interpolates between these endpoints, but with
+zero successes the within-arm dependence is unidentified from the data, so we report the
+result descriptively---$0$ successes in $171$ cells across $9$ arms---with the honest
+per-cell bound lying between $0.02$ and $0.28$ depending on how strongly the shared
+pipeline correlates outcomes. (The $\gamma=0$ lookup rung is excluded from
+the pool by competence class, not outcome: it reduces to in-context retrieval rather
+than value bootstrapping, and it is where the family's only trained positives
+live---the $4/20$ at quadrupled budget quoted above.) Thus the exact Bellman cell remains an oracle/solved-reference control that
+validates the evaluator; the trained positive controls for the detector are supplied by
+the induction family (Section~\ref{sec:r1}), where all 90 genuine emergences are
+detected at zero sustained-criterion latency, and by the lookup rung's late emergence
+at the quadrupled budget (Section~\ref{sec:mnaxes}). We therefore further narrow the
+claim: the budget lever is exhausted at this scale (silent at eight times the
+canonical budget on the $\gamma=0.5$ configuration), and this setup is not a reliable
+trainable TD-emergence testbed under any budget probed; whether other levers,
+pretraining diversity above all, unlock it remains open.
+The early-prediction case study is a post-hoc re-analysis at a fixed corpus scale; the AUROC-collapse warning is
+specific to corpora where the optimizer axis is varied.
+The within-AdamW collapse (W-200 AUROC $0.57$, $p\approx0.12$, $n=72$) is power-bounded:
+a true AUROC around $0.6$ cannot be excluded at this sample size, so the collapse is a
+quantified warning, not a proof that within-AdamW predictiveness is exactly at chance.
+Finally, the false-positive account itself uses classical run/scan statistics rather than a
+new inequality; its novelty is the reduction and the calibrated instrument. The
+illustrative-bar suppression figure of Corollary~\ref{cor:numbers} assumes near-independence, which is now measured rather than pending
+(median detrended lag-1 autocorrelation $+0.03$, $41/45$ runs inside the white-noise
+band, with lags $2$--$5$ equally quiet; a deliberately pessimistic dependence model still
+leaves ${\approx}24\times$, Section~\ref{sec:theorem}).
+
+\section{Conclusion}\label{sec:conclusion}
+
+We have reduced the emergence-timing readout used in small-scale testbeds to a classical
+run/scan-statistics false-positive problem, and calibrated a sustained-crossing correction
+with an explicit nomogram.
+The central message is not that emergence is rare or unreal, but that small-scale
+testbeds require the same measurement discipline as large-scale ones: a solved-reference
+cell to validate the evaluator, a sustained threshold to suppress noise-driven detections,
+a learnable-target check before any intervention is tested, and a frozen nuisance axis
+before any predictiveness claim is made.
+The false-positive theorem (Section~\ref{sec:theorem}) shows that the suppression
+delivered by the sustained-crossing criterion---an observed ${\sim}42\times$ at the
+pre-registered bar---is a direct consequence of the evaluation
+parameters (under the stated association hypothesis).
+The mathematics is classical; what is new is the reduction of small-scale emergence timing
+to it, the sustained-$K$ power/latency analysis, and the calibrated instrument.
+We hope these diagnostics serve as reusable infrastructure for the growing community
+studying phase-transition-like learning at small scale.
+
+\appendix
+\setcounter{figure}{0}\renewcommand{\thefigure}{A\arabic{figure}}
+\setcounter{table}{0}\renewcommand{\thetable}{A\arabic{table}}
+% Keep hyperref anchors unique after the counter reset (avoids duplicate-destination warnings)
+\renewcommand{\theHfigure}{A\arabic{figure}}
+\renewcommand{\theHtable}{A\arabic{table}}
+\section{Supplementary run-grids and robustness checks}\label{app:grid}
+
+These supplementary figures back the three main-text case studies, in the order they are
+first cited: a fit-sanity check for the in-context TD testbed
+(Fig.~\ref{fig:supervised-fit}), the trainable-positive rescue audit
+(Fig.~\ref{fig:positive-rescue}), and the consolidated run-grids behind all
+three nulls (Fig.~\ref{fig:grid}).
+Two further robustness figures illustrate calibration disciplines directly: the
+unlearnable-target check of Section~\ref{sec:disciplines} (Fig.~\ref{fig:walsh-control}) and
+the tier-B route-prediction AUROC at both early windows
+(Fig.~\ref{fig:route-matrix}), complementing the tier-A collapse of Fig.~\ref{fig:specroute}.
+
+
+
+\begin{figure}[htbp]
+\centering
+\figtikz[\linewidth]{E2_walsh}
+\caption{Learnable-vs-unlearnable target check (calibration discipline~3). (a)~On a single
+non-Fourier target, final accuracy stays pinned at the floor ($\approx0.04$--$0.05$) across
+a $20\times$ range of total training budget ($2{,}400$ to $48{,}000$ steps; markers are
+per-seed runs, diamonds the per-budget median, all AdamW), far below the learnable copy
+reference ($1.00$, dashed line). An intervention tested on such a target is uninformative,
+which is why the ordering sweep of Section~\ref{sec:r1} is adjudicated on the copy/induction family
+rather than this one.
+(b)~The floor is ordering-robust: the non-Fourier target stays at the floor
+under every data-ordering policy.
+(c)~Budget-response per target (medians): the learnable target improves with
+budget; the non-Fourier target does not (${\sim}20\times$ span).
+(d)~The learnable-versus-floor accuracy margin by budget: the discriminative
+margin of the discipline-3 control.}
+\label{fig:walsh-control}
+\end{figure}
+
+The consolidated run-grids (Fig.~\ref{fig:grid}) rest on $\approx$255 runs across the
+three nulls, in one panel-per-result view. Panel~(a): across the ordering sweep (120
+runs; three task families $\times$ four orderings $\times$ two optimizers $\times$
+five seeds) the copy/induction circuit emerges flat at $\sim$1850 steps regardless
+of ordering, with i.i.d.\ the fastest---mod-add floors at the first evaluation
+(no headroom to compress) and the Walsh family does not emerge within budget.
+Panel~(b): the in-context-TD grid (45 runs) sits at $\approx$chance for every
+optimizer $\times$ horizon cell; Table~\ref{tab:tdcalib} shows that de-noised, sustained
+threshold criteria remove the single-spike positives.
+Panel~(c): the route-prediction AUROC is high when pooled across optimizers
+($0.815$ at the 200-step window) but collapses to chance within AdamW
+(0.57/0.47), exposing the early window as a configuration fingerprint.
+
+
+
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{E2_grid.pdf}
+\caption{Run-grids behind the three pre-specified negatives ($\approx$255 runs total).
+(a)~Data-ordering sweep (120 runs; copy/induction family flat at $\sim$1850 steps with
+i.i.d.\ the fastest; mod-add floors at the first evaluation; walsh does not emerge within
+the training budget --- note log-$y$ axis).
+(b)~In-context TD grid (45 runs; 3 optimizers $\times$ $T\in\{10,20,40\}$ $\times$ 5
+seeds); each cell shows median accuracy / runs whose accuracy ever crosses $0.8$ at a
+single checkpoint, of $n=5$---$26/45$ runs show such a transient single crossing,
+none is sustained ($0/45$), and the grid is $\approx$chance everywhere.
+(c)~Early-window route-prediction AUROC (90+ route-labelled runs, subset of 364 total);
+pooled signal ($0.815$) collapses to
+chance within AdamW ($0.57$/$0.47$), confirming that the early window is a configuration
+fingerprint.}
+\label{fig:grid}
+\end{figure}
+
+\section{BIG-G audit: per-task item counts and chance baselines}\label{app:bigbench}
+\setcounter{table}{0}\renewcommand{\thetable}{B\arabic{table}}
+\renewcommand{\theHtable}{B\arabic{table}}
+
+The look-elsewhere adjudication of Section~\ref{sec:bigbench} is driven by each task's
+item count $N$ and chance baseline, so we document both. Across the 89 audited
+multiple-choice tasks, $N$ ranges from $8$ to $70{,}000$ (median $175$) and the chance
+baseline from $0.012$ to $0.5$. The verdict classes separate cleanly by power: the 24
+surviving claims have median $N=188$ (range $8$--$54{,}668$; the $N{=}8$ survivor clears
+on a $0.75$ jump), the 9 fragile claims median $N=100$ ($32$--$219$), and the 7
+unconfirmed claims median $N=50$ ($36$--$99$)---the flagged-but-unconfirmed tasks sit at
+the small-$N$, small-jump corner where a chance-level scan is expected to produce
+equally extreme flags. The seven unconfirmed tasks are listed in the appendix table below;
+$E_{\mathrm{task}}$ is the expected number of chance-level tasks in the 89-task scan
+showing a jump at least as extreme, so values $\gg1$ mean the observed jump is
+unremarkable under the all-chance null. None of the seven is among the headline tasks
+cited by \citet{wei2022emergent}; the audit's verdict for them is ``unpowered under
+scan correction,'' not ``demonstrated false.'' The full 89-row table is in the archived
+repository.
+
+The detector's false negatives on the cited claims (Section~\ref{sec:bigbench}) come from
+the same inputs. Of the eighteen cited-emergent multiple-choice tasks, the nine that the
+chance${}+0.10$ detector does not flag are listed in
+Table~\ref{tab:bigbench-falsenegative}. Eight fail the detector's jump leg, never reaching
+chance${}+0.10$ at any of the twelve scales; \texttt{persian\_idioms} fails the
+near-chance-early leg instead, since it already scores $0.455$ at the smallest scale
+against a chance baseline of $0.250$. Item counts run from 32 to 323 (median 60), so most
+sit in the same small-$N$ corner as the seven unconfirmed flags of
+Table~\ref{tab:bigbench-unpowered}: a scan correction has little power to confirm these
+claims, and the detector has little power to find them.
+
+\begin{table}[htbp]
+\centering
+\caption{The nine cited-emergent BIG-G multiple-choice tasks that the audit detector does
+not flag. Jump = peak accuracy minus chance; early = accuracy at the smallest scale.
+A task is flagged only if jump ${\geq}0.10$ and early ${\leq}$ chance${}+0.05$.}
+\label{tab:bigbench-falsenegative}
+\footnotesize
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.36\linewidth}ccccl}
+\toprule
+Task & $N$ & Chance & Peak & Jump & Leg failed \\
+\midrule
+\texttt{persian\_idioms}         & 66  & 0.250 & 0.515 & 0.265 & early \\
+\texttt{english\_proverbs}       & 34  & 0.290 & 0.382 & 0.092 & jump \\
+\texttt{international\_phonetic\_}\newline\texttt{alphabet\_nli}
+                                 & 126 & 0.333 & 0.397 & 0.064 & jump \\
+\texttt{analogical\_similarity}  & 323 & 0.143 & 0.189 & 0.046 & jump \\
+\texttt{crass\_ai}               & 44  & 0.250 & 0.295 & 0.045 & jump \\
+\texttt{odd\_one\_out}           & 86  & 0.206 & 0.244 & 0.038 & jump \\
+\texttt{code\_line\_description} & 60  & 0.248 & 0.283 & 0.035 & jump \\
+\texttt{known\_unknowns}         & 46  & 0.500 & 0.522 & 0.022 & jump \\
+\texttt{gre\_reading\_comprehension} & 32 & 0.284 & 0.290 & 0.006 & jump \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{The seven flagged-but-unconfirmed BIG-G emergence claims (detector: accuracy
+$\geq$ chance${}+0.10$ at some scale, near-chance early). $N$ = items; jump = peak
+accuracy minus chance; $E_{\mathrm{task}}$ = expected number of equally extreme flags
+across the 89-task scan under the all-chance null.}
+\label{tab:bigbench-unpowered}
+\small
+\begin{tabular}{lccccc}
+\toprule
+Task & $N$ & Chance & Peak & Jump & $E_{\mathrm{task}}$ \\
+\midrule
+\texttt{suicide\_risk}           & 40 & 0.250 & 0.350 & 0.100 & 110.3 \\
+\texttt{what\_is\_the\_tao}      & 36 & 0.500 & 0.639 & 0.139 & 70.8 \\
+\texttt{logical\_sequence}       & 39 & 0.252 & 0.385 & 0.133 & 50.1 \\
+\texttt{mathematical\_induction} & 70 & 0.500 & 0.609 & 0.109 & 38.6 \\
+\texttt{empirical\_judgments}    & 99 & 0.333 & 0.455 & 0.121 & 8.6 \\
+\texttt{sentence\_ambiguity}     & 60 & 0.500 & 0.667 & 0.167 & 7.2 \\
+\texttt{common\_morpheme}        & 50 & 0.250 & 0.420 & 0.170 & 6.7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Declaration of competing interest}
+
+The author declares no competing interests.
+
+\section*{CRediT author statement}
+
+Zeyu Fu: Conceptualization, Methodology, Software, Investigation, Formal
+analysis, Writing -- original draft, Writing -- review \& editing.
+
+\section*{Funding}
+This research received no external funding.
+
+\section*{Data and code availability}
+All experiments are synthetic. The complete training and analysis code, the per-cell
+logs for the three negative grids, and the calibration/figure-generation scripts required
+to reproduce every reported result and figure are archived in a public repository under
+open licenses (code: MIT; data and figures: CC~BY~4.0). Repository:
+\href{https://github.com/PeterPonyu/calibration-traps}{\nolinkurl{github.com/PeterPonyu/calibration-traps}};
+archived snapshot DOI:
+\href{https://doi.org/10.5281/zenodo.21020386}{\texttt{10.5281/zenodo.21020386}}.
+
+\bibliographystyle{plainnat}
+\section*{Declaration of generative AI and AI-assisted technologies}
+
+During the preparation of this work the author used Claude (Anthropic) to assist
+with drafting and editing the manuscript text, developing and reviewing the
+analysis code, and preparing the figures. After using this tool, the author
+reviewed and edited the content as needed and takes full responsibility for the
+content of the published article.
+
+\begin{thebibliography}{21}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\doi}[1]{\href{https://doi.org/#1}{\path{doi:#1}}}
+
+\bibitem[Agarwal et~al.(2021)Agarwal, Schwarzer, Castro, Courville, and
+  Bellemare]{agarwal2021precipice}
+Rishabh Agarwal, Max Schwarzer, Pablo~Samuel Castro, Aaron Courville, and
+  Marc~G. Bellemare.
+\newblock Deep reinforcement learning at the edge of the statistical
+  precipice.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2021. arXiv:2108.13264.
+\newblock \doi{10.48550/arXiv.2108.13264}
+\bibitem[Aky{\"u}rek et~al.(2024)Aky{\"u}rek, Wang, Kim, and
+  Andreas]{akyurek2024iclalgorithms}
+Ekin Aky{\"u}rek, Bailin Wang, Yoon Kim, and Jacob Andreas.
+\newblock In-context language learning: Architectures and algorithms.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2024.
+  arXiv:2401.12973.
+\newblock \doi{10.48550/arXiv.2401.12973}
+\bibitem[Barak et~al.(2022)Barak, Edelman, Goel, Kakade, Malach, and
+  Zhang]{barak2022hidden}
+Boaz Barak, Benjamin~L. Edelman, Surbhi Goel, Sham Kakade, Eran Malach, and
+  Cyril Zhang.
+\newblock Hidden progress in deep learning: {SGD} learns parities near the
+  computational limit.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2022.
+\newblock arXiv:2207.08799.
+\newblock \doi{10.48550/arXiv.2207.08799}
+\bibitem[Bengio et~al.(2009)Bengio, Louradour, Collobert, and
+  Weston]{bengio2009curriculum}
+Yoshua Bengio, J{\'e}r{\^o}me Louradour, Ronan Collobert, and Jason Weston.
+\newblock Curriculum learning.
+\newblock In \emph{Proceedings of the 26th International Conference on Machine
+  Learning (ICML)}, pages 41--48, 2009.
+
+\bibitem[Biderman et~al.(2023)Biderman, Schoelkopf, Anthony, Bradley, O'Brien,
+  Hallahan, Khan, Purohit, Prashanth, Raff, Skowron, Sutawika, and van~der
+  Wal]{biderman2023pythia}
+Stella Biderman, Hailey Schoelkopf, Quentin Anthony, Herbie Bradley, Kyle
+  O'Brien, Eric Hallahan, Mohammad~Aflah Khan, Shivanshu Purohit, USVSN~Sai
+  Prashanth, Edward Raff, Aviya Skowron, Lintang Sutawika, and Oskar van~der
+  Wal.
+\newblock Pythia: A suite for analyzing large language models across training
+  and scaling.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2023.
+  arXiv:2304.01373.
+\newblock \doi{10.48550/arXiv.2304.01373}
+\bibitem[Cohen et~al.(2021)Cohen, Kaur, Li, Kolter, and
+  Talwalkar]{cohen2021eos}
+Jeremy~M. Cohen, Simran Kaur, Yuanzhi Li, J.~Zico Kolter, and Ameet Talwalkar.
+\newblock Gradient descent on neural networks typically occurs at the edge of
+  stability.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2021.
+\newblock arXiv:2103.00065.
+\newblock \doi{10.48550/arXiv.2103.00065}
+\bibitem[Du et~al.(2024)Du, Zeng, Dong, and Tang]{du2024loss}
+Zhengxiao Du, Aohan Zeng, Yuxiao Dong, and Jie Tang.
+\newblock Understanding emergent abilities of language models from the loss
+  perspective.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2024. arXiv:2403.15796.
+\newblock \doi{10.48550/arXiv.2403.15796}
+\bibitem[Edelman et~al.(2024)Edelman, Edelman, Goel, Malach, and
+  Tsilivis]{edelman2024statinduction}
+Benjamin~L. Edelman, Ezra Edelman, Surbhi Goel, Eran Malach, and Nikolaos
+  Tsilivis.
+\newblock The evolution of statistical induction heads: In-context learning
+  {Markov} chains.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2024. arXiv:2402.11004.
+\newblock \doi{10.48550/arXiv.2402.11004}
+\bibitem[Feller(1968)]{feller1968}
+William Feller.
+\newblock \emph{An Introduction to Probability Theory and Its Applications},
+  volume~1.
+\newblock Wiley, New York, 3rd edition, 1968.
+
+\bibitem[Fu and Lou(2003)]{fulou2003runs}
+James~C. Fu and W.~Y. Wendy Lou.
+\newblock \emph{Distribution Theory of Runs and Patterns and Its Applications: A
+  Finite Markov Chain Imbedding Approach}.
+\newblock World Scientific, Singapore, 2003.
+
+\bibitem[Garg et~al.(2022)Garg, Tsipras, Liang, and Valiant]{garg2022icl}
+Shivam Garg, Dimitris Tsipras, Percy Liang, and Gregory Valiant.
+\newblock What can transformers learn in-context? {A} case study of simple
+  function classes.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2022. arXiv:2208.01066.
+\newblock \doi{10.48550/arXiv.2208.01066}
+\bibitem[Glaz et~al.(2001)Glaz, Naus, and Wallenstein]{glaz2001scan}
+Joseph Glaz, Joseph Naus, and Sylvan Wallenstein.
+\newblock \emph{Scan Statistics}.
+\newblock Springer, New York, 2001.
+
+\bibitem[Kumar et~al.(2024)Kumar, Bordelon, Gershman, and
+  Pehlevan]{kumar2024lazytorich}
+Tanishq Kumar, Blake Bordelon, Samuel~J. Gershman, and Cengiz Pehlevan.
+\newblock Grokking as the transition from lazy to rich training dynamics.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2024. arXiv:2310.06110.
+\newblock \doi{10.48550/arXiv.2310.06110}
+\bibitem[Laskin et~al.(2023)Laskin, Wang, Oh, Parisotto, Spencer, Steigerwald,
+  Strouse, Hansen, Filos, Brooks, Gazeau, Sahni, Singh, and Mnih]{laskin2022ad}
+Michael Laskin, Luyu Wang, Junhyuk Oh, Emilio Parisotto, Stephen Spencer, Richie
+  Steigerwald, DJ~Strouse, Steven Hansen, Angelos Filos, Ethan Brooks, Maxime
+  Gazeau, Himanshu Sahni, Satinder Singh, and Volodymyr Mnih.
+\newblock In-context reinforcement learning with algorithm distillation.
+\newblock In \emph{International Conference on Learning Representations (ICLR)}, 2023.
+  arXiv:2210.14215.
+\newblock \doi{10.48550/arXiv.2210.14215}
+\bibitem[Lee et~al.(2023)Lee, Xie, Pacchiano, Chandak, Finn, Nachum, and
+  Brunskill]{lee2023icrl}
+Jonathan~N. Lee, Annie Xie, Aldo Pacchiano, Yash Chandak, Chelsea Finn, Ofir
+  Nachum, and Emma Brunskill.
+\newblock Supervised pretraining can learn in-context reinforcement learning.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2023.
+\newblock arXiv:2306.14892.
+\newblock \doi{10.48550/arXiv.2306.14892}
+\bibitem[Liu et~al.(2023)Liu, Michaud, and Tegmark]{liu2023omnigrok}
+Ziming Liu, Eric~J. Michaud, and Max Tegmark.
+\newblock Omnigrok: Grokking beyond algorithmic data.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2023.
+\newblock arXiv:2210.01117.
+\newblock \doi{10.48550/arXiv.2210.01117}
+\bibitem[McKenzie et~al.(2023)McKenzie, Lyzhov, Pieler, Parrish, Mueller,
+  Prabhu, McLean, Kirtland, Ross, Liu, Gritsevskiy, Wurgaft, Kauffman, Recchia,
+  Liu, Cavanagh, Weiss, Huang, Tseng, Korbak, Shen, Zhang, Zhou, Kim, Bowman,
+  and Perez]{mckenzie2023inversescaling}
+Ian~R. McKenzie, Alexander Lyzhov, Michael Pieler, Alicia Parrish, Aaron
+  Mueller, Ameya Prabhu, Euan McLean, Aaron Kirtland, Alexis Ross, Alisa Liu,
+  Andrew Gritsevskiy, Daniel Wurgaft, Derik Kauffman, Gabriel Recchia, Jiacheng
+  Liu, Joe Cavanagh, Max Weiss, Sicong Huang, {The Floating Droid}, Tom Tseng, Tomasz Korbak, Xudong
+  Shen, Yuhui Zhang, Zhengping Zhou, Najoung Kim, Samuel~R. Bowman, and Ethan
+  Perez.
+\newblock Inverse scaling: When bigger isn't better.
+\newblock \emph{Transactions on Machine Learning Research (TMLR)}, 2023.
+\newblock arXiv:2306.09479.
+\newblock \doi{10.48550/arXiv.2306.09479}
+\bibitem[Nanda et~al.(2023)Nanda, Chan, Lieberum, Smith, and
+  Steinhardt]{nanda2023progress}
+Neel Nanda, Lawrence Chan, Tom Lieberum, Jess Smith, and Jacob Steinhardt.
+\newblock Progress measures for grokking via mechanistic interpretability.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2023.
+\newblock arXiv:2301.05217.
+\newblock \doi{10.48550/arXiv.2301.05217}
+\bibitem[Olsson et~al.(2022)Olsson, Elhage, Nanda, Joseph, DasSarma, Henighan,
+  Mann, Askell, Bai, Chen, Conerly, Drain, Ganguli, {Hatfield-Dodds},
+  Hernandez, Johnston, Jones, Kernion, Lovitt, Ndousse, Amodei, Brown, Clark,
+  Kaplan, McCandlish, and Olah]{olsson2022induction}
+Catherine Olsson, Nelson Elhage, Neel Nanda, Nicholas Joseph, Nova DasSarma,
+  Tom Henighan, Ben Mann, Amanda Askell, Yuntao Bai, Anna Chen, Tom Conerly,
+  Dawn Drain, Deep Ganguli, Zac {Hatfield-Dodds}, Danny Hernandez, Scott
+  Johnston, Andy Jones, Jackson Kernion, Liane Lovitt, Kamal Ndousse, Dario
+  Amodei, Tom Brown, Jack Clark, Jared Kaplan, Sam McCandlish, and Chris Olah.
+\newblock In-context learning and induction heads.
+\newblock \emph{arXiv preprint} arXiv:2209.11895, 2022.
+\newblock \doi{10.48550/arXiv.2209.11895}
+\bibitem[Oneto et~al.(2026)Oneto, Ridella, Minisi, Coraddu, and Anguita]{oneto2026}
+Luca Oneto, Sandro Ridella, Simone Minisi, Andrea Coraddu, and Davide Anguita.
+\newblock Reconciling grokking with statistical learning theory through the lens
+  of norm- and stability-based generalization bounds.
+\newblock \emph{Neurocomputing}, 674:\penalty0 132826, 2026.
+\newblock \doi{10.1016/j.neucom.2026.132826}
+\bibitem[Paperno et~al.(2016)Paperno, Kruszewski, Lazaridou, Pham, Bernardi,
+  Pezzelle, Baroni, Boleda, and Fern{\'a}ndez]{paperno2016lambada}
+Denis Paperno, Germ{\'a}n Kruszewski, Angeliki Lazaridou, Quan~Ngoc Pham,
+  Raffaella Bernardi, Sandro Pezzelle, Marco Baroni, Gemma Boleda, and Raquel
+  Fern{\'a}ndez.
+\newblock The {LAMBADA} dataset: Word prediction requiring a broad discourse
+  context.
+\newblock In \emph{Proceedings of the 54th Annual Meeting of the Association
+  for Computational Linguistics (ACL)}, pages 1525--1534, 2016.
+  arXiv:1606.06031.
+\newblock \doi{10.18653/v1/P16-1144}
+\bibitem[Pineau et~al.(2021)Pineau, Vincent-Lamarre, Sinha, Larivi{\`e}re,
+  Beygelzimer, {d'Alch{\'e}-Buc}, Fox, and
+  Larochelle]{pineau2021reproducibility}
+Joelle Pineau, Philippe Vincent-Lamarre, Koustuv Sinha, Vincent Larivi{\`e}re,
+  Alina Beygelzimer, Florence {d'Alch{\'e}-Buc}, Emily Fox, and Hugo
+  Larochelle.
+\newblock Improving reproducibility in machine learning research ({A} report
+  from the {NeurIPS} 2019 reproducibility program).
+\newblock \emph{Journal of Machine Learning Research}, 22\penalty0
+  (164):\penalty0 1--20, 2021.
+\newblock arXiv:2003.12206.
+\newblock \doi{10.48550/arXiv.2003.12206}
+\bibitem[Power et~al.(2022)Power, Burda, Edwards, Babuschkin, and
+  Misra]{power2022grokking}
+Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, and Vedant Misra.
+\newblock Grokking: Generalization beyond overfitting on small algorithmic
+  datasets.
+\newblock \emph{arXiv preprint} arXiv:2201.02177, 2022.
+\newblock \doi{10.48550/arXiv.2201.02177}
+\bibitem[Prieto et~al.(2025)Prieto, Barsbey, Mediano, and
+  Birdal]{prieto2025stablemax}
+Lucas Prieto, Melih Barsbey, Pedro A.~M. Mediano, and Tolga Birdal.
+\newblock Grokking at the edge of numerical stability.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2025.
+\newblock arXiv:2501.04697.
+\newblock \doi{10.48550/arXiv.2501.04697}
+\bibitem[Sabry and Belz(2025)]{sabry2025induction}
+Mohammed Sabry and Anya Belz.
+\newblock Induction signatures are not enough: A matched-compute study of
+  load-bearing structure in in-context learning.
+\newblock arXiv:2509.22947, 2025.
+\newblock \doi{10.48550/arXiv.2509.22947}
+\bibitem[Schaeffer et~al.(2023)Schaeffer, Miranda, and
+  Koyejo]{schaeffer2023mirage}
+Rylan Schaeffer, Brando Miranda, and Sanmi Koyejo.
+\newblock Are emergent abilities of large language models a mirage?
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2023.
+\newblock arXiv:2304.15004.
+\newblock \doi{10.48550/arXiv.2304.15004}
+\bibitem[Snell et~al.(2024)Snell, Wallace, Klein, and Levine]{snell2024predicting}
+Charlie Snell, Eric Wallace, Dan Klein, and Sergey Levine.
+\newblock Predicting emergent capabilities by finetuning.
+\newblock arXiv:2411.16035, 2024.
+\newblock \doi{10.48550/arXiv.2411.16035}
+\bibitem[Soviany et~al.(2022)Soviany, Ionescu, Rota, and
+  Sebe]{soviany2022curriculum}
+Petru Soviany, Radu~Tudor Ionescu, Paolo Rota, and Nicu Sebe.
+\newblock Curriculum learning: A survey.
+\newblock \emph{International Journal of Computer Vision}, 130:\penalty0
+  1526--1565, 2022.
+\newblock \doi{10.1007/s11263-022-01611-x}
+
+\bibitem[Srivastava et~al.(2022)]{srivastava2022bigbench}
+Aarohi Srivastava et~al.
+\newblock Beyond the imitation game: Quantifying and extrapolating the
+  capabilities of language models.
+\newblock \emph{Transactions on Machine Learning Research}, 2022.
+  arXiv:2206.04615.
+\newblock \doi{10.48550/arXiv.2206.04615}
+
+\bibitem[Tikeng Notsawo et~al.(2023)Tikeng Notsawo, Zhou, Pezeshki, Rish, and
+  Dumas]{notsawo2023predicting}
+Pascal~Jr. {Tikeng Notsawo}, Hattie Zhou, Mohammad Pezeshki, Irina Rish, and Guillaume
+  Dumas.
+\newblock Predicting grokking long before it happens: A look into the loss
+  landscape of models which grok.
+\newblock \emph{arXiv preprint} arXiv:2306.13253, 2023.
+\newblock \doi{10.48550/arXiv.2306.13253}
+\bibitem[von Oswald et~al.(2023)von Oswald, Niklasson, Randazzo, Sacramento,
+  Mordvintsev, Zhmoginov, and Vladymyrov]{vonoswald2023gd}
+Johannes von Oswald, Eyvind Niklasson, Ettore Randazzo, Jo{\~a}o Sacramento,
+  Alexander Mordvintsev, Andrey Zhmoginov, and Max Vladymyrov.
+\newblock Transformers learn in-context by gradient descent.
+\newblock In \emph{International Conference on Machine Learning (ICML)},
+  2023. arXiv:2212.07677.
+\newblock \doi{10.48550/arXiv.2212.07677}
+\bibitem[Wang et~al.(2024)Wang, Blaser, Daneshmand, and
+  Zhang]{wang2024tdtransformers}
+Jiuqi Wang, Ethan Blaser, Hadi Daneshmand, and Shangtong Zhang.
+\newblock Transformers can learn temporal difference methods for in-context
+  reinforcement learning.
+\newblock arXiv:2405.13861, 2024.
+\newblock \doi{10.48550/arXiv.2405.13861}
+\bibitem[Wei et~al.(2022)Wei, Tay, Bommasani, Raffel, Zoph, Borgeaud, Yogatama,
+  Bosma, Zhou, Metzler, Chi, Hashimoto, Vinyals, Liang, Dean, and
+  Fedus]{wei2022emergent}
+Jason Wei, Yi~Tay, Rishi Bommasani, Colin Raffel, Barret Zoph, Sebastian
+  Borgeaud, Dani Yogatama, Maarten Bosma, Denny Zhou, Donald Metzler, Ed~H.
+  Chi, Tatsunori Hashimoto, Oriol Vinyals, Percy Liang, Jeff Dean, and William
+  Fedus.
+\newblock Emergent abilities of large language models.
+\newblock \emph{Transactions on Machine Learning Research (TMLR)}, 2022.
+\newblock arXiv:2206.07682.
+\newblock \doi{10.48550/arXiv.2206.07682}
+\bibitem[Wu et~al.(2021)Wu, Dyer, and Neyshabur]{wu2021curricula}
+Xiaoxia Wu, Ethan Dyer, and Behnam Neyshabur.
+\newblock When do curricula work?
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2021. arXiv:2012.03107.
+\newblock \doi{10.48550/arXiv.2012.03107}
+\bibitem[Xu(2026)]{xu2026earlywarning}
+Yongzhong Xu.
+\newblock Early-warning signals of grokking via loss-landscape geometry.
+\newblock \emph{arXiv preprint} arXiv:2602.16967, 2026.
+\newblock \doi{10.48550/arXiv.2602.16967}
+\bibitem[Zisman et~al.(2024)Zisman, Kurenkov, Nikulin, Sinii, and
+  Kolesnikov]{zisman2024noise}
+Ilya Zisman, Vladislav Kurenkov, Alexander Nikulin, Viacheslav Sinii, and Sergey
+  Kolesnikov.
+\newblock Emergence of in-context reinforcement learning from noise
+  distillation.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2024.
+\newblock arXiv:2312.12275.
+\newblock \doi{10.48550/arXiv.2312.12275}
+\end{thebibliography}
+
+\end{document}
