@@ -1,0 +1,37 @@
+{
+  "artifact": "E2_positive_rescue",
+  "layout": "balanced-2x2",
+  "panel_count": 4,
+  "panels": [
+    {
+      "id": "a",
+      "question": "What best accuracy does each rescue family reach?",
+      "sources": [
+        "experiments/results/figures-redteam/redteam_e2_stats.json"
+      ]
+    },
+    {
+      "id": "b",
+      "question": "What upper bound follows from zero successes?",
+      "sources": [
+        "experiments/results/figures-redteam/redteam_e2_stats.json"
+      ]
+    },
+    {
+      "id": "c",
+      "question": "How many cells become near-positive?",
+      "sources": [
+        "experiments/results/figures-redteam/redteam_e2_stats.json"
+      ]
+    },
+    {
+      "id": "d",
+      "question": "How is the pooled rescue evidence distributed across rounds?",
+      "sources": [
+        "experiments/results/figures-redteam/redteam_e2_stats.json"
+      ]
+    }
+  ],
+  "exception_reason": null,
+  "generated_from_manifest": "papers/figs/figure_manifest.yaml"
+}

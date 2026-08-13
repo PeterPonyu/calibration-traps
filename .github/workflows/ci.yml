@@ -1,0 +1,27 @@
+name: comprehensive
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    name: warehouse-contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install test dependencies
+        run: pip install -r tests/requirements.txt
+      - name: Run comprehensive warehouse tests
+        run: pytest -q
+      - name: Build portal site without deploying Pages
+        run: bash portal/build.sh

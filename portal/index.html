@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calibration traps — detector console</title>
+  <link rel="stylesheet" href="console.css">
+</head>
+<body>
+  <div class="console">
+    <header class="console-chrome">
+      <p class="console-kicker">False-positive detector console</p>
+      <h1>Scan-statistic preflight for emergence timing</h1>
+      <nav class="console-modules" aria-label="Modules">
+        <a href="#nomogram">Nomogram</a>
+        <a href="#testbed">Testbed</a>
+        <a href="#drift">Drift</a>
+        <a href="#big-bench">BIG-Bench</a>
+        <a href="#preflight">Preflight</a>
+        <a href="#reproduce">Reproduce</a>
+      </nav>
+    </header>
+    <div class="console-panes">
+      <aside class="console-controls" id="nomogram">
+        <h2>Controls</h2>
+        <p>Documented nomogram knobs M, q, K. Static readouts from warehouse JSON, not a live inference toy.</p>
+      </aside>
+      <section class="console-scan" id="testbed">
+        <h2>Scan / run-length</h2>
+        <p id="drift">Center pane holds the scan-statistic run-length panel once figure summaries are loaded.</p>
+      </section>
+      <aside class="console-adjudication" id="big-bench">
+        <h2>BIG-Bench adjudication</h2>
+        <p>24 confirm / 7 FP. Counts come from the INDEX + summaries copy under <code>data/</code>.</p>
+      </aside>
+    </div>
+    <section id="preflight">
+      <h2>Preflight</h2>
+      <p>Use the nomogram before claiming an onset. Portal source only; GitHub Pages is not enabled.</p>
+    </section>
+    <section id="reproduce">
+      <h2>Reproduce</h2>
+      <p>Clone <a href="https://github.com/PeterPonyu/calibration-traps">PeterPonyu/calibration-traps</a>. Figure contract: <code>data/figures.json</code> copied from <code>papers/FIGURE-INDEX.json</code>.</p>
+    </section>
+    <footer class="console-footer">
+      <p>Concept DOI: <a href="https://doi.org/10.5281/zenodo.21020386">10.5281/zenodo.21020386</a></p>
+      <p>Code MIT / data+figures CC BY 4.0 · <a href="https://github.com/PeterPonyu/calibration-traps">github.com/PeterPonyu/calibration-traps</a></p>
+    </footer>
+  </div>
+  <script src="console.js"></script>
+</body>
+</html>

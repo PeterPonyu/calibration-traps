@@ -1,0 +1,46 @@
+papers:
+  E2:
+    main_tex: E2/main.tex
+    figures:
+      - artifact: E2_scheme
+        generator: figs/GENERATORS.md
+        summary: null
+      - artifact: E2_landscape
+        generator: figs/make_landscape_r.R
+        summary: null
+      - artifact: E2_nomogram
+        generator: figs/make_E2_nomogram_r.R
+        summary: figs/summaries/E2_nomogram.json
+      - artifact: E2_td_grid
+        generator: figs/make_E2_new_figs_r.R
+        summary: figs/summaries/E2_td_grid.json
+      - artifact: E2_case
+        generator: figs/make_E2_figs_r.R
+        summary: figs/summaries/E2_case.json
+      - artifact: E2_budget_grid
+        generator: figs/make_E2_new_figs_r.R
+        summary: figs/summaries/E2_budget_grid.json
+      - artifact: E2_curriculum
+        generator: figs/make_E2_figs_r.R
+        summary: figs/summaries/E2_curriculum.json
+      - artifact: E2_induction
+        generator: figs/make_E2_new_figs_r.R
+        summary: figs/summaries/E2_induction.json
+      - artifact: E2_specroute
+        generator: figs/make_final_polish_figures_r.R
+        summary: figs/summaries/E2_specroute.json
+      - artifact: E2_supervised_fit
+        generator: figs/make_evidence_figures_r.R
+        summary: figs/summaries/E2_supervised_fit.json
+      - artifact: E2_routemat
+        generator: figs/make_E2_new_figs_r.R
+        summary: figs/summaries/E2_routemat.json
+      - artifact: E2_positive_rescue
+        generator: figs/make_E2_figs_r.R
+        summary: figs/summaries/E2_positive_rescue.json
+      - artifact: E2_walsh
+        generator: figs/make_E2_new_figs_r.R
+        summary: null
+      - artifact: E2_grid
+        generator: figs/make_E2_figs_r.R
+        summary: null

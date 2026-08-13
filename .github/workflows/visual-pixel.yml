@@ -1,0 +1,25 @@
+name: visual-pixel
+
+# Optional. Do not add push/pull_request triggers: pixel jobs must not fail
+# required CI until a Visual Ralph reference.png is user-approved.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gated-notice:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain gate
+        run: echo "Visual-pixel CI is optional until portal/reference.png is user-approved."
+
+  pixel-diff:
+    if: ${{ vars.VISUAL_REFERENCE_APPROVED == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require approved reference
+        run: test -f portal/reference.png

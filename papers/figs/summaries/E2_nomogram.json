@@ -1,0 +1,37 @@
+{
+  "artifact": "E2_nomogram",
+  "layout": "evidence-ladder",
+  "panel_count": 4,
+  "panels": [
+    {
+      "id": "a",
+      "question": "What K does the nomogram prescribe?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    },
+    {
+      "id": "b",
+      "question": "Do predicted and observed false positives agree?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    },
+    {
+      "id": "c",
+      "question": "Why does the pooled-q shortcut fail at 14 of 45?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    },
+    {
+      "id": "d",
+      "question": "What power-latency tradeoff follows from K?",
+      "sources": [
+        "experiments/revision2026/se2-pythia/se2_analysis_v1_m12.json"
+      ]
+    }
+  ],
+  "exception_reason": "Ordered K-selection and calibration steps are part of the scientific instrument.",
+  "generated_from_manifest": "papers/figs/figure_manifest.yaml"
+}

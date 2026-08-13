@@ -1,0 +1,148 @@
+{
+  "paper_id": "E2",
+  "github": "PeterPonyu/calibration-traps",
+  "zenodo_concept_doi": "10.5281/zenodo.21020386",
+  "pipeline": "papers/figs/PIPELINE.md",
+  "figures": [
+    {
+      "id": "E2_scheme",
+      "label": "fig:scheme",
+      "generator": "figs/GENERATORS.md",
+      "summary": null,
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_scheme.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_landscape",
+      "label": "fig:landscape",
+      "generator": "figs/make_landscape_r.R",
+      "summary": null,
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_landscape.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_nomogram",
+      "label": "fig:nomogram",
+      "generator": "figs/make_E2_nomogram_r.R",
+      "summary": "figs/summaries/E2_nomogram.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_nomogram.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_td_grid",
+      "label": "fig:td-grid",
+      "generator": "figs/make_E2_new_figs_r.R",
+      "summary": "figs/summaries/E2_td_grid.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_td_grid.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_case",
+      "label": "fig:case",
+      "generator": "figs/make_E2_figs_r.R",
+      "summary": "figs/summaries/E2_case.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_case.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_budget_grid",
+      "label": "fig:budgetgrid",
+      "generator": "figs/make_E2_new_figs_r.R",
+      "summary": "figs/summaries/E2_budget_grid.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_budget_grid.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_curriculum",
+      "label": "fig:curriculum",
+      "generator": "figs/make_E2_figs_r.R",
+      "summary": "figs/summaries/E2_curriculum.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_curriculum.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_induction",
+      "label": "fig:induction-emergence",
+      "generator": "figs/make_E2_new_figs_r.R",
+      "summary": "figs/summaries/E2_induction.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_induction.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_specroute",
+      "label": "fig:specroute",
+      "generator": "figs/make_final_polish_figures_r.R",
+      "summary": "figs/summaries/E2_specroute.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_specroute.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_supervised_fit",
+      "label": "fig:supervised-fit",
+      "generator": "figs/make_evidence_figures_r.R",
+      "summary": "figs/summaries/E2_supervised_fit.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_supervised_fit.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_routemat",
+      "label": "fig:route-matrix",
+      "generator": "figs/make_E2_new_figs_r.R",
+      "summary": "figs/summaries/E2_routemat.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_routemat.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_positive_rescue",
+      "label": "fig:positive-rescue",
+      "generator": "figs/make_E2_figs_r.R",
+      "summary": "figs/summaries/E2_positive_rescue.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_positive_rescue.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_walsh",
+      "label": "fig:walsh",
+      "generator": "figs/make_E2_new_figs_r.R",
+      "summary": null,
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_walsh.tex",
+      "vec_build": null,
+      "venue_flat_name": null
+    },
+    {
+      "id": "E2_grid",
+      "label": "fig:grid",
+      "generator": "figs/make_E2_figs_r.R",
+      "summary": null,
+      "preview_svg": null,
+      "tex_build": null,
+      "vec_build": "figs/vec/E2_grid.pdf",
+      "venue_flat_name": null
+    }
+  ]
+}

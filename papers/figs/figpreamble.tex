@@ -1,0 +1,14 @@
+% figpreamble.tex — shared figure glue for the LuaLaTeX vector pipeline.
+% Load AFTER newtxtext/newtxmath and graphicx in each paper's main.tex:
+%   \input{../figs/figpreamble.tex}
+% Provides:
+%   \figtikz{name}  -> typeset plot-tier TikZ figure (LaTeX-typeset fonts)
+%   heatmap-tier still uses \includegraphics{name.pdf} (graphicspath below).
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,calc,shapes.geometric}
+% resolve heatmap PDFs from figs/vec and legacy PNGs from figs/
+\graphicspath{{../figs/vec/}{../figs/}}
+% Input a plot-tier TikZ figure, scaled to a target width (default \linewidth)
+% so it occupies the same column space the PNG did — vector, not raster, with
+% no layout change. \figtikz[<width>]{<name>}
+\newcommand{\figtikz}[2][\linewidth]{\resizebox{#1}{!}{\input{../figs/tex/#2.tex}}}

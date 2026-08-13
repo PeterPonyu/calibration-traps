@@ -1,0 +1,37 @@
+{
+  "artifact": "E2_curriculum",
+  "layout": "balanced-2x2",
+  "panel_count": 4,
+  "panels": [
+    {
+      "id": "a",
+      "question": "How does data ordering affect each seed?",
+      "sources": [
+        "experiments/results/curriculum_order/copy_iid_adamw_s0.jsonl"
+      ]
+    },
+    {
+      "id": "b",
+      "question": "What is the i.i.d.-fast effect size?",
+      "sources": [
+        "experiments/results/curriculum_order/copy_easy_to_hard_adamw_s0.jsonl"
+      ]
+    },
+    {
+      "id": "c",
+      "question": "Does optimizer interact with curriculum?",
+      "sources": [
+        "experiments/results/curriculum_order/copy_iid_sgdm_s0.jsonl"
+      ]
+    },
+    {
+      "id": "d",
+      "question": "What conclusion follows across the full run grid?",
+      "sources": [
+        "experiments/results/curriculum_order/modadd_iid_adamw_s0.jsonl"
+      ]
+    }
+  ],
+  "exception_reason": null,
+  "generated_from_manifest": "papers/figs/figure_manifest.yaml"
+}

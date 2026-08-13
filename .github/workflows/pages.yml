@@ -1,0 +1,58 @@
+name: pages-build
+
+on:
+  push:
+    branches: [main, ci/comprehensive]
+    paths:
+      - "portal/**"
+      - "papers/FIGURE-INDEX.json"
+      - "papers/figs/summaries/**"
+      - "papers/previews/**"
+      - ".github/workflows/pages.yml"
+  pull_request:
+    paths:
+      - "portal/**"
+      - "papers/FIGURE-INDEX.json"
+      - "papers/figs/summaries/**"
+      - "papers/previews/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: validate-and-copy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install validators
+        run: pip install -r tests/requirements.txt
+      - name: Validate INDEX and copy portal to _site
+        run: bash portal/build.sh
+      - name: Upload site tree as an ordinary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: portal-site
+          path: _site
+          if-no-files-found: error
+
+  deploy:
+    name: github-pages
+    if: ${{ vars.PAGES_ENABLED == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

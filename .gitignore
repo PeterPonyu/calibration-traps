@@ -17,3 +17,15 @@ calibration-traps-v*.tar.gz
 .env.*
 credentials*
 *.pem
+
+# compiled figure tiers (pointer contract; never commit)
+papers/figs/tex/
+papers/figs/vec/
+
+# portal build product
+_site/
+
+# test caches
+.pytest_cache/
+.coverage
+htmlcov/

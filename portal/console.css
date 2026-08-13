@@ -1,0 +1,86 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap");
+
+:root {
+  --bg: #0b0d0c;
+  --panel: #141716;
+  --ink: #e8e6e3;
+  --muted: #9aa39b;
+  --signal: #3dcc6f;
+  --alert: #d64545;
+  --rule: #2a2f2c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Newsreader, "Times New Roman", serif;
+}
+
+.console-chrome,
+.console-modules,
+.console-controls,
+.console-adjudication,
+code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.console {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+.console-kicker {
+  color: var(--signal);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.console-modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.75rem 0;
+}
+
+.console-modules a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.console-panes {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(16rem, 2fr) minmax(12rem, 1fr);
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.console-controls,
+.console-scan,
+.console-adjudication {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  padding: 1rem;
+}
+
+.console-adjudication {
+  border-color: var(--alert);
+}
+
+.console-footer {
+  margin-top: 2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.console-footer a {
+  color: var(--signal);
+}
