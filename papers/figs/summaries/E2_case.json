@@ -1,0 +1,37 @@
+{
+  "artifact": "E2_case",
+  "layout": "balanced-2x2",
+  "panel_count": 4,
+  "panels": [
+    {
+      "id": "a",
+      "question": "What trajectory creates a representative false positive?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    },
+    {
+      "id": "b",
+      "question": "How are exceedances clustered in time?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    },
+    {
+      "id": "c",
+      "question": "Does the geometric null explain the run length?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    },
+    {
+      "id": "d",
+      "question": "Does sustained K reject the case?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    }
+  ],
+  "exception_reason": null,
+  "generated_from_manifest": "papers/figs/figure_manifest.yaml"
+}

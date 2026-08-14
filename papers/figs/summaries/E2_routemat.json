@@ -1,0 +1,37 @@
+{
+  "artifact": "E2_routemat",
+  "layout": "balanced-2x2",
+  "panel_count": 4,
+  "panels": [
+    {
+      "id": "a",
+      "question": "What route AUROC appears on tier B?",
+      "sources": [
+        "experiments/results/spec_route/posthoc_round1.json"
+      ]
+    },
+    {
+      "id": "b",
+      "question": "Does tier-A AUROC collapse within AdamW?",
+      "sources": [
+        "experiments/results/spec_route/posthoc_round1.json"
+      ]
+    },
+    {
+      "id": "c",
+      "question": "How large is the optimizer-identity component?",
+      "sources": [
+        "experiments/results/spec_route/posthoc_round1.json"
+      ]
+    },
+    {
+      "id": "d",
+      "question": "Which variance component dominates each optimizer?",
+      "sources": [
+        "experiments/results/spec_route/posthoc_round1.json"
+      ]
+    }
+  ],
+  "exception_reason": null,
+  "generated_from_manifest": "papers/figs/figure_manifest.yaml"
+}

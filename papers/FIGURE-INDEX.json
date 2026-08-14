@@ -1,0 +1,178 @@
+{
+  "paper_id": "E2",
+  "github": "PeterPonyu/calibration-traps",
+  "zenodo_concept_doi": "10.5281/zenodo.21020386",
+  "pipeline": "figs/PIPELINE.md",
+  "figures": [
+    {
+      "id": "E2_nomogram",
+      "label": "fig:nomogram",
+      "generator": "figs/make_E2_nomogram_r.R",
+      "summary": "figs/summaries/E2_nomogram.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_nomogram.tex",
+      "vec_build": "figs/vec/E2_nomogram.pdf",
+      "caption": "K nomogram; calibration check; pooled-q caution; power-latency tradeoff",
+      "caption_panels": [
+        "K nomogram",
+        "calibration check",
+        "pooled-q caution",
+        "power-latency tradeoff"
+      ],
+      "venue_flat_name": "E2_nomogram.pdf"
+    },
+    {
+      "id": "E2_td_grid",
+      "label": "fig:td-grid",
+      "generator": "figs/make_E2_new_figs_r.R",
+      "summary": "figs/summaries/E2_td_grid.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_td_grid.tex",
+      "vec_build": "figs/vec/E2_td_grid.pdf",
+      "caption": "validation grid; single crossings; sustained-$K$ ladder; mixture calibration",
+      "caption_panels": [
+        "validation grid",
+        "single crossings",
+        "sustained-$K$ ladder",
+        "mixture calibration"
+      ],
+      "venue_flat_name": "E2_td_grid.pdf"
+    },
+    {
+      "id": "E2_case",
+      "label": "fig:case",
+      "generator": "figs/make_E2_figs_r.R",
+      "summary": "figs/summaries/E2_case.json",
+      "preview_svg": "figs/previews/E2_case.svg",
+      "tex_build": "figs/tex/E2_case.tex",
+      "vec_build": "figs/vec/E2_case.pdf",
+      "caption": "false-positive trajectory; exceedance clustering; geometric null; sustained-K rejection",
+      "caption_panels": [
+        "false-positive trajectory",
+        "exceedance clustering",
+        "geometric null",
+        "sustained-K rejection"
+      ],
+      "venue_flat_name": "E2_case.pdf"
+    },
+    {
+      "id": "E2_budget_grid",
+      "label": "fig:budgetgrid",
+      "generator": "figs/make_E2_new_figs_r.R",
+      "summary": "figs/summaries/E2_budget_grid.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_budget_grid.tex",
+      "vec_build": "figs/vec/E2_budget_grid.pdf",
+      "caption": "budget grid; horizon marginal; gamma ladder; budget exhaustion",
+      "caption_panels": [
+        "budget grid",
+        "horizon marginal",
+        "gamma ladder",
+        "budget exhaustion"
+      ],
+      "venue_flat_name": "E2_budget_grid.pdf"
+    },
+    {
+      "id": "E2_curriculum",
+      "label": "fig:curriculum",
+      "generator": "figs/make_E2_figs_r.R",
+      "summary": "figs/summaries/E2_curriculum.json",
+      "preview_svg": "figs/previews/E2_curriculum.svg",
+      "tex_build": "figs/tex/E2_curriculum.tex",
+      "vec_build": "figs/vec/E2_curriculum.pdf",
+      "caption": "per-seed ordering; i.i.d. effect; optimizer interaction; grid summary",
+      "caption_panels": [
+        "per-seed ordering",
+        "i.i.d. effect",
+        "optimizer interaction",
+        "grid summary"
+      ],
+      "venue_flat_name": "E2_curriculum.pdf"
+    },
+    {
+      "id": "E2_induction",
+      "label": "fig:induction-emergence",
+      "generator": "figs/make_E2_new_figs_r.R",
+      "summary": "figs/summaries/E2_induction.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_induction.tex",
+      "vec_build": "figs/vec/E2_induction.pdf",
+      "caption": "positive-control trajectories; seed onsets; sustained-K latency; detection audit",
+      "caption_panels": [
+        "positive-control trajectories",
+        "seed onsets",
+        "sustained-K latency",
+        "detection audit"
+      ],
+      "venue_flat_name": "E2_induction.pdf"
+    },
+    {
+      "id": "E2_specroute",
+      "label": "fig:specroute",
+      "generator": "figs/make_final_polish_figures_r.R",
+      "summary": "figs/summaries/E2_specroute.json",
+      "preview_svg": "figs/previews/E2_specroute.svg",
+      "tex_build": "figs/tex/E2_specroute.tex",
+      "vec_build": "figs/vec/E2_specroute.pdf",
+      "caption": "early diagnostics; tier-A AUROC; window comparison; pure-noise regime",
+      "caption_panels": [
+        "early diagnostics",
+        "tier-A AUROC",
+        "window comparison",
+        "pure-noise regime"
+      ],
+      "venue_flat_name": "E2_specroute.pdf"
+    },
+    {
+      "id": "E2_supervised_fit",
+      "label": "fig:supervised-fit",
+      "generator": "figs/make_evidence_figures_r.R",
+      "summary": "figs/summaries/E2_supervised_fit.json",
+      "preview_svg": "figs/previews/E2_supervised_fit.svg",
+      "tex_build": "figs/tex/E2_supervised_fit.tex",
+      "vec_build": "figs/vec/E2_supervised_fit.pdf",
+      "caption": "support-label fit; fresh-MRP comparison; transformer control; classification-TD separation",
+      "caption_panels": [
+        "support-label fit",
+        "fresh-MRP comparison",
+        "transformer control",
+        "classification-TD separation"
+      ],
+      "venue_flat_name": "E2_supervised_fit.pdf"
+    },
+    {
+      "id": "E2_routemat",
+      "label": "fig:route-matrix",
+      "generator": "figs/make_E2_new_figs_r.R",
+      "summary": "figs/summaries/E2_routemat.json",
+      "preview_svg": null,
+      "tex_build": "figs/tex/E2_routemat.tex",
+      "vec_build": "figs/vec/E2_routemat.pdf",
+      "caption": "tier-B AUROC; within-AdamW collapse; optimizer component; variance decomposition",
+      "caption_panels": [
+        "tier-B AUROC",
+        "within-AdamW collapse",
+        "optimizer component",
+        "variance decomposition"
+      ],
+      "venue_flat_name": "E2_routemat.pdf"
+    },
+    {
+      "id": "E2_positive_rescue",
+      "label": "fig:positive-rescue",
+      "generator": "figs/make_E2_figs_r.R",
+      "summary": "figs/summaries/E2_positive_rescue.json",
+      "preview_svg": "figs/previews/E2_positive_rescue.svg",
+      "tex_build": "figs/tex/E2_positive_rescue.tex",
+      "vec_build": "figs/vec/E2_positive_rescue.pdf",
+      "caption": "best rescue accuracy; zero-success bound; near-positive cells; pool provenance",
+      "caption_panels": [
+        "best rescue accuracy",
+        "zero-success bound",
+        "near-positive cells",
+        "pool provenance"
+      ],
+      "venue_flat_name": "E2_positive_rescue.pdf"
+    }
+  ]
+}

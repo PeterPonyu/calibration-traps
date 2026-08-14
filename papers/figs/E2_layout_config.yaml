@@ -1,0 +1,10 @@
+# Paper E2 layout overrides — text-width-aware schema (2026-08-05).
+
+_default:
+  plot_margin: [8, 10, 8, 10]
+  panel_spacing: 16
+  title_wrap_width: 38
+
+# Example:
+# E2_curriculum:
+#   title_wrap_width: 30

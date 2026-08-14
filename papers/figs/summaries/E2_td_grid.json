@@ -1,0 +1,37 @@
+{
+  "artifact": "E2_td_grid",
+  "layout": "balanced-2x2",
+  "panel_count": 4,
+  "panels": [
+    {
+      "id": "a",
+      "question": "What validation accuracy is reached on the grid?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    },
+    {
+      "id": "b",
+      "question": "Where do single crossings occur?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    },
+    {
+      "id": "c",
+      "question": "What remains under sustained K?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    },
+    {
+      "id": "d",
+      "question": "Does the per-run mixture predict observed counts?",
+      "sources": [
+        "experiments/results/icrl_td_ultragoal_calib/icrl_td_calibration_verdict.json"
+      ]
+    }
+  ],
+  "exception_reason": null,
+  "generated_from_manifest": "papers/figs/figure_manifest.yaml"
+}

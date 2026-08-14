@@ -1,0 +1,37 @@
+{
+  "artifact": "E2_budget_grid",
+  "layout": "balanced-2x2",
+  "panel_count": 4,
+  "panels": [
+    {
+      "id": "a",
+      "question": "What accuracy is reached over horizon and budget?",
+      "sources": [
+        "experiments/results/icrl_td_positive_regime/adamw_T10_s0_g0p5_steps40000.jsonl"
+      ]
+    },
+    {
+      "id": "b",
+      "question": "How does performance vary by horizon?",
+      "sources": [
+        "experiments/results/icrl_td_positive_regime/adamw_T20_s0_g0p5_steps40000.jsonl"
+      ]
+    },
+    {
+      "id": "c",
+      "question": "How does gamma change crossing frequency?",
+      "sources": [
+        "experiments/results/icrl_td_gamma_ladder/gamma0p5_T40_s0.jsonl"
+      ]
+    },
+    {
+      "id": "d",
+      "question": "Does fourfold or eightfold budget rescue learning?",
+      "sources": [
+        "experiments/results/icrl_td_positive_regime/adamw_T40_s0_g0p5_steps80000.jsonl"
+      ]
+    }
+  ],
+  "exception_reason": null,
+  "generated_from_manifest": "papers/figs/figure_manifest.yaml"
+}
