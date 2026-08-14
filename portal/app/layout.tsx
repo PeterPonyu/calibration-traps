@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Calibration Traps — Preflight Instrument",
   description:
-    "Phosphor preflight console for the calibration-traps warehouse. HOLD: not live inference.",
+    "Phosphor preflight console. HOLD: not live inference.",
 };
 
 export default function RootLayout({
