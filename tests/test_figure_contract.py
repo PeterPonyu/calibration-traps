@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 
 import jsonschema
+import pytest
 
-from conftest import CANONICAL_TEX, INDEX_PATH, LAB_SCHEMA, REPO_ROOT, SCHEMA_PATH
+from conftest import INDEX_PATH, REPO_ROOT, SCHEMA_PATH, WAREHOUSE_TEX, lab_path
 
 MANIFEST_IDS = {
     "E2_nomogram",
@@ -22,6 +24,13 @@ MANIFEST_IDS = {
     "E2_positive_rescue",
 }
 
+# Line count of papers/E2/main.tex measured from the canonical manuscript on
+# 2026-08-14 (2207 upstream lines minus the two stripped submission scars).
+# The warehouse copy must stay within 5% of this floor so a stub or truncated
+# pointer file can never pass.
+CANONICAL_WAREHOUSE_LINES = 2205
+LINE_TOLERANCE = 0.05
+
 
 def _index() -> dict:
     assert INDEX_PATH.is_file(), f"F1: missing {INDEX_PATH}"
@@ -31,12 +40,28 @@ def _index() -> dict:
 def test_figure_index_and_shared_schema_exist() -> None:
     assert INDEX_PATH.is_file()
     assert SCHEMA_PATH.is_file()
-    assert LAB_SCHEMA.is_file()
-    assert SCHEMA_PATH.read_bytes() == LAB_SCHEMA.read_bytes()
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    # Structural invariants of the shared five-paper schema (in-repo SSOT).
+    assert schema.get("type") == "object"
+    assert "paper_id" in schema.get("required", [])
+    assert "figures" in schema.get("required", [])
     paper_id = schema["properties"]["paper_id"]
     assert "const" not in paper_id
     assert set(paper_id["enum"]) == {"A", "B", "C", "E1", "E2"}
+    figures = schema["properties"]["figures"]
+    assert figures.get("type") == "array"
+    for key in ("id", "generator", "summary", "preview_svg", "tex_build", "vec_build"):
+        assert key in figures["items"]["properties"], f"schema missing figures[].{key}"
+
+
+def test_schema_matches_upstream_when_available() -> None:
+    # Optional maintainer check: byte-compare against the upstream schema when
+    # CALTRAPS_LAB_TREE points at the private working tree. Always skips on
+    # CI runners; the in-repo invariants above are the portable contract.
+    upstream = lab_path(".omx", "plans", "figure-index.schema.json")
+    if upstream is None:
+        pytest.skip("upstream lab schema not configured (CALTRAPS_LAB_TREE unset)")
+    assert SCHEMA_PATH.read_bytes() == upstream.read_bytes()
 
 
 def test_figure_index_validates() -> None:
@@ -81,12 +106,12 @@ def test_no_pdfs_committed_under_papers() -> None:
 
 
 def test_tex_does_not_include_previews() -> None:
-    tex = (REPO_ROOT / "papers" / "E2" / "main.tex").read_text(encoding="utf-8")
+    tex = WAREHOUSE_TEX.read_text(encoding="utf-8")
     assert "previews/" not in tex
 
 
 def test_canonical_includes_survive() -> None:
-    tex = (REPO_ROOT / "papers" / "E2" / "main.tex").read_text(encoding="utf-8")
+    tex = WAREHOUSE_TEX.read_text(encoding="utf-8")
     assert r"\input{../figs/figpreamble.tex}" in tex
     assert r"\graphicspath{{./}}" not in tex
     assert "Figure3.pdf" not in tex
@@ -95,16 +120,40 @@ def test_canonical_includes_survive() -> None:
 
 
 def test_full_canonical_tex_not_stub() -> None:
-    warehouse = (REPO_ROOT / "papers" / "E2" / "main.tex").read_text(encoding="utf-8")
-    canonical = CANONICAL_TEX.read_text(encoding="utf-8")
-    expected = canonical.replace("\\graphicspath{{./}}\n", "", 1).replace(
+    assert WAREHOUSE_TEX.is_file(), f"missing {WAREHOUSE_TEX}"
+    warehouse = WAREHOUSE_TEX.read_text(encoding="utf-8")
+    # Full-length floor: canonical manuscript length measured 2026-08-14,
+    # 5% tolerance. A stub or truncated pointer trips this immediately.
+    lines = warehouse.count("\n")
+    lower = CANONICAL_WAREHOUSE_LINES * (1 - LINE_TOLERANCE)
+    upper = CANONICAL_WAREHOUSE_LINES * (1 + LINE_TOLERANCE)
+    assert lower <= lines <= upper, (
+        f"main.tex line count {lines} outside [{lower:.0f}, {upper:.0f}]"
+    )
+    # Scar-strip invariants: submission scars removed, pointer include kept,
+    # no venue-flat figure includes.
+    assert r"\input{../figs/figpreamble.tex}" in warehouse
+    assert r"\graphicspath{{./}}" not in warehouse
+    assert not re.search(r"Figure\d+\.pdf", warehouse)
+    assert "% figpreamble severed by build_submission_figs.py" not in warehouse
+
+
+def test_warehouse_tex_matches_canonical_when_available() -> None:
+    # Optional maintainer check: full comparison against the canonical
+    # manuscript when CALTRAPS_LAB_TREE points at the private working tree.
+    canonical = lab_path("papers", "E2", "main.tex")
+    if canonical is None:
+        pytest.skip("canonical lab manuscript not configured (CALTRAPS_LAB_TREE unset)")
+    warehouse = WAREHOUSE_TEX.read_text(encoding="utf-8")
+    expected = canonical.read_text(encoding="utf-8").replace(
+        "\\graphicspath{{./}}\n", "", 1
+    ).replace(
         "% figpreamble severed by build_submission_figs.py "
         "(figures are self-contained standalone PDFs under figures/)\n",
         "",
         1,
     )
     assert warehouse == expected
-    assert warehouse.count("\n") > 1000
 
 
 def test_summaries_exist_when_declared() -> None:

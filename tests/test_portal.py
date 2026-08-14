@@ -43,9 +43,15 @@ def test_next_config_export_and_base_path() -> None:
 
 def test_next_font_jetbrains_and_newsreader() -> None:
     fonts = (PORTAL / "app" / "fonts.ts").read_text(encoding="utf-8")
-    assert "next/font/google" in fonts
-    assert "JetBrains_Mono" in fonts
-    assert "Newsreader" in fonts
+    # C8: self-hosted woff2 via next/font/local — no build-time font fetch.
+    assert "next/font/google" not in fonts
+    assert "next/font/local" in fonts
+    assert "--font-chrome" in fonts
+    assert "--font-prose" in fonts
+    for path in re.findall(r'\{ path: "(\./fonts/[^"]+\.woff2)"', fonts):
+        assert (PORTAL / "app" / path).is_file(), f"missing committed font {path}"
+    assert (PORTAL / "app" / "fonts" / "OFL-jetbrains-mono.txt").is_file()
+    assert (PORTAL / "app" / "fonts" / "OFL-newsreader.txt").is_file()
 
 
 def test_anti_stub() -> None:
@@ -62,8 +68,8 @@ def test_three_pane_console_landmark() -> None:
 
 def test_type_pair_not_siblings() -> None:
     blob = portal_blob()
-    assert "JetBrains_Mono" in blob or "JetBrains Mono" in blob
-    assert "Newsreader" in blob
+    assert re.search(r"jetbrains[-_ ]mono", blob, re.I)
+    assert re.search(r"newsreader", blob, re.I)
     for forbidden in (
         "IBM Plex Sans",
         "IBM Plex Mono",
