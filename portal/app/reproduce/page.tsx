@@ -1,7 +1,7 @@
-import { Console } from "../../components/Console";
+import { ConsoleFrame } from "../../components/ConsoleFrame";
 
 export const metadata = { title: "Reproduce-as-rebuild — Calibration Traps" };
 
 export default function ReproducePage() {
-  return <Console />;
+  return <ConsoleFrame />;
 }

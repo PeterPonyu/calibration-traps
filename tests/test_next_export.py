@@ -22,6 +22,7 @@ MODULE_ROUTES = (
     "testbed",
     "drift",
     "bigbench",
+    "big-bench",
     "preflight",
     "reproduce",
 )
@@ -48,7 +49,12 @@ def test_export_nested_module_routes() -> None:
         assert site_page.is_file(), f"missing _site/{slug}/index.html — run portal/build.sh"
         html = site_page.read_text(encoding="utf-8")
         assert "/calibration-traps/_next/" in html
-        assert f"/calibration-traps/{slug}/" in html or f'href="/calibration-traps/{slug}' in html
+        aliases = {slug, "bigbench"} if slug == "big-bench" else {slug}
+        assert any(
+            f"/calibration-traps/{name}/" in html
+            or f'href="/calibration-traps/{name}' in html
+            for name in aliases
+        )
 
 
 def test_export_copies_figure_index() -> None:
@@ -101,3 +107,30 @@ def test_build_script_is_next_export() -> None:
     assert "npm run build" in text
     assert "latexmk" not in text
     assert "portal/out" in text
+
+
+SCIENCE_MARKERS = (
+    "What K does the nomogram prescribe?",
+    "Can the transformer fit support labels?",
+    "What validation accuracy is reached on the grid?",
+    "What trajectories form the positive control?",
+    "What early-window diagnostics predict the route?",
+    "Rebuild from the experiment runners",
+)
+
+VISIBLE_LEAK = re.compile(
+    r"E2_|figs/summaries|main\.tex|FIGURE-INDEX|PIPELINE\.md|"
+    r"(?i:\bpapers/|\bjournals?\b|\bmanuscripts?\b|\bsubmissions?\b|\bJMLR\b)|"
+    r"\bF[1-6]\b"
+)
+
+
+def test_export_html_renders_science_not_filenames() -> None:
+    site = REPO_ROOT / "_site"
+    pages = [site / "index.html"]
+    pages.extend(site / slug / "index.html" for slug in MODULE_ROUTES)
+    blob = "\n".join(path.read_text(encoding="utf-8") for path in pages)
+    for marker in SCIENCE_MARKERS:
+        assert marker in blob, marker
+    hits = VISIBLE_LEAK.findall(blob)
+    assert not hits, hits

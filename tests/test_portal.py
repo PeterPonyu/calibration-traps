@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import json
 import re
+from pathlib import Path
 
-from conftest import GITHUB_URL, PORTAL, portal_blob
+from conftest import GITHUB_URL, PORTAL, REPO_ROOT, portal_blob
 
 MODULE_ROUTES = (
     "nomogram",
@@ -103,7 +105,7 @@ def test_nav_modules() -> None:
 
 
 def test_app_router_module_pages_exist() -> None:
-    for slug in MODULE_ROUTES:
+    for slug in (*MODULE_ROUTES, "big-bench"):
         page = PORTAL / "app" / slug / "page.tsx"
         assert page.is_file(), f"missing App Router page for /{slug}/"
         text = page.read_text(encoding="utf-8")
@@ -206,3 +208,69 @@ def test_source_has_no_user_site_assets() -> None:
         assert '"/assets' not in text
         assert "'/assets" not in text
         assert "url(/assets" not in text
+
+
+VISIBLE_LEAK = re.compile(
+    r"E2_|figs/summaries|main\.tex|FIGURE-INDEX|PIPELINE\.md|"
+    r"(?i:\bpapers/|\bjournals?\b|\bmanuscripts?\b|\bsubmissions?\b|\bJMLR\b)|"
+    r"\bF[1-6]\b"
+)
+
+
+def test_visible_chrome_has_no_filenames_or_letter_codes() -> None:
+    hits: list[str] = []
+    for path in CHROME_FILES:
+        text = path.read_text(encoding="utf-8")
+        for match in VISIBLE_LEAK.finditer(text):
+            hits.append(f"{path.relative_to(PORTAL)}: {match.group(0)}")
+    assert not hits, hits
+
+
+def test_science_questions_come_from_summaries() -> None:
+    src = (PORTAL / "lib" / "loadScience.ts").read_text(encoding="utf-8")
+    assert "loadScience" in src
+    assert "questionsOf" in src
+    console = (PORTAL / "components" / "Console.tsx").read_text(encoding="utf-8")
+    assert "science.nomogram" in console
+    assert "science.testbed" in console
+    assert "science.drift" in console
+    assert "science.bigbench" in console
+    assert "science.preflight" in console
+    assert "science.rebuild" in console
+    assert "E2_supervised_fit.json" not in console
+    assert "E2_td_grid.json" not in console
+
+
+def test_readme_live_door_and_no_publication_leaks() -> None:
+    text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    head = "\n".join(text.splitlines()[:12])
+    assert "https://peterponyu.github.io/calibration-traps/" in head
+    lowered = text.lower()
+    for tok in (
+        "journal",
+        "manuscript",
+        "jmlr",
+        "papers/e2",
+        "pointer tex",
+        "pointer manuscript",
+        "github stars",
+        "star this",
+        "stars as",
+    ):
+        assert tok not in lowered, tok
+
+
+def test_summary_questions_exist_for_console_modules() -> None:
+    summaries = REPO_ROOT / "papers" / "figs" / "summaries"
+    for name in (
+        "E2_nomogram.json",
+        "E2_supervised_fit.json",
+        "E2_td_grid.json",
+        "E2_budget_grid.json",
+        "E2_induction.json",
+        "E2_case.json",
+        "E2_specroute.json",
+    ):
+        payload = json.loads((summaries / name).read_text(encoding="utf-8"))
+        questions = [p.get("question") for p in payload.get("panels", [])]
+        assert all(questions), name
