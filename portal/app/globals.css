@@ -281,7 +281,8 @@ a:hover {
   background: var(--panel);
 }
 
-.module[hidden] {
+.module[hidden],
+.panes[hidden] {
   display: none !important;
 }
 
@@ -309,6 +310,12 @@ a:hover {
   background: transparent;
   font-family: inherit;
   cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+
+a.fkey:hover {
+  text-decoration: none;
 }
 
 .fkey:last-child {

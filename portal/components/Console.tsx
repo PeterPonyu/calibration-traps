@@ -1,17 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const MODULES = [
-  { id: "nomogram", key: "F1", label: "Nomogram" },
-  { id: "testbed", key: "F2", label: "Testbed" },
-  { id: "drift", key: "F3", label: "Drift" },
-  { id: "bigbench", key: "F4", label: "BIG-Bench" },
-  { id: "preflight", key: "F5", label: "Preflight" },
-  { id: "reproduce", key: "F6", label: "Reproduce" },
-] as const;
-
-type ModuleId = (typeof MODULES)[number]["id"];
+import {
+  MODULES,
+  hrefForModule,
+  moduleFromPathname,
+  type ModuleId,
+} from "../lib/modules";
 
 function Raster() {
   const rows = 4;
@@ -30,13 +27,8 @@ function Raster() {
 }
 
 export function Console() {
-  const [module, setModule] = useState<ModuleId>("nomogram");
-
-  useEffect(() => {
-    fetch("data/figures.json")
-      .then((res) => (res.ok ? res.json() : null))
-      .catch(() => null);
-  }, []);
+  const pathname = usePathname();
+  const module: ModuleId = moduleFromPathname(pathname);
 
   return (
     <div className="console" data-layout="three-pane" data-module={module}>
@@ -196,17 +188,21 @@ export function Console() {
       </section>
 
       <nav className="fkey-rail" aria-label="modules">
-        {MODULES.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className={item.id === module ? "fkey is-active" : "fkey"}
-            data-module={item.id}
-            onClick={() => setModule(item.id)}
-          >
-            <kbd>{item.key}</kbd> {item.label}
-          </button>
-        ))}
+        {MODULES.map((item) => {
+          const href = hrefForModule(item.id);
+          const active = item.id === module;
+          return (
+            <Link
+              key={item.id}
+              href={href}
+              className={active ? "fkey is-active" : "fkey"}
+              data-module={item.id}
+              aria-current={active ? "page" : undefined}
+            >
+              <kbd>{item.key}</kbd> {item.label}
+            </Link>
+          );
+        })}
       </nav>
 
       <footer className="site-foot">
