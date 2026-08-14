@@ -17,6 +17,16 @@ LEAK = re.compile(
 )
 
 
+MODULE_ROUTES = (
+    "nomogram",
+    "testbed",
+    "drift",
+    "bigbench",
+    "preflight",
+    "reproduce",
+)
+
+
 def test_export_index_uses_base_path() -> None:
     site = REPO_ROOT / "_site"
     index = site / "index.html"
@@ -26,6 +36,19 @@ def test_export_index_uses_base_path() -> None:
     assert ".nojekyll" in {p.name for p in site.iterdir()} or (
         site / ".nojekyll"
     ).is_file()
+
+
+def test_export_nested_module_routes() -> None:
+    site = REPO_ROOT / "_site"
+    out = REPO_ROOT / "portal" / "out"
+    for slug in MODULE_ROUTES:
+        site_page = site / slug / "index.html"
+        out_page = out / slug / "index.html"
+        assert out_page.is_file(), f"missing portal/out/{slug}/index.html — run portal/build.sh"
+        assert site_page.is_file(), f"missing _site/{slug}/index.html — run portal/build.sh"
+        html = site_page.read_text(encoding="utf-8")
+        assert "/calibration-traps/_next/" in html
+        assert f"/calibration-traps/{slug}/" in html or f'href="/calibration-traps/{slug}' in html
 
 
 def test_export_copies_figure_index() -> None:

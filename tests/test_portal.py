@@ -6,6 +6,15 @@ import re
 
 from conftest import GITHUB_URL, PIPELINE, PORTAL, portal_blob
 
+MODULE_ROUTES = (
+    "nomogram",
+    "testbed",
+    "drift",
+    "bigbench",
+    "preflight",
+    "reproduce",
+)
+
 EMOJI = re.compile(r"[\U0001F300-\U0001FAFF]")
 STUB = re.compile(
     r"CI stub|instrument stub|Two-probe contract stub|"
@@ -84,9 +93,21 @@ def test_type_pair_not_siblings() -> None:
 
 
 def test_nav_modules() -> None:
-    src = (PORTAL / "components" / "Console.tsx").read_text(encoding="utf-8")
+    blob = (PORTAL / "components" / "Console.tsx").read_text(
+        encoding="utf-8"
+    ) + (PORTAL / "lib" / "modules.ts").read_text(encoding="utf-8")
     for label in ("Nomogram", "Testbed", "Drift", "BIG-Bench", "Preflight", "Reproduce"):
-        assert label in src
+        assert label in blob
+    assert "hrefForModule" in blob
+    assert "usePathname" in blob
+
+
+def test_app_router_module_pages_exist() -> None:
+    for slug in MODULE_ROUTES:
+        page = PORTAL / "app" / slug / "page.tsx"
+        assert page.is_file(), f"missing App Router page for /{slug}/"
+        text = page.read_text(encoding="utf-8")
+        assert "Console" in text
 
 
 def test_footer_doi_github_license() -> None:
