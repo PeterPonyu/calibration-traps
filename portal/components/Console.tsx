@@ -9,6 +9,7 @@ import {
   moduleFromPathname,
   type ModuleId,
 } from "../lib/modules";
+import type { ScienceBlock, ScienceView } from "../lib/science";
 
 function Raster() {
   const rows = 4;
@@ -26,7 +27,33 @@ function Raster() {
   );
 }
 
-export function Console() {
+function QuestionList({ block }: { block: ScienceBlock }) {
+  if (block.questions.length === 0) {
+    return null;
+  }
+  return (
+    <ol className="q-list">
+      {block.questions.map((question) => (
+        <li key={question}>{question}</li>
+      ))}
+    </ol>
+  );
+}
+
+function CaptionRow({ block }: { block: ScienceBlock }) {
+  if (block.captions.length === 0) {
+    return null;
+  }
+  return (
+    <ul className="captions">
+      {block.captions.map((caption) => (
+        <li key={caption}>{caption}</li>
+      ))}
+    </ul>
+  );
+}
+
+export function Console({ science }: { science: ScienceView }) {
   const pathname = usePathname();
   const module: ModuleId = moduleFromPathname(pathname);
 
@@ -40,63 +67,42 @@ export function Console() {
 
       <main className="panes" id="module-nomogram" hidden={module !== "nomogram"}>
         <section className="pane pane-controls" aria-labelledby="controls-title">
-          <h2 id="controls-title">NOMOGRAM CONTROLS</h2>
-          <p className="procedure">
-            Closed-form nomogram selects K from M, q, and false-positive budget
-            &alpha;. Sealed operating point. Not a live detector.
-          </p>
+          <h2 id="controls-title">{science.nomogram.title}</h2>
+          <p className="procedure">{science.nomogram.lead}</p>
           <dl className="params">
             <div>
               <dt>M</dt>
-              <dd>SEALED</dd>
+              <dd>HOLD</dd>
             </div>
             <div>
               <dt>q</dt>
-              <dd>SEALED</dd>
+              <dd>HOLD</dd>
             </div>
             <div>
               <dt>&alpha;</dt>
-              <dd>SEALED</dd>
+              <dd>HOLD</dd>
             </div>
             <div>
               <dt>K</dt>
-              <dd>SEALED</dd>
+              <dd>HOLD</dd>
             </div>
           </dl>
           <p className="formula">K &ge; (ln M &minus; ln &alpha;) / ln(1/q)</p>
-          <p className="sealed">Operating point is sealed. HOLD.</p>
+          <CaptionRow block={science.nomogram} />
+          <QuestionList block={science.nomogram} />
         </section>
 
         <section className="pane pane-scan" aria-labelledby="scan-title">
-          <h2 id="scan-title">SCAN / RUN-LENGTH</h2>
+          <h2 id="scan-title">{science.scan.title}</h2>
           <p className="scan-caption">Checkpoint raster (structure only)</p>
           <Raster />
-          <h3 className="ladder-title">K-ladder (exceedance runs &ge; K)</h3>
-          <ol className="ladder">
-            <li>
-              <span className="k">K=1</span>
-              <span className="count">SEALED</span>
-            </li>
-            <li>
-              <span className="k">K=2</span>
-              <span className="count">SEALED</span>
-            </li>
-            <li>
-              <span className="k">K=3</span>
-              <span className="count">SEALED</span>
-            </li>
-            <li>
-              <span className="k">K=5</span>
-              <span className="count">SEALED</span>
-            </li>
-          </ol>
-          <p className="note">
-            Scan counts stay sealed. Not on this door.
-          </p>
+          <p className="procedure">{science.scan.lead}</p>
+          <CaptionRow block={science.scan} />
+          <QuestionList block={science.scan} />
         </section>
 
         <section className="pane pane-adjudication" aria-labelledby="bb-title">
-          <h2 id="bb-title">ADJUDICATION</h2>
+          <h2 id="bb-title">{science.adjudication.title}</h2>
           <div className="bb-hero">
             <div className="confirm">
               <strong>HOLD</strong>
@@ -107,66 +113,70 @@ export function Console() {
               <span>UNPOWERED CHANNEL</span>
             </div>
           </div>
-          <table className="bb-table">
-            <thead>
-              <tr>
-                <th>TASK</th>
-                <th>JUMP</th>
-                <th>
-                  E<sub>task</sub>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colSpan={3}>SEALED — task rows are not on this door</td>
-              </tr>
-            </tbody>
-          </table>
-          <p className="note">Look-elsewhere table is not published on this door.</p>
+          <p className="procedure">{science.adjudication.lead}</p>
+          <CaptionRow block={science.adjudication} />
+          <QuestionList block={science.adjudication} />
         </section>
       </main>
 
       <section className="module" id="module-testbed" hidden={module !== "testbed"}>
-        <h2>TESTBED</h2>
-        <p className="procedure">
-          Supervised-fit control is a sealed pointer, not a live run.
-        </p>
-        <p className="note">
-          Summary: <span className="mono">figs/summaries/E2_supervised_fit.json</span>
-        </p>
+        <h2>{science.testbed.title}</h2>
+        <p className="procedure">{science.testbed.lead}</p>
+        <CaptionRow block={science.testbed} />
+        <QuestionList block={science.testbed} />
       </section>
 
       <section className="module" id="module-drift" hidden={module !== "drift"}>
-        <h2>DRIFT</h2>
-        <p className="procedure">
-          Scan / budget grids are sealed. Heatmap artwork is an untracked
-          vec-tier include, not a summary file.
-        </p>
-        <p className="note">
-          <span className="mono">E2_td_grid.json</span> ·{" "}
-          <span className="mono">E2_budget_grid.json</span>
-        </p>
+        <h2>{science.drift.title}</h2>
+        <p className="procedure">{science.drift.lead}</p>
+        <CaptionRow block={science.drift} />
+        <QuestionList block={science.drift} />
       </section>
 
       <section className="module" id="module-bigbench" hidden={module !== "bigbench"}>
-        <h2>BIG-BENCH</h2>
-        <p className="procedure">
-          Adjudication structure only. Task rows and channel counts stay sealed,
-          not on this door.
-        </p>
+        <h2>{science.bigbench.title}</h2>
+        <p className="procedure">{science.bigbench.lead}</p>
+        <div className="bb-hero">
+          <div className="confirm">
+            <strong>HOLD</strong>
+            <span>CONFIRM CHANNEL</span>
+          </div>
+          <div className="unpowered">
+            <strong>HOLD</strong>
+            <span>UNPOWERED CHANNEL</span>
+          </div>
+        </div>
+        <CaptionRow block={science.bigbench} />
+        <QuestionList block={science.bigbench} />
       </section>
 
       <section className="module" id="module-preflight" hidden={module !== "preflight"}>
-        <h2>PREFLIGHT</h2>
-        <p className="procedure">
-          Preflight instrument: pick K from M, q, and &alpha; before reading a
-          timing. This page does not run the detector.
-        </p>
+        <h2>{science.preflight.title}</h2>
+        <p className="procedure">{science.preflight.lead}</p>
+        <dl className="params">
+          <div>
+            <dt>M</dt>
+            <dd>scan length</dd>
+          </div>
+          <div>
+            <dt>q</dt>
+            <dd>exceedance rate</dd>
+          </div>
+          <div>
+            <dt>&alpha;</dt>
+            <dd>false-positive budget</dd>
+          </div>
+          <div>
+            <dt>K</dt>
+            <dd>run length</dd>
+          </div>
+        </dl>
+        <CaptionRow block={science.preflight} />
+        <QuestionList block={science.preflight} />
       </section>
 
       <section className="module" id="module-reproduce" hidden={module !== "reproduce"}>
-        <h2>REPRODUCE-AS-REBUILD</h2>
+        <h2>{science.rebuild.title}</h2>
         <p className="procedure">
           Clone{" "}
           <a href="https://github.com/PeterPonyu/calibration-traps">
@@ -178,10 +188,8 @@ export function Console() {
           </a>
           .
         </p>
-        <p className="note">
-          Reproduce-as-rebuild: clone, run the seeded experiment scripts, compare
-          against committed logs. This console does not execute a run.
-        </p>
+        <p className="note">{science.rebuild.lead}</p>
+        <QuestionList block={science.rebuild} />
       </section>
 
       <nav className="fkey-rail" aria-label="modules">
@@ -196,7 +204,7 @@ export function Console() {
               data-module={item.id}
               aria-current={active ? "page" : undefined}
             >
-              <kbd>{item.key}</kbd> {item.label}
+              {item.label}
             </Link>
           );
         })}

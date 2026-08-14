@@ -276,6 +276,34 @@ a:hover {
   padding-right: 0;
 }
 
+.q-list {
+  margin: 12px 0 0;
+  padding: 0 0 0 1.15rem;
+  color: var(--prose);
+  font-family: var(--font-prose), "Times New Roman", serif;
+  font-size: 15px;
+  line-height: 1.45;
+  display: grid;
+  gap: 8px;
+}
+
+.captions {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.captions li {
+  border: 1px solid var(--bezel);
+  color: var(--signal);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+}
+
 .module {
   padding: 22px 28px;
   background: var(--panel);
@@ -320,13 +348,6 @@ a.fkey:hover {
 
 .fkey:last-child {
   border-right: 0;
-}
-
-.fkey kbd {
-  font-family: inherit;
-  color: var(--chrome);
-  font-weight: 500;
-  margin-right: 6px;
 }
 
 .fkey.is-active {

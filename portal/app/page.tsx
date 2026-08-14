@@ -1,5 +1,5 @@
-import { Console } from "../components/Console";
+import { ConsoleFrame } from "../components/ConsoleFrame";
 
 export default function Page() {
-  return <Console />;
+  return <ConsoleFrame />;
 }

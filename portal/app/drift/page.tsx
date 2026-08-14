@@ -1,7 +1,7 @@
-import { Console } from "../../components/Console";
+import { ConsoleFrame } from "../../components/ConsoleFrame";
 
 export const metadata = { title: "Drift — Calibration Traps" };
 
 export default function DriftPage() {
-  return <Console />;
+  return <ConsoleFrame />;
 }

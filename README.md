@@ -1,29 +1,23 @@
-# Testbed-calibration traps in small-scale emergence — code, data, pointer tex
+# Calibration Traps
 
-Public warehouse for **calibration-traps**: experiment code, per-run logs, pointer
-manuscript `papers/E2/main.tex`, figure generators, and a preflight console under
-`portal/`. Compiled journal PDFs are not hosted here.
+**Live door:** https://peterponyu.github.io/calibration-traps/
+
+Open the preflight console first. Modules: Nomogram, Testbed, Drift, BIG-Bench, Preflight, Reproduce-as-rebuild.
 
 - GitHub: https://github.com/PeterPonyu/calibration-traps
-- Zenodo concept: https://doi.org/10.5281/zenodo.21020386
-- Figure contract: `papers/FIGURE-INDEX.json`
-- Rebuild figures: `papers/figs/PIPELINE.md`
+- Zenodo: https://doi.org/10.5281/zenodo.21020386
 
-## Contents
-- `experiments/<study>/` — runner / analysis code per sub-experiment.
-- `experiments/results/` — per-run logs (JSON/JSONL) behind every reported number.
-- `papers/E2/main.tex` — full canonical pointer manuscript (`\input{../figs/figpreamble.tex}`).
-- `papers/figs/` — generators + JSON summaries (compiled `tex/` and `vec/` are gitignored).
-- `portal/` — Next.js phosphor preflight console (`output: 'export'`, `basePath: /calibration-traps`). HOLD door only; findings stay in the warehouse.
+## What's here
+- `experiments/` — runners and per-run logs
+- `portal/` — phosphor preflight console (static export)
 
-## Reproducing
+## Reproduce
 The committed per-run logs are the recorded outputs. To re-run a study from
-scratch (GPU recommended): `python experiments/<study>/run_*.py`. Runs are seeded
-(seed lists appear in result-log filenames). Dependencies: Python 3.11+, PyTorch,
-numpy. All inputs are synthetic and fully specified in the code, except large
-standard datasets (MNIST / WikiText) which are not bundled.
+scratch (GPU recommended): `python experiments/<study>/run_*.py`. Runs are seeded.
+Dependencies: Python 3.11+, PyTorch, numpy. Inputs are synthetic and specified
+in the runners, except large standard datasets (MNIST / WikiText) which are not bundled.
 
-Local portal preview (Next.js static export, no LaTeX):
+Local console preview:
 
 ```
 python -m pip install -r requirements-ci.txt
