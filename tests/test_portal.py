@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from conftest import GITHUB_URL, PIPELINE, PORTAL, portal_blob
+from conftest import GITHUB_URL, PORTAL, portal_blob
 
 MODULE_ROUTES = (
     "nomogram",
@@ -118,15 +118,39 @@ def test_footer_doi_github_license() -> None:
     assert re.search(r"CC\s*BY\s*4\.0", blob)
 
 
-def test_consumes_figure_index_not_venue_pdfs() -> None:
-    blob = portal_blob()
-    assert "FIGURE-INDEX.json" in blob or "data/figures.json" in blob
+CHROME_FILES = (
+    PORTAL / "components" / "Console.tsx",
+    PORTAL / "app" / "layout.tsx",
+    PORTAL / "lib" / "modules.ts",
+    *(PORTAL / "app").rglob("page.tsx"),
+)
+
+FORBIDDEN_CHROME = re.compile(
+    r"\bpapers?\b|\bjournals?\b|\bmanuscripts?\b|\bsubmissions?\b|"
+    r"\bJMLR\b|main\.tex|FIGURE-INDEX|PIPELINE|\bwarehouse\b|"
+    r"\bdocuments?\b|\bdocumented\b",
+    re.I,
+)
+
+
+def _chrome_blob() -> str:
+    return "\n".join(path.read_text(encoding="utf-8") for path in CHROME_FILES)
+
+
+def test_console_chrome_has_no_forbidden_words() -> None:
+    hits: list[str] = []
+    for path in CHROME_FILES:
+        text = path.read_text(encoding="utf-8")
+        for match in FORBIDDEN_CHROME.finditer(text):
+            hits.append(f"{path.relative_to(PORTAL)}: {match.group(0)}")
+    assert not hits, hits
+
+
+def test_console_does_not_cite_venue_pdfs() -> None:
+    blob = _chrome_blob()
     assert "papers/submissions/E2-jmlr/" not in blob
     assert "Figure3.pdf" not in blob
-
-
-def test_points_at_pipeline() -> None:
-    assert PIPELINE in portal_blob()
+    assert "main.pdf" not in blob
 
 
 def test_nomogram_documented_not_live() -> None:

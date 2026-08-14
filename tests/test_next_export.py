@@ -59,6 +59,28 @@ def test_export_copies_figure_index() -> None:
     assert (REPO_ROOT / "_site" / "data" / "figs" / "summaries" / "E2_nomogram.json").is_file()
 
 
+FORBIDDEN_CHROME = re.compile(
+    r"\bpapers?\b|\bjournals?\b|\bmanuscripts?\b|\bsubmissions?\b|"
+    r"\bJMLR\b|main\.tex|FIGURE-INDEX|PIPELINE|\bwarehouse\b|"
+    r"\bdocuments?\b|\bdocumented\b",
+    re.I,
+)
+
+
+def test_export_html_has_no_forbidden_chrome() -> None:
+    site = REPO_ROOT / "_site"
+    hits: list[str] = []
+    pages = [site / "index.html"]
+    pages.extend(site / slug / "index.html" for slug in MODULE_ROUTES)
+    for path in pages:
+        assert path.is_file(), f"missing {path} — run portal/build.sh"
+        text = path.read_text(encoding="utf-8", errors="replace")
+        match = FORBIDDEN_CHROME.search(text)
+        if match:
+            hits.append(f"{path.relative_to(site)}: {match.group(0)}")
+    assert not hits, hits
+
+
 def test_export_html_does_not_leak_findings() -> None:
     hits: list[str] = []
     site = REPO_ROOT / "_site"

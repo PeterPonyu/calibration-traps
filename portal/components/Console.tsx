@@ -40,10 +40,10 @@ export function Console() {
 
       <main className="panes" id="module-nomogram" hidden={module !== "nomogram"}>
         <section className="pane pane-controls" aria-labelledby="controls-title">
-          <h2 id="controls-title">DOCUMENTED CONTROLS</h2>
+          <h2 id="controls-title">NOMOGRAM CONTROLS</h2>
           <p className="procedure">
             Closed-form nomogram selects K from M, q, and false-positive budget
-            &alpha;. Static warehouse JSON. Not a live detector.
+            &alpha;. Sealed operating point. Not a live detector.
           </p>
           <dl className="params">
             <div>
@@ -64,7 +64,7 @@ export function Console() {
             </div>
           </dl>
           <p className="formula">K &ge; (ln M &minus; ln &alpha;) / ln(1/q)</p>
-          <p className="sealed">Operating point lives in warehouse JSON. HOLD.</p>
+          <p className="sealed">Operating point is sealed. HOLD.</p>
         </section>
 
         <section className="pane pane-scan" aria-labelledby="scan-title">
@@ -91,8 +91,7 @@ export function Console() {
             </li>
           </ol>
           <p className="note">
-            Warehouse summaries, not pasted PDFs. Scan counts are not on this
-            door.
+            Scan counts stay sealed. Not on this door.
           </p>
         </section>
 
@@ -120,7 +119,7 @@ export function Console() {
             </thead>
             <tbody>
               <tr>
-                <td colSpan={3}>SEALED — rows live in warehouse INDEX</td>
+                <td colSpan={3}>SEALED — task rows are not on this door</td>
               </tr>
             </tbody>
           </table>
@@ -131,7 +130,7 @@ export function Console() {
       <section className="module" id="module-testbed" hidden={module !== "testbed"}>
         <h2>TESTBED</h2>
         <p className="procedure">
-          Supervised-fit control is a warehouse JSON pointer, not a live run.
+          Supervised-fit control is a sealed pointer, not a live run.
         </p>
         <p className="note">
           Summary: <span className="mono">figs/summaries/E2_supervised_fit.json</span>
@@ -141,7 +140,7 @@ export function Console() {
       <section className="module" id="module-drift" hidden={module !== "drift"}>
         <h2>DRIFT</h2>
         <p className="procedure">
-          Scan / budget grids are warehouse JSON. Heatmap artwork is an untracked
+          Scan / budget grids are sealed. Heatmap artwork is an untracked
           vec-tier include, not a summary file.
         </p>
         <p className="note">
@@ -153,37 +152,35 @@ export function Console() {
       <section className="module" id="module-bigbench" hidden={module !== "bigbench"}>
         <h2>BIG-BENCH</h2>
         <p className="procedure">
-          Adjudication structure only. Task rows and channel counts stay in the
-          warehouse, not on this door.
+          Adjudication structure only. Task rows and channel counts stay sealed,
+          not on this door.
         </p>
       </section>
 
       <section className="module" id="module-preflight" hidden={module !== "preflight"}>
         <h2>PREFLIGHT</h2>
         <p className="procedure">
-          Documented instrument: pick K from M, q, and &alpha; before reading a
+          Preflight instrument: pick K from M, q, and &alpha; before reading a
           timing. This page does not run the detector.
         </p>
       </section>
 
       <section className="module" id="module-reproduce" hidden={module !== "reproduce"}>
-        <h2>REPRODUCE</h2>
+        <h2>REPRODUCE-AS-REBUILD</h2>
         <p className="procedure">
           Clone{" "}
           <a href="https://github.com/PeterPonyu/calibration-traps">
             github.com/PeterPonyu/calibration-traps
           </a>
-          . Rebuild figures via <span className="mono">papers/figs/PIPELINE.md</span>.
-          Archival binaries:{" "}
+          . Rebuild from the experiment runners. Archival binaries:{" "}
           <a href="https://doi.org/10.5281/zenodo.21020386">
             10.5281/zenodo.21020386
           </a>
           .
         </p>
         <p className="note">
-          Portal contract: <span className="mono">papers/FIGURE-INDEX.json</span>{" "}
-          (copied to <span className="mono">data/figures.json</span>). Pointer tex:{" "}
-          <span className="mono">papers/E2/main.tex</span>.
+          Reproduce-as-rebuild: clone, run the seeded experiment scripts, compare
+          against committed logs. This console does not execute a run.
         </p>
       </section>
 
@@ -214,7 +211,7 @@ export function Console() {
         <a href="https://github.com/PeterPonyu/calibration-traps">
           github.com/PeterPonyu/calibration-traps
         </a>{" "}
-        · papers/FIGURE-INDEX.json · papers/figs/PIPELINE.md · papers/E2/main.tex
+        · sealed operating point · not a live detector
       </footer>
     </div>
   );
